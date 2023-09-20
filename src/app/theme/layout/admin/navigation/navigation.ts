@@ -24,87 +24,38 @@ const NavigationItems = [
     icon: 'icon-navigation',
     children: [
       {
-        id: 'default',
-        title: 'Default',
+        id: 'dashboard',
+        title: 'Dashboard',
         type: 'item',
         classes: 'nav-item',
-        url: '/default',
+        url: '/dashboard',
         icon: 'ti ti-dashboard',
         breadcrumbs: false
       }
     ]
   },
   {
-    id: 'page',
-    title: 'Pages',
+    id: 'bookings',
+    title: 'Bookings',
     type: 'group',
     icon: 'icon-navigation',
     children: [
       {
-        id: 'Authentication',
-        title: 'Authentication',
-        type: 'collapse',
-        icon: 'ti ti-key',
-        children: [
-          {
-            id: 'login',
-            title: 'Login',
-            type: 'item',
-            url: '/guest/login',
-            breadcrumbs: false
-          },
-          {
-            id: 'register',
-            title: 'Register',
-            type: 'item',
-            url: '/guest/register',
-            target: true,
-            breadcrumbs: false
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'elements',
-    title: 'Elements',
-    type: 'group',
-    icon: 'icon-navigation',
-    children: [
-      {
-        id: 'typography',
-        title: 'Typography',
+        id: 'driverBookings',
+        title: 'Add Driver Bookings',
         type: 'item',
         classes: 'nav-item',
-        url: '/typography',
+        url: '/driverBookings',
         icon: 'ti ti-typography'
       },
-      {
-        id: 'color',
-        title: 'Colors',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/color',
-        icon: 'ti ti-brush'
-      },
-      {
-        id: 'color',
-        title: 'Colors',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/color',
-        icon: 'ti ti-brush'
-      },
-      {
-        id: 'tabler',
-        title: 'Tabler',
-        type: 'item',
-        classes: 'nav-item',
-        url: 'https://tabler-icons.io/',
-        icon: 'ti ti-plant-2',
-        target: true,
-        external: true
-      }
+      // {
+      //   id: 'color',
+      //   title: 'Colors',
+      //   type: 'item',
+      //   classes: 'nav-item',
+      //   url: '/color',
+      //   icon: 'ti ti-brush'
+      // }
     ]
   },
   {
@@ -114,25 +65,31 @@ const NavigationItems = [
     icon: 'icon-navigation',
     children: [
       {
-        id: 'sample-page',
-        title: 'Sample Page',
+        id: 'addDrivers',
+        title: 'Add Drivers',
         type: 'item',
-        url: '/sample-page',
+        url: '/addDrivers',
         classes: 'nav-item',
         icon: 'ti ti-brand-chrome'
-      },
-      {
-        id: 'document',
-        title: 'Document',
-        type: 'item',
-        classes: 'nav-item',
-        url: 'https://codedthemes.gitbook.io/berry-angular/',
-        icon: 'ti ti-vocabulary',
-        target: true,
-        external: true
       }
     ]
-  }
+  },
+  {
+    id: 'list',
+    title: 'List',
+    type: 'group',
+    icon: 'icon-navigation',
+    children: [
+      {
+        id: 'driverBookingList',
+        title: 'Driver Booking List',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/driverBookingList',
+        icon: 'ti ti-typography'
+      }
+    ]
+  },
 ];
 
 @Injectable()

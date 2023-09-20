@@ -1,0 +1,56 @@
+<div>
+    <table mat-table [dataSource]="dataSource">
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef> No. </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.position ? element.position : '--' }} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="customerName">
+            <th mat-header-cell *matHeaderCellDef> Customer Name </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.customer_name ? element.customer_name : '--' }} </td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="customerNumber">
+            <th mat-header-cell *matHeaderCellDef> Customer Number </th>
+            <td mat-cell *matCellDef="let element"> {{ element.customer_number ? ('+91 ' + element.customer_number) :
+                '--' }} </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="driverName">
+            <th mat-header-cell *matHeaderCellDef> Driver Name </th>
+            <td mat-cell *matCellDef="let element"> {{ element.tripClosedDrierName ? element.tripClosedDrierName : '--'
+                }} </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="driverNumber">
+            <th mat-header-cell *matHeaderCellDef> Driver Number </th>
+            <td mat-cell *matCellDef="let element"> {{ element.tripClosedDrierMobile ? ('+91 ' +
+                element.tripClosedDrierMobile) :
+                '--' }} </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="bookingDate">
+            <th mat-header-cell *matHeaderCellDef> Date </th>
+            <td mat-cell *matCellDef="let element"> {{ element.bookingDate ? element.bookingDate : '--' }} </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="bookingTime">
+            <th mat-header-cell *matHeaderCellDef> Time </th>
+            <td mat-cell *matCellDef="let element"> {{ element.timePicker ? element.timePicker : '--' }} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+    </mat-paginator> -->
+</div>

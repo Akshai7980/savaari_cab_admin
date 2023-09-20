@@ -1,6 +1,89 @@
 <div class="row">
-  <!-- [ Typography ] start -->
+
   <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Add Driver Bookings</h5>
+      </div>
+
+      <form [formGroup]="driverBookingForm">
+
+        <div class="card-body">
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" formControlName="customer_name" />
+            <label for="floatingInput">Customer Name</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <textarea type="text" class="form-control" id="floatingInput" formControlName="address"></textarea>
+            <label for="floatingInput">Address</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" formControlName="pickUpLocation" />
+            <label for="floatingInput">Pick Up Location</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" formControlName="dropOffLocation" />
+            <label for="floatingInput">Drop Off Location</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="number" class="form-control no-spinners" id="floatingInput"
+              formControlName="customer_number" />
+            <label for="floatingInput">Mobile Number</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="date" class="form-control" id="startDate" formControlName="bookingDate" (input)="onInputDate()" />
+            <label for="floatingInput">Trip Start Date</label>
+          </div>
+          
+          <div class="form-floating mb-3">
+            <input type="date" class="form-control" id="endDate" formControlName="endDate" (input)="onInputDate()" />
+            <label for="floatingInput">Trip End Date</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="time" class="form-control" id="floatingInput" formControlName="timePicker" (input)="onInputTime()" />
+            <label for="floatingInput">Trip Start Time</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="number" class="form-control no-spinners" id="floatingInput" formControlName="numberOfDays" [readOnly]="true" />
+            <label for="floatingInput">Number Of Days</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" formControlName="tripClosedDrierName" (click)="openDialog()" />
+            <label for="floatingInput">Driver Name</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" formControlName="tripClosedDrierMobile" />
+            <label for="floatingInput">Driver Mobile Number</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" formControlName="vehicleType" />
+            <label for="floatingInput">Vehicle Type</label>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button type="button" class="btn btn-secondary" (click)="addDriverBooking()"
+              [disabled]="!driverBookingForm.valid">Add Driver Booking</button>
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- <div class="col-sm-12">
     <div class="card">
       <div class="card-header">
         <h5>Headings</h5>
@@ -23,8 +106,8 @@
         <h6>This is a H6</h6>
       </div>
     </div>
-  </div>
-  <div class="col-sm-12">
+  </div> -->
+  <!-- <div class="col-sm-12">
     <div class="card">
       <div class="card-header">
         <h5>Display Headings</h5>
@@ -38,8 +121,8 @@
         <h1 class="display-6">Display 6</h1>
       </div>
     </div>
-  </div>
-  <div class="col-md-6">
+  </div> -->
+  <!-- <div class="col-md-6">
     <div class="card">
       <div class="card-header">
         <h5>Inline Text Elements</h5>
@@ -58,8 +141,8 @@
         <em>rendered as italicized text</em>
       </div>
     </div>
-  </div>
-  <div class="col-md-6">
+  </div> -->
+  <!-- <div class="col-md-6">
     <div class="card">
       <div class="card-header">
         <h5>Contextual Text Colors</h5>
@@ -74,8 +157,8 @@
         <p class="text-dark mb-1"> Nullam id dolor id nibh ultricies vehicula ut id elit. </p>
       </div>
     </div>
-  </div>
-  <div class="col-md-6 col-lg-4">
+  </div> -->
+  <!-- <div class="col-md-6 col-lg-4">
     <div class="card">
       <div class="card-header">
         <h5>Unordered</h5>
@@ -101,8 +184,8 @@
         </ul>
       </div>
     </div>
-  </div>
-  <div class="col-md-6 col-lg-4">
+  </div> -->
+  <!-- <div class="col-md-6 col-lg-4">
     <div class="card">
       <div class="card-header">
         <h5>Ordered</h5>
@@ -128,8 +211,8 @@
         </ol>
       </div>
     </div>
-  </div>
-  <div class="col-md-12 col-lg-4">
+  </div> -->
+  <!-- <div class="col-md-12 col-lg-4">
     <div class="card">
       <div class="card-header">
         <h5>Unstyled</h5>
@@ -155,8 +238,8 @@
         </ul>
       </div>
     </div>
-  </div>
-  <div class="col-md-6">
+  </div> -->
+  <!-- <div class="col-md-6">
     <div class="card">
       <div class="card-header">
         <h5>Blockquotes</h5>
@@ -174,8 +257,8 @@
         </blockquote>
       </div>
     </div>
-  </div>
-  <div class="col-md-6">
+  </div> -->
+  <!-- <div class="col-md-6">
     <div class="card">
       <div class="card-header">
         <h5>Horizontal Description</h5>
@@ -199,6 +282,6 @@
         </dl>
       </div>
     </div>
-  </div>
+  </div> -->
   <!-- [ Typography ] end -->
 </div>

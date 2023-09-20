@@ -1,42 +1,57 @@
-// Angular Imports
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // project import
 import { BreadcrumbModule, CardModule } from './components';
 
-import { SpinnerComponent } from './components/spinner/spinner.component';
-import { NgScrollbarModule } from 'ngx-scrollbar';
-
 // bootstrap import
-import { NgbDropdownModule, NgbNavModule, NgbModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCollapseModule, NgbDropdownModule, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { SpinnerComponent } from './components/spinner/spinner.component';
+
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    CardModule,
     BreadcrumbModule,
+    CardModule,
+    NgbModule,
     NgbDropdownModule,
     NgbNavModule,
-    NgbModule,
     NgbCollapseModule,
-    NgScrollbarModule
+    NgScrollbarModule,
+    MatSlideToggleModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSnackBarModule,
+    MatDialogModule
   ],
   exports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    CardModule,
     BreadcrumbModule,
+    CardModule,
     SpinnerComponent,
     NgbModule,
     NgbDropdownModule,
     NgbNavModule,
     NgbCollapseModule,
-    NgScrollbarModule
+    NgScrollbarModule,
+    MatSlideToggleModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSnackBarModule,
+    MatDialogModule
   ],
   declarations: [SpinnerComponent]
 })

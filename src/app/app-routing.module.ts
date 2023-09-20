@@ -10,15 +10,15 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: '/default',
+        redirectTo: '/dashboard',
         pathMatch: 'full'
       },
       {
-        path: 'default',
+        path: 'dashboard',
         loadComponent: () => import('./demo/default/default.component')
       },
       {
-        path: 'typography',
+        path: 'driverBookings',
         loadComponent: () => import('./demo/elements/typography/typography.component')
       },
       {
@@ -26,8 +26,12 @@ const routes: Routes = [
         loadComponent: () => import('./demo/elements/element-color/element-color.component')
       },
       {
-        path: 'sample-page',
+        path: 'addDrivers',
         loadComponent: () => import('./demo/sample-page/sample-page.component')
+      },
+      {
+        path: 'driverBookingList',
+        loadComponent: () => import('./demo/elements/driver-booking-list/driver-booking-list.component')
       }
     ]
   },
@@ -36,7 +40,7 @@ const routes: Routes = [
     component: GuestComponent,
     children: [
       {
-        path: 'guest',
+        path: 'admin',
         loadChildren: () => import('./demo/pages/authentication/authentication.module').then((m) => m.AuthenticationModule)
       }
     ]
@@ -47,4 +51,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
