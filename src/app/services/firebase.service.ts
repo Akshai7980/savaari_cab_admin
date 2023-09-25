@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, first } from 'rxjs';
 import { SnackbarService } from './snackbar.service';
@@ -131,11 +131,51 @@ export class FirebaseService {
     return this.fireStore.collection('driverBooking').add(driverBooking);
   }
 
+  addDrivers(driver: any) {
+    return this.fireStore.collection('registeredDrivers').add(driver);
+  }
+
   getDriverBooking(): Observable<any[]> {
     return this.fireStore.collection('driverBooking').valueChanges();
   }
 
   getRegisteredDrivers(): Observable<any[]> {
     return this.fireStore.collection('registeredDrivers').valueChanges();
+  }
+
+  getUserOTPs(): Observable<any[]> {
+    return this.fireStore.collection('userOtp').valueChanges();
+  }
+
+  findDocumentById(id: string): QueryFn {
+    return (ref) => ref.where('docId', '==', id);
+  }
+
+  updateTripStatus(params: any): Promise<void> {
+    console.log(params);
+
+    const query = this.findDocumentById(params.docId);
+
+    return this.fireStore
+      .collection('driverBooking')
+      .ref.where('docId', '==', params.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+
+          return docRef.update(params);
+        } else {
+          throw new Error('Document not found or multiple documents match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating trip status:', error);
+        throw error;
+      });
+  }
+
+  createId() {
+    this.fireStore.createId();
   }
 }

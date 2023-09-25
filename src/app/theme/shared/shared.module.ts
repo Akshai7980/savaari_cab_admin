@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // project import
-import { BreadcrumbModule, CardModule } from './components';
+import { BreadcrumbModule, CardModule, NoDataFoundModule } from './components';
 
 // bootstrap import
 import { NgbCollapseModule, NgbDropdownModule, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
@@ -23,6 +23,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     FormsModule,
     ReactiveFormsModule,
     BreadcrumbModule,
+    NoDataFoundModule,
     CardModule,
     NgbModule,
     NgbDropdownModule,
@@ -40,6 +41,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     FormsModule,
     ReactiveFormsModule,
     BreadcrumbModule,
+    NoDataFoundModule,
     CardModule,
     SpinnerComponent,
     NgbModule,

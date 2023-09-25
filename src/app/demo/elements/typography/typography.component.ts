@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
@@ -15,13 +15,13 @@ import { UtilityService } from 'src/app/services/utility.service';
   templateUrl: './typography.component.html',
   styleUrls: ['./typography.component.scss']
 })
-export default class TypographyComponent {
+export default class TypographyComponent implements OnInit {
   @ViewChild('startDateInput') startDateInput: HTMLInputElement;
   @ViewChild('endDateInput') endDateInput: HTMLInputElement;
 
   driverBookingForm: FormGroup;
   formattedTime: string;
-  timePickerInput: any;
+  allDrivers: Driver[];
 
   constructor(
     private readonly firebaseService: FirebaseService,
@@ -31,50 +31,62 @@ export default class TypographyComponent {
     private readonly dialog: MatDialog
   ) {
     this.driverBookingForm = this.formBuilder.group({
-      customer_name: ['', Validators.required],
+      customerName: ['', Validators.required],
       address: ['', Validators.required],
       pickUpLocation: ['', Validators.required],
       dropOffLocation: ['', Validators.required],
-      customer_number: ['', Validators.required],
-      bookingDate: ['', Validators.required],
+      customerNumber: ['', Validators.required],
+      startDate: ['', Validators.required],
       endDate: ['', Validators.required],
-      timePicker: ['', Validators.required],
+      startTime: ['', Validators.required],
       numberOfDays: ['', Validators.required],
-      tripClosedDrierName: ['', Validators.required],
-      vehicleType: ['', Validators.required],
-      tripClosedDrierMobile: ['', Validators.required]
+      requiredDriver: ['', Validators.required],
+      rejectedDriver: [''],
+      cusVehicleName: ['', Validators.required],
+      cusVehicleType: ['', Validators.required],
+      cusVehicleNumber: ['', Validators.required]
     });
+  }
+  ngOnInit(): void {
+    this.getAllDrivers();
   }
 
   onInputDate() {
-    const startDate = this.startDateInput.value;
-    const endDate = this.endDateInput.value;
-
-    if (startDate && endDate) {
-      const daysDifference = this.utilityService.calculateDaysDifference(startDate, endDate);
-      this.driverBookingForm.controls['numberOfDays'].setValue(daysDifference);
-    }
-  }
-
-  onInputTime() {
-    const inputValue = this.timePickerInput.value;
-    this.formattedTime = this.utilityService.convertTo12HourFormat(inputValue);
+    this.utilityService.updateDaysDifference(this);
   }
 
   openDialog() {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.maxWidth = '500px';
-    dialogConfig.maxHeight = '500px';
+    dialogConfig.height = '400px';
+    dialogConfig.width = '600px';
+    dialogConfig.hasBackdrop = true; // Enable backdrop
 
-    const dialogRef = this.dialog.open(ListAllDriversComponent, dialogConfig);
+    const dialogRef = this.dialog.open(ListAllDriversComponent, {
+      ...dialogConfig,
+      data: { drivers: this.allDrivers }
+    });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+    dialogRef.afterClosed().subscribe((selectedDrivers: Driver[]) => {
+      console.log(`Dialog result: ${selectedDrivers}`);
+    });
+  }
+
+  getAllDrivers() {
+    this.firebaseService.getUserOTPs().subscribe((res: any) => {
+      console.log('res:', res);
+      this.allDrivers = res;
     });
   }
 
   addDriverBooking() {
-    this.driverBookingForm.controls['timePicker'].setValue(this.formattedTime);
+    const inputValue = this.driverBookingForm.controls['startTime'].value;
+
+    this.driverBookingForm.controls['startTime'].setValue(this.utilityService.convertTo12HourFormat(inputValue));
+
+    const docId = this.firebaseService.createId();
+
+    this.driverBookingForm.value.docId = docId;
+
     this.firebaseService
       .addDriverBooking(this.driverBookingForm.value)
       .then((res) => {
@@ -87,4 +99,9 @@ export default class TypographyComponent {
         console.error('Error adding driver booking:', error);
       });
   }
+}
+
+export interface Driver {
+  name: string;
+  code: string;
 }

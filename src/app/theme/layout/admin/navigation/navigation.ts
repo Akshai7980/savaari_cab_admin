@@ -36,31 +36,7 @@ const NavigationItems = [
   },
   {
     id: 'bookings',
-    title: 'Bookings',
-    type: 'group',
-    icon: 'icon-navigation',
-    children: [
-      {
-        id: 'driverBookings',
-        title: 'Add Driver Bookings',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/driverBookings',
-        icon: 'ti ti-typography'
-      },
-      // {
-      //   id: 'color',
-      //   title: 'Colors',
-      //   type: 'item',
-      //   classes: 'nav-item',
-      //   url: '/color',
-      //   icon: 'ti ti-brush'
-      // }
-    ]
-  },
-  {
-    id: 'other',
-    title: 'Other',
+    title: 'Driver',
     type: 'group',
     icon: 'icon-navigation',
     children: [
@@ -70,26 +46,58 @@ const NavigationItems = [
         type: 'item',
         url: '/addDrivers',
         classes: 'nav-item',
-        icon: 'ti ti-brand-chrome'
-      }
-    ]
-  },
-  {
-    id: 'list',
-    title: 'List',
-    type: 'group',
-    icon: 'icon-navigation',
-    children: [
+        icon: 'ti ti-user'
+      },
       {
-        id: 'driverBookingList',
-        title: 'Driver Booking List',
+        id: 'driverBookings',
+        title: 'Add Booking',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/driverBookings',
+        icon: 'ti ti-file'
+      },
+      {
+        id: 'todayTrips',
+        title: 'Today`s Trips',
         type: 'item',
         classes: 'nav-item',
         url: '/driverBookingList',
-        icon: 'ti ti-typography'
-      }
+        icon: 'ti ti-calendar'
+      },
+      // {
+      //   id: 'tomorrowTrips',
+      //   title: 'Tomorrow`s Trips',
+      //   type: 'item',
+      //   classes: 'nav-item',
+      //   url: '/driverBookingList',
+      //   icon: 'ti ti-calendar'
+      // }
+      // {
+      //   id: 'color',
+      //   title: 'Colors',
+      //   type: 'item',
+      //   classes: 'nav-item',
+      //   url: '/color',
+      //   icon: 'ti ti-brush'
+      // }
     ]
-  },
+  }
+  // {
+  //   id: 'other',
+  //   title: 'Other',
+  //   type: 'group',
+  //   icon: 'icon-navigation',
+  //   children: [
+  //     {
+  //       id: 'addDrivers',
+  //       title: 'Add Drivers',
+  //       type: 'item',
+  //       url: '/addDrivers',
+  //       classes: 'nav-item',
+  //       icon: 'ti ti-brand-chrome'
+  //     }
+  //   ]
+  // }
 ];
 
 @Injectable()
