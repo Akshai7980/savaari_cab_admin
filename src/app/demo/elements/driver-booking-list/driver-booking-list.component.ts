@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { NavigationExtras, Router } from '@angular/router';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
@@ -10,7 +11,7 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './driver-booking-list.component.html',
-  styleUrls: ['./driver-booking-list.component.scss'],
+  styleUrls: ['./driver-booking-list.component.scss']
 })
 export default class DriverBookingListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['position', 'tripTime', 'customerName', 'location', 'destination', 'vehicleName', 'actions'];
@@ -19,7 +20,10 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private readonly firebaseService: FirebaseService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
     this.getTodaysDriverBookings();
@@ -36,9 +40,8 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
     this.firebaseService.getDriverBooking().subscribe(
       (res: DriverBookings[]) => {
         const todaysDriverBookings = res.filter((booking) => {
-          // Convert booking.startDate to a timestamp
           const bookingTimestamp = new Date(booking.startDate).getTime();
-          return bookingTimestamp >= todayStart && bookingTimestamp <= todayEnd;
+          return bookingTimestamp >= todayStart && bookingTimestamp <= todayEnd && !booking.isTripCancelled;
         });
 
         console.log(todaysDriverBookings);
@@ -69,7 +72,9 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
   //   this.firebaseService.updateTripStatus(rowData);
   // }
 
-  toViewTrip(rowData: any) {}
+  toViewTrip(rowData: any) {
+    console.log(rowData);
+  }
 
   toCancelTrip(rowData: any) {
     console.log(rowData);
@@ -78,13 +83,20 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
       isTripCancelled: true,
       tripCancellationTime: new Date(),
       tripCancelledBy: 'Admin',
-      id: rowData.docId
+      docId: rowData.docId
     };
     this.firebaseService.updateTripStatus(params);
   }
 
   toEditTrip(rowData: any) {
     console.log(rowData);
+    const navigationExtras: NavigationExtras = {
+      state: {
+        rowData: rowData,
+        path: 'EDIT_DRIVER_BOOKING'
+      }
+    };
+    this.router.navigate(['/driverBookings'], navigationExtras);
   }
 }
 
@@ -100,4 +112,5 @@ export interface DriverBookings {
   docId: string;
   startDate: string;
   startTime: string;
+  isTripCancelled?: boolean;
 }

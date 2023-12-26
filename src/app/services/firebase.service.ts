@@ -175,7 +175,7 @@ export class FirebaseService {
       });
   }
 
-  createId() {
-    this.fireStore.createId();
+  createId(): string {
+    return this.fireStore.createId();
   }
 }

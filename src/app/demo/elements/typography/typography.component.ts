@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ListAllDriversComponent } from 'src/app/modals/list-all-drivers/list-all-drivers.component';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -20,7 +21,6 @@ export default class TypographyComponent implements OnInit {
   @ViewChild('endDateInput') endDateInput: HTMLInputElement;
 
   driverBookingForm: FormGroup;
-  formattedTime: string;
   allDrivers: Driver[];
 
   constructor(
@@ -28,7 +28,9 @@ export default class TypographyComponent implements OnInit {
     private readonly snackBar: SnackbarService,
     private readonly formBuilder: FormBuilder,
     private readonly utilityService: UtilityService,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    public route: ActivatedRoute,
+    private router: Router
   ) {
     this.driverBookingForm = this.formBuilder.group({
       customerName: ['', Validators.required],
@@ -44,9 +46,33 @@ export default class TypographyComponent implements OnInit {
       rejectedDriver: [''],
       cusVehicleName: ['', Validators.required],
       cusVehicleType: ['', Validators.required],
-      cusVehicleNumber: ['', Validators.required]
+      cusVehicleNumber: ['', Validators.required],
+      docId: ['']
     });
+
+    if (this.router.getCurrentNavigation()?.extras.state) {
+      const tripDetails = this.router.getCurrentNavigation()?.extras.state;
+      console.log(tripDetails);
+
+      if (tripDetails?.['path'] === 'EDIT_DRIVER_BOOKING') {
+        this.driverBookingForm.controls['customerName'].setValue(tripDetails?.['rowData'].customerName);
+        this.driverBookingForm.controls['address'].setValue(tripDetails?.['rowData'].address);
+        this.driverBookingForm.controls['pickUpLocation'].setValue(tripDetails?.['rowData'].pickUpLocation);
+        this.driverBookingForm.controls['dropOffLocation'].setValue(tripDetails?.['rowData'].dropOffLocation);
+        this.driverBookingForm.controls['customerNumber'].setValue(tripDetails?.['rowData'].customerNumber);
+        this.driverBookingForm.controls['startDate'].setValue(tripDetails?.['rowData'].startDate);
+        this.driverBookingForm.controls['endDate'].setValue(tripDetails?.['rowData'].endDate);
+        this.driverBookingForm.controls['startTime'].setValue(tripDetails?.['rowData'].startTime);
+        this.driverBookingForm.controls['numberOfDays'].setValue(tripDetails?.['rowData'].numberOfDays);
+        this.driverBookingForm.controls['requiredDriver'].setValue(tripDetails?.['rowData'].requiredDriver);
+        this.driverBookingForm.controls['rejectedDriver'].setValue(tripDetails?.['rowData'].rejectedDriver);
+        this.driverBookingForm.controls['cusVehicleType'].setValue(tripDetails?.['rowData'].cusVehicleType);
+        this.driverBookingForm.controls['cusVehicleNumber'].setValue(tripDetails?.['rowData'].cusVehicleNumber);
+        this.driverBookingForm.controls['cusVehicleName'].setValue(tripDetails?.['rowData'].cusVehicleName);
+      }
+    }
   }
+
   ngOnInit(): void {
     this.getAllDrivers();
   }
@@ -59,7 +85,7 @@ export default class TypographyComponent implements OnInit {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.height = '400px';
     dialogConfig.width = '600px';
-    dialogConfig.hasBackdrop = true; // Enable backdrop
+    dialogConfig.hasBackdrop = true;
 
     const dialogRef = this.dialog.open(ListAllDriversComponent, {
       ...dialogConfig,
@@ -73,30 +99,28 @@ export default class TypographyComponent implements OnInit {
 
   getAllDrivers() {
     this.firebaseService.getUserOTPs().subscribe((res: any) => {
-      console.log('res:', res);
-      this.allDrivers = res;
+      if (res && res.length > 0) {
+        this.allDrivers = res;
+      }
     });
   }
 
   addDriverBooking() {
     const inputValue = this.driverBookingForm.controls['startTime'].value;
-
     this.driverBookingForm.controls['startTime'].setValue(this.utilityService.convertTo12HourFormat(inputValue));
 
     const docId = this.firebaseService.createId();
-
-    this.driverBookingForm.value.docId = docId;
+    this.driverBookingForm.controls['docId'].setValue(docId);
 
     this.firebaseService
       .addDriverBooking(this.driverBookingForm.value)
       .then((res) => {
-        this.driverBookingForm.reset();
         this.snackBar.showMessage('Driver Booking Successfully Added');
-        console.log('Successfully added:', res);
+        this.driverBookingForm.reset();
       })
       .catch((error) => {
-        this.snackBar.showMessage('Error Adding Driver Booking');
         console.error('Error adding driver booking:', error);
+        this.snackBar.showMessage('Error Adding Driver Booking');
       });
   }
 }
