@@ -36,6 +36,10 @@ const routes: Routes = [
       {
         path: 'applyDriverLeave',
         loadComponent: () => import('./demo/apply-driver-leave/apply-driver-leave.component')
+      },
+      {
+        path: 'listDriverLeave',
+        loadComponent: () => import('./demo/list-driver-leave/list-driver-leave.component')
       }
     ]
   },

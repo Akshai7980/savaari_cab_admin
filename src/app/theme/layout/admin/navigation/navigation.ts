@@ -71,6 +71,14 @@ const NavigationItems = [
         classes: 'nav-item',
         url: '/applyDriverLeave',
         icon: 'ti ti-calendar'
+      },
+      {
+        id: 'listDriverLeave',
+        title: 'List Leave',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/listDriverLeave',
+        icon: 'ti ti-calendar'
       }
       // {
       //   id: 'color',

@@ -191,4 +191,34 @@ export class FirebaseService {
   applyDriverLeave(driverLeave: any) {
     return this.fireStore.collection('allAppliedLeaves').add(driverLeave);
   }
+
+  // --- TO GET DRIVER APPLIED DRIVER LEAVE(S) ---
+  getDriverAppliedLeaves(): Observable<any[]> {
+    return this.fireStore.collection('allAppliedLeaves').valueChanges();
+  }
+
+  // --- TO UPDATE TRIP STATUS ---
+  updateLeaveStatus(params: any): Promise<void> {
+    console.log(params);
+
+    const query = this.findDocumentById(params.docId);
+
+    return this.fireStore
+      .collection('allAppliedLeaves')
+      .ref.where('docId', '==', params.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+
+          return docRef.update(params);
+        } else {
+          throw new Error('Document not found or multiple documents match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating trip status:', error);
+        throw error;
+      });
+  }
 }
