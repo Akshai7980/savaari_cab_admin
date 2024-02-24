@@ -1,0 +1,95 @@
+<div>
+  <app-no-data-found *ngIf="dataSource.data.length === 0"></app-no-data-found>
+
+  <table mat-table [dataSource]="dataSource" *ngIf="dataSource.data.length > 0">
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef>No.</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element?.position ? element.position : '--' }}
+      </td>
+    </ng-container>
+
+    <!-- Driver Name Column -->
+    <ng-container matColumnDef="driverName">
+      <th mat-header-cell *matHeaderCellDef>Driver Name</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element?.driverName ? element.driverName : '--' }}
+      </td>
+    </ng-container>
+
+    <!-- Mobile Number Column -->
+    <ng-container matColumnDef="driverMobileNumber">
+      <th mat-header-cell *matHeaderCellDef>Mobile</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element?.driverMobileNumber ? element.driverMobileNumber : '--' }}
+      </td>
+    </ng-container>
+
+    <!-- Leave Reason Column -->
+    <ng-container matColumnDef="leaveReason">
+      <th mat-header-cell *matHeaderCellDef>Reason</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.leaveReason ? element.leaveReason : '--' }}
+      </td>
+    </ng-container>
+
+    <!-- Leave Type Column -->
+    <ng-container matColumnDef="leaveType">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.leaveType ? element.leaveType : '--' }}
+      </td>
+    </ng-container>
+
+    <!-- Number Of Days Leave Column -->
+    <ng-container matColumnDef="numberOfDays">
+      <th mat-header-cell *matHeaderCellDef>Days</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.numberOfDays ? element.numberOfDays : '--' }}
+      </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          style="margin-right: 10px;"
+          (click)="toViewLeave(element)"
+        >
+          View
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          style="margin-right: 10px;"
+          (click)="toCancelLeave(element)"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          style="margin-right: 10px;"
+          (click)="toEditTrip(element)"
+        >
+          Edit
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator
+    *ngIf="showPaginator"
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+    aria-label="Select page of periodic elements"
+  >
+  </mat-paginator>
+</div>

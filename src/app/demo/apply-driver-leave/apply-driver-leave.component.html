@@ -1,0 +1,101 @@
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Apply Driver Leave</h5>
+      </div>
+
+      <form [formGroup]="applyLeaveForm">
+        <div class="card-body">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="driverName"
+              [readOnly]="true"
+              (click)="openDialog()"
+            />
+            <label for="floatingInput">Driver Name</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <textarea
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="leaveReason"
+            ></textarea>
+            <label for="floatingInput">Leave Reason</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="date"
+              class="form-control"
+              #startDateInput
+              formControlName="leaveStartDate"
+              (input)="onInputDate()"
+            />
+            <label for="floatingInput">Leave Start Date</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="date"
+              class="form-control"
+              #endDateInput
+              formControlName="leaveEndDate"
+              (input)="onInputDate()"
+            />
+            <label for="floatingInput">Leave End Date</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="number"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="numberOfDays"
+              [readOnly]="true"
+            />
+            <label for="floatingInput">Number Of Days</label>
+          </div>
+
+          <div class="form-floating mb-3 leaveType">
+            <label for="floatingInput">Leave Type</label>
+            <select
+              class="form-control"
+              id="floatingInput"
+              formControlName="leaveType"
+            >
+              <option value="FULL"> Full Day </option>
+              <option value="HALF"> Half Day </option>
+            </select>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="driverMobileNumber"
+            />
+            <label for="floatingInput">Driver Mobile Number</label>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="applyDriverLeave()"
+              [disabled]="!applyLeaveForm.valid"
+            >
+              Apply Driver Leave
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

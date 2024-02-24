@@ -1,36 +1,74 @@
-<div style=" padding: 20px;">
-
-    <div class="input-group" style="margin-bottom: 20px;">
-        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-            aria-describedby="search-addon" [(ngModel)]="searchQuery" (input)="searchDrivers($event)" />
-        <button type="button" class="btn btn-secondary">search</button>
+<div style="padding: 20px;">
+  <div
+    class="input-group"
+    style="
+      margin-bottom: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: #fff;
+      padding: 10px 0px;
+    "
+  >
+    <div style="margin-right: 10px;">
+      <button
+        class="btn btn-secondary"
+        (click)="closeDialog({  type: '',otp: ''})"
+      >
+        Cancel
+      </button>
     </div>
 
-    <div style=" display: flex;
-    align-items: center;
-    border-bottom: 1px solid lightgrey; justify-content: space-between;" *ngFor="let item of filteredDrivers">
+    <input
+      type="search"
+      class="form-control rounded"
+      placeholder="Search"
+      aria-label="Search"
+      aria-describedby="search-addon"
+      [(ngModel)]="searchQuery"
+      (input)="searchDrivers($event)"
+    />
 
-        <div style="display: flex;
-    align-items: center; margin: 10px 0px 10px 0px;">
-            <div>
-                <img src="../../../assets/images/user/avatar-1.jpg" alt="" style="    border-radius: 50%;
+    <div style="margin-left: 10px;">
+      <button class="btn btn-secondary">
+        search
+      </button>
+    </div>
+  </div>
+
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid lightgrey;
+      justify-content: space-between;
+    "
+    *ngFor="let item of filteredDrivers"
+  >
+    <div style="display: flex; align-items: center; margin: 10px 0px 10px 0px;">
+      <div>
+        <img
+          src="../../../assets/images/user/avatar-1.jpg"
+          alt=""
+          style="
+            border-radius: 50%;
             height: 60px;
             width: 60px;
             object-fit: cover;
-            margin-right: 20px;">
-            </div>
-            <div>
-                <p style="    margin: 5px 0px 5px 0px;"> {{ item.type }} </p>
-                <p style="    margin: 5px 0px 5px 0px;"> {{ item.otp }} </p>
-            </div>
-        </div>
-
-
-        <div>
-
-            <button class="btn btn-secondary">Select Driver</button>
-        </div>
-
+            margin-right: 20px;
+          "
+        />
+      </div>
+      <div>
+        <p style="margin: 5px 0px 5px 0px;">{{ item.type }}</p>
+        <p style="margin: 5px 0px 5px 0px;">{{ item.otp }}</p>
+      </div>
     </div>
 
+    <div>
+      <button class="btn btn-secondary" (click)="closeDialog(item)">
+        Select Driver
+      </button>
+    </div>
+  </div>
 </div>

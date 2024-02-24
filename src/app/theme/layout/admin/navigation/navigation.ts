@@ -64,14 +64,22 @@ const NavigationItems = [
         url: '/driverBookingList',
         icon: 'ti ti-calendar'
       },
-      // {
-      //   id: 'tomorrowTrips',
-      //   title: 'Tomorrow`s Trips',
-      //   type: 'item',
-      //   classes: 'nav-item',
-      //   url: '/driverBookingList',
-      //   icon: 'ti ti-calendar'
-      // }
+      {
+        id: 'applyDriverLeave',
+        title: 'Apply Leave',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/applyDriverLeave',
+        icon: 'ti ti-calendar'
+      },
+      {
+        id: 'listDriverLeave',
+        title: 'List Leave',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/listDriverLeave',
+        icon: 'ti ti-calendar'
+      }
       // {
       //   id: 'color',
       //   title: 'Colors',

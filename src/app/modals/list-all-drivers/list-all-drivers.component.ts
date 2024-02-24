@@ -31,8 +31,8 @@ export class ListAllDriversComponent implements OnInit {
     this.filteredDrivers = this.drivers; // Initialize filteredDrivers with all drivers
   }
 
-  closeDialog() {
-    this.dialogRef.close();
+  closeDialog(driverDetails: Driver) {
+    this.dialogRef.close(driverDetails);
   }
 
   searchDrivers(event: Event) {

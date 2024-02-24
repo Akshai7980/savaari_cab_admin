@@ -127,30 +127,37 @@ export class FirebaseService {
     }
   }
 
+  // --- TO ADD DRIVER BOOKING ---
   addDriverBooking(driverBooking: any) {
     return this.fireStore.collection('driverBooking').add(driverBooking);
   }
 
+  // --- TO ADD DRIVER ---
   addDrivers(driver: any) {
     return this.fireStore.collection('registeredDrivers').add(driver);
   }
 
+  // --- TO GET DRIVER BOOKING ---
   getDriverBooking(): Observable<any[]> {
     return this.fireStore.collection('driverBooking').valueChanges();
   }
 
+  // --- TO GET REGISTERED DRIVER ---
   getRegisteredDrivers(): Observable<any[]> {
     return this.fireStore.collection('registeredDrivers').valueChanges();
   }
 
+  // --- TO GET USER OTP(S) ---
   getUserOTPs(): Observable<any[]> {
     return this.fireStore.collection('userOtp').valueChanges();
   }
 
+  // --- TO FIND DOCUMENT BY ID ---
   findDocumentById(id: string): QueryFn {
     return (ref) => ref.where('docId', '==', id);
   }
 
+  // --- TO UPDATE TRIP STATUS ---
   updateTripStatus(params: any): Promise<void> {
     console.log(params);
 
@@ -175,7 +182,43 @@ export class FirebaseService {
       });
   }
 
+  // --- TO CREATE DOCUMENT ID(S) ---
   createId(): string {
     return this.fireStore.createId();
+  }
+
+  // --- TO APPLY DRIVER LEAVE(S) ---
+  applyDriverLeave(driverLeave: any) {
+    return this.fireStore.collection('allAppliedLeaves').add(driverLeave);
+  }
+
+  // --- TO GET DRIVER APPLIED DRIVER LEAVE(S) ---
+  getDriverAppliedLeaves(): Observable<any[]> {
+    return this.fireStore.collection('allAppliedLeaves').valueChanges();
+  }
+
+  // --- TO UPDATE TRIP STATUS ---
+  updateLeaveStatus(params: any): Promise<void> {
+    console.log(params);
+
+    const query = this.findDocumentById(params.docId);
+
+    return this.fireStore
+      .collection('allAppliedLeaves')
+      .ref.where('docId', '==', params.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+
+          return docRef.update(params);
+        } else {
+          throw new Error('Document not found or multiple documents match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating trip status:', error);
+        throw error;
+      });
   }
 }
