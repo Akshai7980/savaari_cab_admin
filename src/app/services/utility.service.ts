@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { FirebaseService } from './firebase.service';
 
 @Injectable({
@@ -25,14 +26,17 @@ export class UtilityService {
     return Math.round((endTimestamp - startTimestamp) / millisecondsPerDay);
   }
 
-  updateDaysDifference(component: any) {
-    const startDate = component.driverBookingForm.controls['startDate'].value;
-    const endDate = component.driverBookingForm.controls['endDate'].value;
+  updateDaysDifference(formGroup: FormGroup) {
+    const startDate = formGroup.controls['startDate'].value;
+    const endDate = formGroup.controls['endDate'].value;
+
+    console.log(startDate);
+    console.log(endDate);
 
     const daysDifference = this.calculateDaysDifference(startDate, endDate);
 
     if (daysDifference !== null) {
-      component.driverBookingForm.controls['numberOfDays'].setValue(daysDifference);
+      formGroup.controls['numberOfDays'].setValue(daysDifference);
     }
   }
 

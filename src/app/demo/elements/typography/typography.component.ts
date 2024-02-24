@@ -78,7 +78,7 @@ export default class TypographyComponent implements OnInit {
   }
 
   onInputDate() {
-    this.utilityService.updateDaysDifference(this);
+    this.utilityService.updateDaysDifference(this.driverBookingForm);
   }
 
   openDialog() {

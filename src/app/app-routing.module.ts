@@ -32,6 +32,10 @@ const routes: Routes = [
       {
         path: 'driverBookingList',
         loadComponent: () => import('./demo/elements/driver-booking-list/driver-booking-list.component')
+      },
+      {
+        path: 'applyDriverLeave',
+        loadComponent: () => import('./demo/apply-driver-leave/apply-driver-leave.component')
       }
     ]
   },
@@ -51,4 +55,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
