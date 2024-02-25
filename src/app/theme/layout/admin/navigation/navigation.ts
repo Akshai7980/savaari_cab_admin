@@ -119,7 +119,16 @@ const NavigationItems = [
         classes: 'nav-item',
         url: '/addVehicle',
         icon: 'ti ti-car',
-        breadcrumbs: false
+        breadcrumbs: true
+      },
+      {
+        id: 'list-vehicle',
+        title: 'List Vehicle',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/listVehicle',
+        icon: 'ti ti-car',
+        breadcrumbs: true
       }
     ]
   },
