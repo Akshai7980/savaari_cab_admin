@@ -221,4 +221,14 @@ export class FirebaseService {
         throw error;
       });
   }
+
+  // --- TO ADD VEHICLE DETAILS(S) ---
+  addVehicleDetails(driverLeave: any) {
+    return this.fireStore.collection('addVehicleDetails').add(driverLeave);
+  }
+
+  // --- TO GET ALL VEHICLE DETAILS(S) ---
+  getAllVehicleDetails(): Observable<any[]> {
+    return this.fireStore.collection('addVehicleDetails').valueChanges();
+  }
 }

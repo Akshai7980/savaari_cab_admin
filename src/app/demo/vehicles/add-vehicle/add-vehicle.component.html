@@ -1,94 +1,155 @@
 <div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Add Vehicle Details (Registering Vehicles)</h5>
+      </div>
 
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Add Vehicle Details (Registering Vehicles)</h5>
-            </div>
+      <form [formGroup]="vehicleRegForm">
+        <div class="card-body">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="ownerName"
+            />
+            <label for="floatingInput">Owner Name</label>
+          </div>
 
-            <form [formGroup]="vehicleRegForm">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="vehicleNumber"
+            />
+            <label for="floatingInput">Vehicle Number</label>
+          </div>
 
-                <div class="card-body">
+          <div class="form-floating mb-3">
+            <input
+              type="date"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="insuranceDateStart"
+            />
+            <label for="floatingInput">Insurance Date Start</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input
+              type="date"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="insuranceDateEnd"
+            />
+            <label for="floatingInput">Insurance Date End</label>
+          </div>
 
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" formControlName="ownerName" />
-                        <label for="floatingInput">Owner Name</label>
-                    </div>
+          <div class="form-floating mb-3">
+            <input
+              type="date"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="registrationDate"
+            />
+            <label for="floatingInput">Vehicle Registration Date</label>
+          </div>
 
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput"
-                            formControlName="vehicleNumber">
-                        <label for="floatingInput">Vehicle Number</label>
-                    </div>
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="registeringAuthority"
+            />
+            <label for="floatingInput">Registering Autority</label>
+          </div>
 
-                    <div class="form-floating mb-3">
-                        <input type="date" class="form-control no-spinners" id="floatingInput"
-                            formControlName="insuranceDateStart" />
-                        <label for="floatingInput">Insurance Date Start</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="date" class="form-control no-spinners" id="floatingInput"
-                            formControlName="insuranceDateEnd" />
-                        <label for="floatingInput">Insurance Date End</label>
-                    </div>
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="makeModel"
+            />
+            <label for="floatingInput">Vehicle Make</label>
+          </div>
 
-                    <div class="form-floating mb-3">
-                        <input type="date" class="form-control no-spinners" id="floatingInput"
-                            formControlName="registrationDate" />
-                        <label for="floatingInput">Vehicle Registration Date</label>
-                    </div>
+          <div class="form-floating mb-3">
+            <label
+              for="floatingInput"
+              style="font-size: 12px; color: #6c757d; padding-top: 7px;"
+              >Fuel Type</label
+            >
+            <select
+              class="form-control"
+              id="floatingInput"
+              formControlName="fuelType"
+            >
+              <option selected disabled> </option>
+              <option *ngFor="let type of fuelType" value="{{ type.type }}">
+                {{ type.type }}</option
+              >
+            </select>
+          </div>
 
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" formControlName="registeringAuthority" />
-                        <label for="floatingInput">Registering Autority</label>
-                    </div>
+          <div class="form-floating mb-3">
+            <input
+              type="number"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="vehicleAge"
+              readonly
+            />
+            <label for="floatingInput">Vehicle Age</label>
+          </div>
 
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control no-spinners" id="floatingInput"
-                            formControlName="makeModel" />
-                        <label for="floatingInput">Vehicle Make</label>
-                    </div>
+          <div class="form-floating mb-3">
+            <label
+              for="floatingInput"
+              style="font-size: 12px; color: #6c757d; padding-top: 7px;"
+              >Vehicle Classs</label
+            >
+            <input
+              type="text"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="vehicleClass"
+            />
+          </div>
 
-                    <div class="form-floating mb-3">
-                        <label for="floatingInput" style="    font-size: 12px;
-              color: #6c757d; padding-top: 7px;">Fuel Type</label>
-                        <select class="form-control" id="floatingInput" formControlName="fuelType">
-                            <option selected disabled> </option>
-                            <option *ngFor="let type of fuelType" value="{{ type.type }}">
-                            {{ type.type }}</option>
-                        </select>
-                    </div>
+          <div class="form-floating mb-3">
+            <input
+              type="date"
+              class="form-control"
+              id="floatingInput"
+              formControlName="smokeClearanceDateStart"
+            />
+            <label for="floatingInput">Smoke Clearance Start Date</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input
+              type="date"
+              class="form-control"
+              id="floatingInput"
+              formControlName="smokeClearanceDateEnd"
+            />
+            <label for="floatingInput">Smoke Clearance End Date</label>
+          </div>
 
-                    <div class="form-floating mb-3">
-                        <input type="number" class="form-control no-spinners" id="floatingInput" formControlName="vehicleAge" readonly/>
-                        <label for="floatingInput">Vehicle Age</label>
-                      </div>
-
-                    <div class="form-floating mb-3">
-                        <label for="floatingInput" style="    font-size: 12px;
-              color: #6c757d; padding-top: 7px;">Vehicle Classs</label>
-                        <input type="text" class="form-control no-spinners" id="floatingInput"
-                            formControlName="vehicleClass" />
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="floatingInput" formControlName="smokeClearanceDateStart" />
-                        <label for="floatingInput">Smoke Clearance Start Date</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="floatingInput" formControlName="smokeClearanceDateEnd" />
-                        <label for="floatingInput">Smoke Clearance End Date</label>
-                    </div>
-
-                    <div class="d-grid mt-4">
-                        <button type="button" class="btn btn-secondary" [disabled]="!vehicleRegForm.valid"
-                (click)="addVehicle()">Add Vehicle Details</button>
-                    </div>
-
-                </div>
-
-            </form>
-
+          <div class="d-grid mt-4">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [disabled]="!vehicleRegForm.valid"
+              (click)="addVehicle()"
+            >
+              Add Vehicle Details
+            </button>
+          </div>
         </div>
+      </form>
     </div>
+  </div>
 </div>
