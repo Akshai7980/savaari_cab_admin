@@ -2,7 +2,7 @@
   <div class="col-sm-12">
     <div class="card">
       <div class="card-header">
-        <h5>Add Driver Details (Registering Drivers)</h5>
+        <h5>Edit Registered Driver Details</h5>
       </div>
 
       <form [formGroup]="driverRegForm">
@@ -93,9 +93,10 @@
               <option selected disabled> </option>
               <option
                 *ngFor="let district of districts"
-                value="{{ district.districts }}"
-                >{{ district.districts }}</option
+                [value]="district.districts"
               >
+                {{ district.districts }}
+              </option>
             </select>
           </div>
 

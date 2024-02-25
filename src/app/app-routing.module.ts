@@ -40,6 +40,14 @@ const routes: Routes = [
       {
         path: 'listDriverLeave',
         loadComponent: () => import('./demo/list-driver-leave/list-driver-leave.component')
+      },
+      {
+        path: 'listDriverDetails',
+        loadComponent: () => import('./demo/list-driver-details/list-driver-details.component')
+      },
+      {
+        path: 'editDriverDetails',
+        loadComponent: () => import('./demo/edit-driver-details/edit-driver-details.component')
       }
     ]
   },

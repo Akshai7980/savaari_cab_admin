@@ -221,4 +221,9 @@ export class FirebaseService {
         throw error;
       });
   }
+
+  // --- TO GET REGISTERED DRIVER(S) ---
+  getDriverList(): Observable<any[]> {
+    return this.fireStore.collection('registeredDrivers').valueChanges();
+  }
 }

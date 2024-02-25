@@ -29,8 +29,8 @@ export default class TypographyComponent implements OnInit {
     private readonly formBuilder: FormBuilder,
     private readonly utilityService: UtilityService,
     private readonly dialog: MatDialog,
-    public route: ActivatedRoute,
-    private router: Router
+    public readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {
     this.driverBookingForm = this.formBuilder.group({
       customerName: ['', Validators.required],
