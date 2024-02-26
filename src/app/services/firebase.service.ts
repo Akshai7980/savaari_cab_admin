@@ -231,4 +231,65 @@ export class FirebaseService {
   getAllVehicleDetails(): Observable<any[]> {
     return this.fireStore.collection('addVehicleDetails').valueChanges();
   }
+
+  // TO FETCH VEHICLE DETAIL
+  fetchVehicleDetails(docId: string) {
+    return new Promise((resolve) => {
+      this.fireStore
+        .collection('addVehicleDetails')
+        .ref.where('docId', '==', docId)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.size === 1) {
+            resolve(snapshot.docs[0].data());
+          } else {
+            throw new Error('Vehicle not found or multiple vehicle match the ID.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error getting data:', error);
+          throw error;
+        });
+    });
+  }
+
+  // TO UPDATE VEHICLE DETAILS
+  updateVehicleDetails(data) {
+    return this.fireStore
+      .collection('addVehicleDetails')
+      .ref.where('docId', '==', data.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+          return docRef.update(data);
+        } else {
+          throw new Error('Vehicle not found or multiple vehicle match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error getting data:', error);
+        throw error;
+      });
+  }
+
+  // TO DELETE VEHICLE DETAILS
+  deleteVehicle(id: string) {
+    return this.fireStore
+      .collection('addVehicleDetails')
+      .ref.where('docId', '==', id)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+          return docRef.delete();
+        } else {
+          throw new Error('Vehicle not found or multiple vehicle match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error getting data:', error);
+        throw error;
+      });
+  }
 }

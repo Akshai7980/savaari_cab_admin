@@ -48,6 +48,10 @@ const routes: Routes = [
       {
         path: 'listVehicle',
         loadComponent: () => import('./demo/vehicles/list-vehicle/list-vehicle.component')
+      },
+      {
+        path: 'editVehicle',
+        loadComponent: () => import('./demo/vehicles/add-vehicle/add-vehicle.component')
       }
     ]
   },

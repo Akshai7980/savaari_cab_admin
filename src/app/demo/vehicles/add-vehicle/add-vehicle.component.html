@@ -145,7 +145,7 @@
               [disabled]="!vehicleRegForm.valid"
               (click)="addVehicle()"
             >
-              Add Vehicle Details
+              {{editForm? 'Edit Vehicle Details': 'Add Vehicle Details'}}
             </button>
           </div>
         </div>
