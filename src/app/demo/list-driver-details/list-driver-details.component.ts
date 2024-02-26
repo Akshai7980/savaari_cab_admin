@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { DataShareService } from 'src/app/services/data-share.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
@@ -22,7 +23,8 @@ export default class ListDriverDetailsComponent {
 
   constructor(
     private readonly firebaseService: FirebaseService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly dataSharingService: DataShareService
   ) {}
 
   ngOnInit(): void {
@@ -79,10 +81,8 @@ export default class ListDriverDetailsComponent {
   toEditDriverDetails(rowData: ListAllDrivers) {
     console.log(rowData);
     rowData.path = 'EDIT_DRIVER_DETAILS';
-    const navigationExtras: NavigationExtras = {
-      state: { rowData: rowData }
-    };
-    this.router.navigate(['/editDriverDetails'], navigationExtras);
+    this.dataSharingService.updateData(rowData);
+    this.router.navigate(['/editDriverDetails']);
   }
 }
 

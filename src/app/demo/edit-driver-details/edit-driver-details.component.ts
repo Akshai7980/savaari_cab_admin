@@ -3,7 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { DataShareService } from 'src/app/services/data-share.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -22,11 +23,11 @@ export default class EditDriverDetailsComponent implements OnInit {
 
   constructor(
     private readonly router: Router,
-    private readonly activatedRoute: ActivatedRoute,
     private readonly formBuilder: FormBuilder,
     private readonly utilityService: UtilityService,
     private readonly firebaseService: FirebaseService,
-    private readonly snackBar: SnackbarService
+    private readonly snackBar: SnackbarService,
+    private readonly dataSharingService: DataShareService
   ) {
     this.driverRegForm = this.formBuilder.group({
       driverName: ['', Validators.required],
@@ -35,42 +36,43 @@ export default class EditDriverDetailsComponent implements OnInit {
       altMobileNumber: ['', Validators.required],
       bloodGroup: ['', Validators.required],
       licenseNumber: ['', Validators.required],
-      state: ['', Validators.required],
       district: ['', Validators.required],
-      pinCode: ['', Validators.required],
       driverType: ['', Validators.required],
-      driverCode: ['', Validators.required],
-      driverLocation: ['', Validators.required]
+      driverCode: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
-    const queryParams = this.activatedRoute.snapshot.queryParams;
-    const rowData = JSON.parse(queryParams['rowData']);
-
-    console.log(rowData);
-
-    if (rowData.path === 'EDIT_DRIVER_BOOKING') {
-      this.driverRegForm.controls['driverName'].setValue(rowData?.['rowData'].customerName);
-      this.driverRegForm.controls['address'].setValue(rowData?.['rowData'].address);
-      this.driverRegForm.controls['pickUpLocation'].setValue(rowData?.['rowData'].pickUpLocation);
-      this.driverRegForm.controls['dropOffLocation'].setValue(rowData?.['rowData'].dropOffLocation);
-      this.driverRegForm.controls['customerNumber'].setValue(rowData?.['rowData'].customerNumber);
-      this.driverRegForm.controls['startDate'].setValue(rowData?.['rowData'].startDate);
-      this.driverRegForm.controls['endDate'].setValue(rowData?.['rowData'].endDate);
-      this.driverRegForm.controls['startTime'].setValue(rowData?.['rowData'].startTime);
-      this.driverRegForm.controls['numberOfDays'].setValue(rowData?.['rowData'].numberOfDays);
-      this.driverRegForm.controls['requiredDriver'].setValue(rowData?.['rowData'].requiredDriver);
-      this.driverRegForm.controls['rejectedDriver'].setValue(rowData?.['rowData'].rejectedDriver);
-      this.driverRegForm.controls['cusVehicleType'].setValue(rowData?.['rowData'].cusVehicleType);
-      this.driverRegForm.controls['cusVehicleNumber'].setValue(rowData?.['rowData'].cusVehicleNumber);
-      this.driverRegForm.controls['cusVehicleName'].setValue(rowData?.['rowData'].cusVehicleName);
-    }
-
     this.fetchDistricts();
 
-    if (!rowData) this.router.navigate(['/listDriverDetails']);
-    return;
+    this.dataSharingService.data$.subscribe((data) => {
+      console.log('data:', data);
+
+      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+        const driverDetails = data;
+
+        this.driverRegForm.controls['address'].setValue(driverDetails.address);
+
+        this.driverRegForm.controls['altMobileNumber'].setValue(driverDetails.alternateNumber);
+
+        this.driverRegForm.controls['mobileNumber'].setValue(driverDetails.mobileNumber);
+        this.driverRegForm.controls['bloodGroup'].setValue(driverDetails.bloodGroup);
+        this.driverRegForm.controls['licenseNumber'].setValue(driverDetails.licenseNumber);
+        this.driverRegForm.controls['driverName'].setValue(driverDetails.fullName);
+        this.driverRegForm.controls['district'].setValue(driverDetails.district);
+
+        this.driverRegForm.controls['driverType'].setValue(
+          driverDetails.driverType === 'callDriver' ? 'Call Driver' : driverDetails.driverType === 'taxiDriver' ? 'Taxi Driver' : ''
+        );
+
+        this.driverRegForm.controls['driverCode'].setValue(driverDetails.driverCode);
+      } else {
+        console.warn('Received invalid data from data stream');
+      }
+
+      if (data.length === 0) this.router.navigate(['/listDriverDetails']);
+      return;
+    });
   }
 
   async fetchDistricts() {

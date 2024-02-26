@@ -75,6 +75,11 @@ export default class TypographyComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllDrivers();
+
+    this.driverBookingForm.controls['startDate'].setValue(this.utilityService.currentDate());
+    this.driverBookingForm.controls['endDate'].setValue(this.utilityService.currentDate());
+    this.driverBookingForm.controls['startTime'].setValue(this.utilityService.currentTime());
+    this.driverBookingForm.controls['numberOfDays'].setValue('1');
   }
 
   onInputDate() {

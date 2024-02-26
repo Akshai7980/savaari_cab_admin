@@ -9,8 +9,6 @@ import { UtilityService } from 'src/app/services/utility.service';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { Driver } from '../elements/typography/typography.component';
 
-const currentDate = new Date().toISOString().substring(0, 10);
-
 @Component({
   selector: 'apply-driver-leave',
   standalone: true,
@@ -53,8 +51,8 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getAllDrivers();
 
-    this.applyLeaveForm.controls['leaveStartDate'].setValue(currentDate);
-    this.applyLeaveForm.controls['leaveEndDate'].setValue(currentDate);
+    this.applyLeaveForm.controls['leaveStartDate'].setValue(this.utilityService.currentDate());
+    this.applyLeaveForm.controls['leaveEndDate'].setValue(this.utilityService.currentDate());
 
     this.applyLeaveForm.controls['numberOfDays'].setValue('1');
   }
@@ -107,8 +105,8 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
         this.applyLeaveForm.reset();
 
         this.timeoutId = setTimeout(() => {
-          this.applyLeaveForm.controls['leaveStartDate'].setValue(currentDate);
-          this.applyLeaveForm.controls['leaveEndDate'].setValue(currentDate);
+          this.applyLeaveForm.controls['leaveStartDate'].setValue(this.utilityService.currentDate());
+          this.applyLeaveForm.controls['leaveEndDate'].setValue(this.utilityService.currentDate());
           this.applyLeaveForm.controls['numberOfDays'].setValue('1');
         }, 100);
 
