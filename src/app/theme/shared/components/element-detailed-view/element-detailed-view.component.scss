@@ -1,17 +1,25 @@
-.wrapper{
-    margin: 20px;
-    
-    th {
-        border: 0;
-    }
+.wrapper {
+  margin: 20px;
 
-    td {
-        border: 0;
-    }
+  th {
+    border: 0;
+  }
 
-    .action-btn {
-        display: flex;
-        gap: 5px;
-        margin: 20px 0;
-    }
+  td {
+    border: 0;
+  }
+
+  .action-btn {
+    display: flex;
+    gap: 5px;
+    margin: 20px 0;
+  }
+
+  button {
+    width: 50%;
+  }
+
+  .mat-icon {
+    float: right;
+  }
 }

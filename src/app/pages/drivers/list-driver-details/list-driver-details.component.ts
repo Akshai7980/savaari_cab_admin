@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
   styleUrls: ['./list-driver-details.component.scss'],
   imports: [CommonModule, SharedModule]
 })
-export default class ListDriverDetailsComponent {
+export default class ListDriverDetailsComponent implements OnInit, AfterViewChecked {
   displayedColumns: string[] = ['position', 'driverName', 'mobileNumber', 'driverType', 'district', 'actions'];
   dataSource = new MatTableDataSource<ListAllDrivers>([]);
 

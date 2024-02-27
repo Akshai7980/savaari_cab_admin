@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ListAllDriversComponent } from 'src/app/modals/list-all-drivers/list-all-drivers.component';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
+import { ListAllDriversComponent } from 'src/app/theme/shared/components/list-all-drivers/list-all-drivers.component';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
-import { Driver } from '../elements/typography/typography.component';
+import { Driver } from '../add-driver-booking/add-driver-booking.component';
 
 @Component({
   selector: 'apply-driver-leave',
@@ -23,6 +23,7 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   applyLeaveForm: FormGroup;
   allDrivers: Driver[];
   timeoutId: any;
+  currentDate: string = '';
 
   constructor(
     private readonly firebaseService: FirebaseService,
@@ -31,12 +32,14 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
     private readonly utilityService: UtilityService,
     private readonly dialog: MatDialog
   ) {
+    this.currentDate = utilityService.currentDate();
+
     this.applyLeaveForm = this.formBuilder.group({
       driverName: ['', Validators.required],
       leaveReason: [''],
-      leaveStartDate: ['', Validators.required],
-      leaveEndDate: ['', Validators.required],
-      numberOfDays: ['', Validators.required],
+      leaveStartDate: [this.currentDate, Validators.required],
+      leaveEndDate: [this.currentDate, Validators.required],
+      numberOfDays: ['1', Validators.required],
       leaveType: ['', Validators.required],
       driverMobileNumber: ['', Validators.required],
       docId: [''],
@@ -50,11 +53,6 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAllDrivers();
-
-    this.applyLeaveForm.controls['leaveStartDate'].setValue(this.utilityService.currentDate());
-    this.applyLeaveForm.controls['leaveEndDate'].setValue(this.utilityService.currentDate());
-
-    this.applyLeaveForm.controls['numberOfDays'].setValue('1');
   }
 
   onInputDate() {
@@ -105,8 +103,8 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
         this.applyLeaveForm.reset();
 
         this.timeoutId = setTimeout(() => {
-          this.applyLeaveForm.controls['leaveStartDate'].setValue(this.utilityService.currentDate());
-          this.applyLeaveForm.controls['leaveEndDate'].setValue(this.utilityService.currentDate());
+          this.applyLeaveForm.controls['leaveStartDate'].setValue(this.currentDate);
+          this.applyLeaveForm.controls['leaveEndDate'].setValue(this.currentDate);
           this.applyLeaveForm.controls['numberOfDays'].setValue('1');
         }, 100);
 

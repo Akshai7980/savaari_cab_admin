@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
@@ -15,7 +15,7 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
   templateUrl: './list-vehicle.component.html',
   styleUrls: ['./list-vehicle.component.scss']
 })
-export default class ListVehicleComponent implements AfterViewInit, OnInit {
+export default class ListVehicleComponent implements OnInit {
   displayedColumns: string[] = ['position', 'ownerName', 'vehicleNumber', 'fuelType', 'vehicleAge', 'vehicleClass', 'actions'];
   dataSource = new MatTableDataSource<VehicleList>([]);
   showPaginator: boolean = false;
@@ -31,8 +31,6 @@ export default class ListVehicleComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     this.getVehicleList();
   }
-
-  ngAfterViewInit(): void {}
 
   getVehicleList() {
     this.firebaseService.getAllVehicleDetails().subscribe(
@@ -77,6 +75,8 @@ export default class ListVehicleComponent implements AfterViewInit, OnInit {
       data: {
         data: data,
         heading: `Vehicle Detail (${element.vehicleNumber})`,
+        buttons1: 'Edit',
+        buttons2: 'Delete',
         edit: () => {
           this.dialogRef.close();
           this.toEditVehicle(element);

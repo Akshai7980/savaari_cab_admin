@@ -7,13 +7,13 @@ import { UtilityService } from 'src/app/services/utility.service';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
 @Component({
-  selector: 'app-sample-page',
+  selector: 'app-add-driver-details',
   standalone: true,
   imports: [CommonModule, SharedModule, ReactiveFormsModule],
-  templateUrl: './sample-page.component.html',
-  styleUrls: ['./sample-page.component.scss']
+  templateUrl: './add-driver-details.component.html',
+  styleUrls: ['./add-driver-details.component.scss']
 })
-export default class SamplePageComponent implements AfterViewInit, OnInit {
+export default class AddDriverDetailsComponent implements AfterViewInit, OnInit {
   driverRegForm: FormGroup;
   districts: any;
 
@@ -30,7 +30,7 @@ export default class SamplePageComponent implements AfterViewInit, OnInit {
       altMobileNumber: ['', Validators.required],
       bloodGroup: ['', Validators.required],
       licenseNumber: ['', Validators.required],
-      state: ['', Validators.required],
+      state: ['Kerala', Validators.required],
       district: ['', Validators.required],
       pinCode: ['', Validators.required],
       driverType: ['', Validators.required],
@@ -40,7 +40,6 @@ export default class SamplePageComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.driverRegForm.controls['state'].setValue('Kerala');
     this.fetchDistricts();
   }
 
