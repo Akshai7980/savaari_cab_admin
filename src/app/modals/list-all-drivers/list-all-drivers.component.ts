@@ -3,7 +3,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { FirebaseService } from 'src/app/services/firebase.service';
 
 @Component({
   selector: 'app-list-all-drivers',
@@ -13,22 +12,21 @@ import { FirebaseService } from 'src/app/services/firebase.service';
   imports: [MatDialogModule, MatButtonModule, CommonModule, FormsModule]
 })
 export class ListAllDriversComponent implements OnInit {
-  allDrivers: any[] = []; // Initialize the list of all drivers
-  filteredDrivers: any[] = []; // Initialize the filtered driver list
-  searchQuery: string = ''; // Initialize the search query
-  drivers: Driver[]; // Define an input property to receive the array of drivers
+  allDrivers: any[] = [];
+  filteredDrivers: any[] = [];
+  searchQuery: string = '';
+  drivers: Driver[];
 
   constructor(
-    private dialogRef: MatDialogRef<ListAllDriversComponent>,
-    private firebaseService: FirebaseService,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    private readonly dialogRef: MatDialogRef<ListAllDriversComponent>,
+    @Inject(MAT_DIALOG_DATA) public readonly data: any
   ) {
     this.drivers = data.drivers;
     console.log(this.drivers);
   }
 
   ngOnInit(): void {
-    this.filteredDrivers = this.drivers; // Initialize filteredDrivers with all drivers
+    this.filteredDrivers = this.drivers;
   }
 
   closeDialog(driverDetails: Driver) {

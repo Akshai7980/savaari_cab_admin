@@ -1,12 +1,12 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from 'src/app/theme/shared/shared.module';
-import { MatTableDataSource } from '@angular/material/table';
-import { FirebaseService } from 'src/app/services/firebase.service';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ElementDetailedViewComponent } from 'src/app/theme/shared/components/element-detailed-view/element-detailed-view.component';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
+import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { ElementDetailedViewComponent } from 'src/app/theme/shared/components/element-detailed-view/element-detailed-view.component';
+import { SharedModule } from 'src/app/theme/shared/shared.module';
 
 @Component({
   selector: 'app-list-vehicle',
@@ -32,9 +32,7 @@ export default class ListVehicleComponent implements AfterViewInit, OnInit {
     this.getVehicleList();
   }
 
-  ngAfterViewInit(): void {
-    
-  }
+  ngAfterViewInit(): void {}
 
   getVehicleList() {
     this.firebaseService.getAllVehicleDetails().subscribe(
@@ -57,9 +55,9 @@ export default class ListVehicleComponent implements AfterViewInit, OnInit {
   }
 
   toViewVehicle(element) {
-    const data1 = Object.entries(element).map(([key, value]) => 
-    ({ key, value })).filter(entry => 
-    entry.key !== 'position');
+    const data1 = Object.entries(element)
+      .map(([key, value]) => ({ key, value }))
+      .filter((entry) => entry.key !== 'position');
 
     const data = [
       { key: 'Owner Name', value: element.ownerName },
@@ -69,11 +67,11 @@ export default class ListVehicleComponent implements AfterViewInit, OnInit {
       { key: 'Insurance Date Start', value: element.insuranceDateStart },
       { key: 'Insurance Date End', value: element.insuranceDateEnd },
       { key: 'Fuel Type', value: element.fuelType },
-      { key: 'Vehicle Class', value: element.vehicleClass	 },
+      { key: 'Vehicle Class', value: element.vehicleClass },
       { key: 'Make Model', value: element.makeModel },
       { key: 'SmokeClearance Date Start', value: element.smokeClearanceDateStart },
-      { key: 'Smoke Clearance DateEnd', value: element.smokeClearanceDateEnd },
-    ]
+      { key: 'Smoke Clearance DateEnd', value: element.smokeClearanceDateEnd }
+    ];
 
     this.dialogRef = this.matDialog.open(ElementDetailedViewComponent, {
       data: {
@@ -87,8 +85,8 @@ export default class ListVehicleComponent implements AfterViewInit, OnInit {
           this.dialogRef.close();
           this.toDeleteVehicle(element);
         }
-      },
-    })
+      }
+    });
   }
 
   toDeleteVehicle(element) {
@@ -104,10 +102,10 @@ export default class ListVehicleComponent implements AfterViewInit, OnInit {
 }
 
 export interface VehicleList {
-  position: number,
-  ownerName: string,
-  vehicleNumber: string,
-  fuelType: string,
-  vehicleAge: number,
-  vehicleClass: string
+  position: number;
+  ownerName: string;
+  vehicleNumber: string;
+  fuelType: string;
+  vehicleAge: number;
+  vehicleClass: string;
 }

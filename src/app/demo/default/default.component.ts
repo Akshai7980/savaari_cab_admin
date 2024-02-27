@@ -1,6 +1,6 @@
 // Angular Import
-import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, ViewChild } from '@angular/core';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
@@ -9,19 +9,19 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 // third party
-import { NgApexchartsModule } from 'ng-apexcharts';
 import ApexCharts from 'apexcharts';
 import {
   ApexAxisChartSeries,
   ApexChart,
-  ChartComponent,
   ApexDataLabels,
+  ApexGrid,
   ApexPlotOptions,
   ApexResponsive,
-  ApexXAxis,
-  ApexGrid,
   ApexStroke,
-  ApexTooltip
+  ApexTooltip,
+  ApexXAxis,
+  ChartComponent,
+  NgApexchartsModule
 } from 'ng-apexcharts';
 
 export type ChartOptions = {

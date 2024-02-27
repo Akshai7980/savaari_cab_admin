@@ -73,8 +73,7 @@ export default class AddVehicleComponent implements OnInit {
 
   addVehicle() {
     if (this.vehicleRegForm.valid) {
-
-      if(!this.editForm) {
+      if (!this.editForm) {
         const docId = this.firebaseService.createId();
         this.vehicleRegForm.controls['docId'].setValue(docId);
 
@@ -97,9 +96,9 @@ export default class AddVehicleComponent implements OnInit {
           (error) => {
             console.error('Error updating vehicle details:', error);
             this.snackBar.showMessage('Error Updating vehicle details');
-          });
+          }
+        );
       }
-
     }
   }
 }
