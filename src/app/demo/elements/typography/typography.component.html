@@ -11,7 +11,7 @@
         <div class="card-body">
 
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingInput" formControlName="customer_name" />
+            <input type="text" class="form-control" id="floatingInput" formControlName="customerName" />
             <label for="floatingInput">Customer Name</label>
           </div>
 
@@ -31,44 +31,60 @@
           </div>
 
           <div class="form-floating mb-3">
-            <input type="number" class="form-control no-spinners" id="floatingInput"
-              formControlName="customer_number" />
+            <input type="number" class="form-control no-spinners" id="floatingInput" formControlName="customerNumber" />
             <label for="floatingInput">Mobile Number</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input type="date" class="form-control" id="startDate" formControlName="bookingDate" (input)="onInputDate()" />
+            <input type="date" class="form-control" #startDateInput formControlName="startDate"
+              (input)="onInputDate()" />
             <label for="floatingInput">Trip Start Date</label>
           </div>
-          
+
           <div class="form-floating mb-3">
-            <input type="date" class="form-control" id="endDate" formControlName="endDate" (input)="onInputDate()" />
+            <input type="date" class="form-control" #endDateInput formControlName="endDate" (input)="onInputDate()" />
             <label for="floatingInput">Trip End Date</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input type="time" class="form-control" id="floatingInput" formControlName="timePicker" (input)="onInputTime()" />
+            <input type="time" class="form-control" formControlName="startTime" />
             <label for="floatingInput">Trip Start Time</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input type="number" class="form-control no-spinners" id="floatingInput" formControlName="numberOfDays" [readOnly]="true" />
+            <input type="number" class="form-control no-spinners" id="floatingInput" formControlName="numberOfDays"
+              [readOnly]="true" />
             <label for="floatingInput">Number Of Days</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingInput" formControlName="tripClosedDrierName" (click)="openDialog()" />
-            <label for="floatingInput">Driver Name</label>
+            <input type="text" class="form-control" id="floatingInput" formControlName="requiredDriver" />
+            <label for="floatingInput">Required Driver</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingInput" formControlName="tripClosedDrierMobile" />
-            <label for="floatingInput">Driver Mobile Number</label>
+            <input type="text" class="form-control" id="floatingInput" formControlName="rejectedDriver" />
+            <label for="floatingInput">Rejected Driver</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingInput" formControlName="vehicleType" />
-            <label for="floatingInput">Vehicle Type</label>
+            <input type="text" class="form-control" id="floatingInput" formControlName="cusVehicleName" />
+            <label for="floatingInput">Customer Vehicle Name</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <label for="floatingInput" style="    font-size: 12px;
+            color: #6c757d; padding-top: 7px;">Customer Vehicle Type</label>
+            <select class="form-control" id="floatingInput" formControlName="cusVehicleType">
+              <option selected disabled> </option>
+              <option value="Automatic"> Automatic </option>
+              <option value="Manual"> Manual </option>
+            </select>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" formControlName="cusVehicleNumber" />
+            <label for="floatingInput">Customer Vehicle Number</label>
           </div>
 
           <div class="d-grid mt-4">

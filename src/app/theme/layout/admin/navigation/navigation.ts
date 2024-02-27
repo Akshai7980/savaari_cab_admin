@@ -36,18 +36,50 @@ const NavigationItems = [
   },
   {
     id: 'bookings',
-    title: 'Bookings',
+    title: 'Driver',
     type: 'group',
     icon: 'icon-navigation',
     children: [
       {
+        id: 'addDrivers',
+        title: 'Add Drivers',
+        type: 'item',
+        url: '/addDrivers',
+        classes: 'nav-item',
+        icon: 'ti ti-user'
+      },
+      {
         id: 'driverBookings',
-        title: 'Add Driver Bookings',
+        title: 'Add Booking',
         type: 'item',
         classes: 'nav-item',
         url: '/driverBookings',
-        icon: 'ti ti-typography'
+        icon: 'ti ti-file'
       },
+      {
+        id: 'todayTrips',
+        title: 'Today`s Trips',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/driverBookingList',
+        icon: 'ti ti-calendar'
+      },
+      {
+        id: 'applyDriverLeave',
+        title: 'Apply Leave',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/applyDriverLeave',
+        icon: 'ti ti-calendar'
+      },
+      {
+        id: 'listDriverLeave',
+        title: 'List Leave',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/listDriverLeave',
+        icon: 'ti ti-calendar'
+      }
       // {
       //   id: 'color',
       //   title: 'Colors',
@@ -58,35 +90,45 @@ const NavigationItems = [
       // }
     ]
   },
+  // {
+  //   id: 'other',
+  //   title: 'Other',
+  //   type: 'group',
+  //   icon: 'icon-navigation',
+  //   children: [
+  //     {
+  //       id: 'addDrivers',
+  //       title: 'Add Drivers',
+  //       type: 'item',
+  //       url: '/addDrivers',
+  //       classes: 'nav-item',
+  //       icon: 'ti ti-brand-chrome'
+  //     }
+  //   ]
+  // }
   {
-    id: 'other',
-    title: 'Other',
+    id: 'vehicle',
+    title: 'Vehicle',
     type: 'group',
-    icon: 'icon-navigation',
+    icon: 'icon-car',
     children: [
       {
-        id: 'addDrivers',
-        title: 'Add Drivers',
+        id: 'add-vehicle',
+        title: 'Add Vehicle',
         type: 'item',
-        url: '/addDrivers',
         classes: 'nav-item',
-        icon: 'ti ti-brand-chrome'
-      }
-    ]
-  },
-  {
-    id: 'list',
-    title: 'List',
-    type: 'group',
-    icon: 'icon-navigation',
-    children: [
+        url: '/addVehicle',
+        icon: 'ti ti-car',
+        breadcrumbs: true
+      },
       {
-        id: 'driverBookingList',
-        title: 'Driver Booking List',
+        id: 'list-vehicle',
+        title: 'List Vehicle',
         type: 'item',
         classes: 'nav-item',
-        url: '/driverBookingList',
-        icon: 'ti ti-typography'
+        url: '/listVehicle',
+        icon: 'ti ti-car',
+        breadcrumbs: true
       }
     ]
   },

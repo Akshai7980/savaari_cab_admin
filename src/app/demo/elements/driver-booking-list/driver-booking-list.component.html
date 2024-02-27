@@ -1,5 +1,8 @@
 <div>
-    <table mat-table [dataSource]="dataSource">
+
+    <app-no-data-found *ngIf="dataSource.data.length === 0"></app-no-data-found>
+
+    <table mat-table [dataSource]="dataSource" *ngIf="dataSource.data.length > 0">
 
         <!-- Position Column -->
         <ng-container matColumnDef="position">
@@ -7,44 +10,50 @@
             <td mat-cell *matCellDef="let element"> {{ element?.position ? element.position : '--' }} </td>
         </ng-container>
 
-        <!-- Name Column -->
-        <ng-container matColumnDef="customerName">
-            <th mat-header-cell *matHeaderCellDef> Customer Name </th>
-            <td mat-cell *matCellDef="let element"> {{ element?.customer_name ? element.customer_name : '--' }} </td>
+        <!-- Trip Time Column -->
+        <ng-container matColumnDef="tripTime">
+            <th mat-header-cell *matHeaderCellDef> Trip Time </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.startTime ? element.startTime : '--' }} </td>
         </ng-container>
 
-        <!-- Weight Column -->
-        <ng-container matColumnDef="customerNumber">
-            <th mat-header-cell *matHeaderCellDef> Customer Number </th>
-            <td mat-cell *matCellDef="let element"> {{ element.customer_number ? ('+91 ' + element.customer_number) :
+        <!-- Customer Name Column -->
+        <ng-container matColumnDef="customerName">
+            <th mat-header-cell *matHeaderCellDef> Customer Name </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.customerName ? element.customerName : '--' }} </td>
+        </ng-container>
+
+        <!-- Customer Location Column -->
+        <ng-container matColumnDef="location">
+            <th mat-header-cell *matHeaderCellDef> Location </th>
+            <td mat-cell *matCellDef="let element"> {{ element.pickUpLocation ? element.pickUpLocation :
                 '--' }} </td>
         </ng-container>
 
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="driverName">
-            <th mat-header-cell *matHeaderCellDef> Driver Name </th>
-            <td mat-cell *matCellDef="let element"> {{ element.tripClosedDrierName ? element.tripClosedDrierName : '--'
+        <!-- Customer Destination Column -->
+        <ng-container matColumnDef="destination">
+            <th mat-header-cell *matHeaderCellDef> Destination </th>
+            <td mat-cell *matCellDef="let element"> {{ element.dropOffLocation ? element.dropOffLocation : '--' }} </td>
+        </ng-container>
+
+        <!-- Customer Vehicle Name Column -->
+        <ng-container matColumnDef="vehicleName">
+            <th mat-header-cell *matHeaderCellDef> Vehicle Name (Type) </th>
+            <td mat-cell *matCellDef="let element"> {{ element.cusVehicleName ? (element.cusVehicleName + ' ( ' +
+                element.cusVehicleType + ' )') : '--'
                 }} </td>
         </ng-container>
 
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="driverNumber">
-            <th mat-header-cell *matHeaderCellDef> Driver Number </th>
-            <td mat-cell *matCellDef="let element"> {{ element.tripClosedDrierMobile ? ('+91 ' +
-                element.tripClosedDrierMobile) :
-                '--' }} </td>
-        </ng-container>
-
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="bookingDate">
-            <th mat-header-cell *matHeaderCellDef> Date </th>
-            <td mat-cell *matCellDef="let element"> {{ element.bookingDate ? element.bookingDate : '--' }} </td>
-        </ng-container>
-
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="bookingTime">
-            <th mat-header-cell *matHeaderCellDef> Time </th>
-            <td mat-cell *matCellDef="let element"> {{ element.timePicker ? element.timePicker : '--' }} </td>
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let element">
+                <button type="button" class="btn btn-secondary" style="margin-right: 10px;"
+                    (click)="toViewTrip(element)">View</button>
+                <button type="button" class="btn btn-secondary" style="margin-right: 10px;"
+                    (click)="toCancelTrip(element)">Cancel</button>
+                <button type="button" class="btn btn-secondary" style="margin-right: 10px;"
+                    (click)="toEditTrip(element)">Edit</button>
+            </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

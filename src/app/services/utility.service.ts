@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { FirebaseService } from './firebase.service';
 
 @Injectable({
@@ -7,21 +8,43 @@ import { FirebaseService } from './firebase.service';
 export class UtilityService {
   constructor(private readonly firebaseService: FirebaseService) {}
 
+  /**
+   * Calculate the difference in days between two dates.
+   * @param startDate Start date string (format: yyyy-MM-dd).
+   * @param endDate End date string (format: yyyy-MM-dd).
+   * @returns The difference in days or null if invalid input.
+   */
   calculateDaysDifference(startDate: string, endDate: string): number | null {
-    const startDateTime = new Date(startDate).getTime();
-    const endDateTime = new Date(endDate).getTime();
+    const startTimestamp = this.parseDateToTimestamp(startDate);
+    const endTimestamp = this.parseDateToTimestamp(endDate);
 
-    if (!isNaN(startDateTime) && !isNaN(endDateTime)) {
-      const millisecondsPerDay = 24 * 60 * 60 * 1000;
-      const daysDifference = Math.round((endDateTime - startDateTime) / millisecondsPerDay);
+    if (!startTimestamp || !endTimestamp) {
+      return null; // Invalid date format
+    }
 
-      return daysDifference;
-    } else {
-      console.error('Invalid date format');
-      return null;
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    return Math.round((endTimestamp - startTimestamp) / millisecondsPerDay);
+  }
+
+  updateDaysDifference(formGroup: FormGroup) {
+    const startDate = formGroup.controls['startDate'].value;
+    const endDate = formGroup.controls['endDate'].value;
+
+    console.log(startDate);
+    console.log(endDate);
+
+    const daysDifference = this.calculateDaysDifference(startDate, endDate);
+
+    if (daysDifference !== null) {
+      formGroup.controls['numberOfDays'].setValue(daysDifference);
     }
   }
 
+  /**
+   * Convert a 24-hour time string to 12-hour format.
+   * @param inputValue Time string in 24-hour format (HH:mm).
+   * @returns The time string in 12-hour format (hh:mm AM/PM) or null if invalid input.
+   */
   convertTo12HourFormat(inputValue: string): string | null {
     const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 
@@ -37,11 +60,30 @@ export class UtilityService {
         }
       }
 
-      return `${hours12}:${minutes} ${ampm}`;
+      return `${this.zeroPad(hours12)}:${minutes} ${ampm}`;
     } else {
-      console.error('Invalid time format. Please use HH:mm in 24-hour format.');
-      return null;
+      return null; // Invalid time format
     }
+  }
+
+  /**
+   * Zero-pad a number if it's a single digit (e.g., 7 becomes '07').
+   * @param num The number to zero-pad.
+   * @returns The zero-padded string.
+   */
+
+  private zeroPad(num: number): string {
+    return num.toString().padStart(2, '0');
+  }
+
+  /**
+   * Parse a date string to a timestamp.
+   * @param dateStr Date string (format: yyyy-MM-dd).
+   * @returns The timestamp or null if invalid input.
+   */
+  private parseDateToTimestamp(dateStr: string): number | null {
+    const timestamp = new Date(dateStr).getTime();
+    return isNaN(timestamp) ? null : timestamp;
   }
 
   generateToken(): Promise<string> {

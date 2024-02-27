@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, first } from 'rxjs';
 import { SnackbarService } from './snackbar.service';
@@ -127,15 +127,169 @@ export class FirebaseService {
     }
   }
 
+  // --- TO ADD DRIVER BOOKING ---
   addDriverBooking(driverBooking: any) {
     return this.fireStore.collection('driverBooking').add(driverBooking);
   }
 
+  // --- TO ADD DRIVER ---
+  addDrivers(driver: any) {
+    return this.fireStore.collection('registeredDrivers').add(driver);
+  }
+
+  // --- TO GET DRIVER BOOKING ---
   getDriverBooking(): Observable<any[]> {
     return this.fireStore.collection('driverBooking').valueChanges();
   }
 
+  // --- TO GET REGISTERED DRIVER ---
   getRegisteredDrivers(): Observable<any[]> {
     return this.fireStore.collection('registeredDrivers').valueChanges();
+  }
+
+  // --- TO GET USER OTP(S) ---
+  getUserOTPs(): Observable<any[]> {
+    return this.fireStore.collection('userOtp').valueChanges();
+  }
+
+  // --- TO FIND DOCUMENT BY ID ---
+  findDocumentById(id: string): QueryFn {
+    return (ref) => ref.where('docId', '==', id);
+  }
+
+  // --- TO UPDATE TRIP STATUS ---
+  updateTripStatus(params: any): Promise<void> {
+    console.log(params);
+
+    const query = this.findDocumentById(params.docId);
+
+    return this.fireStore
+      .collection('driverBooking')
+      .ref.where('docId', '==', params.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+
+          return docRef.update(params);
+        } else {
+          throw new Error('Document not found or multiple documents match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating trip status:', error);
+        throw error;
+      });
+  }
+
+  // --- TO CREATE DOCUMENT ID(S) ---
+  createId(): string {
+    return this.fireStore.createId();
+  }
+
+  // --- TO APPLY DRIVER LEAVE(S) ---
+  applyDriverLeave(driverLeave: any) {
+    return this.fireStore.collection('allAppliedLeaves').add(driverLeave);
+  }
+
+  // --- TO GET DRIVER APPLIED DRIVER LEAVE(S) ---
+  getDriverAppliedLeaves(): Observable<any[]> {
+    return this.fireStore.collection('allAppliedLeaves').valueChanges();
+  }
+
+  // --- TO UPDATE TRIP STATUS ---
+  updateLeaveStatus(params: any): Promise<void> {
+    console.log(params);
+
+    const query = this.findDocumentById(params.docId);
+
+    return this.fireStore
+      .collection('allAppliedLeaves')
+      .ref.where('docId', '==', params.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+
+          return docRef.update(params);
+        } else {
+          throw new Error('Document not found or multiple documents match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating trip status:', error);
+        throw error;
+      });
+  }
+
+  // --- TO ADD VEHICLE DETAILS(S) ---
+  addVehicleDetails(driverLeave: any) {
+    return this.fireStore.collection('addVehicleDetails').add(driverLeave);
+  }
+
+  // --- TO GET ALL VEHICLE DETAILS(S) ---
+  getAllVehicleDetails(): Observable<any[]> {
+    return this.fireStore.collection('addVehicleDetails').valueChanges();
+  }
+
+  // TO FETCH VEHICLE DETAIL
+  fetchVehicleDetails(docId: string) {
+    return new Promise((resolve) => {
+      this.fireStore
+        .collection('addVehicleDetails')
+        .ref.where('docId', '==', docId)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.size === 1) {
+            resolve(snapshot.docs[0].data());
+          } else {
+            throw new Error('Vehicle not found or multiple vehicle match the ID.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error getting data:', error);
+          throw error;
+        });
+    });
+  }
+
+  // TO UPDATE VEHICLE DETAILS
+  updateVehicleDetails(data) {
+    return this.fireStore
+      .collection('addVehicleDetails')
+      .ref.where('docId', '==', data.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+          return docRef.update(data);
+        } else {
+          throw new Error('Vehicle not found or multiple vehicle match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error getting data:', error);
+        throw error;
+      });
+  }
+
+  // TO DELETE VEHICLE DETAILS
+  deleteVehicle(id: string) {
+    return this.fireStore
+      .collection('addVehicleDetails')
+      .ref.where('docId', '==', id)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+          return docRef.delete();
+        } else {
+          throw new Error('Vehicle not found or multiple vehicle match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error getting data:', error);
+        throw error;
+      });
   }
 }
