@@ -138,4 +138,16 @@ export class UtilityService {
 
     return generateUniqueToken();
   }
+
+  // To fetch current date -- (DD-MM-YYYY) format
+  currentDate() {
+    const currentDate = new Date().toISOString().substring(0, 10);
+    return currentDate;
+  }
+
+  // To fetch current time -- (HH:MM:SS AM/PM) format
+  currentTime() {
+    const currentTime = new Date().toTimeString().substring(0, 8);
+    return currentTime;
+  }
 }

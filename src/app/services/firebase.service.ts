@@ -222,6 +222,11 @@ export class FirebaseService {
       });
   }
 
+  // --- TO GET REGISTERED DRIVER(S) ---
+  getDriverList(): Observable<any[]> {
+    return this.fireStore.collection('registeredDrivers').valueChanges();
+  }
+
   // --- TO ADD VEHICLE DETAILS(S) ---
   addVehicleDetails(driverLeave: any) {
     return this.fireStore.collection('addVehicleDetails').add(driverLeave);

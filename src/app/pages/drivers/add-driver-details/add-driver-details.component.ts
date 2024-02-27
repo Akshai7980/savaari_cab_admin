@@ -1,0 +1,73 @@
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FirebaseService } from 'src/app/services/firebase.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { UtilityService } from 'src/app/services/utility.service';
+import { SharedModule } from 'src/app/theme/shared/shared.module';
+
+@Component({
+  selector: 'app-add-driver-details',
+  standalone: true,
+  imports: [CommonModule, SharedModule, ReactiveFormsModule],
+  templateUrl: './add-driver-details.component.html',
+  styleUrls: ['./add-driver-details.component.scss']
+})
+export default class AddDriverDetailsComponent implements AfterViewInit, OnInit {
+  driverRegForm: FormGroup;
+  districts: any;
+
+  constructor(
+    private readonly utilityService: UtilityService,
+    private readonly firebaseService: FirebaseService,
+    private readonly snackBar: SnackbarService,
+    private readonly formBuilder: FormBuilder
+  ) {
+    this.driverRegForm = this.formBuilder.group({
+      driverName: ['', Validators.required],
+      address: ['', Validators.required],
+      mobileNumber: ['', Validators.required],
+      altMobileNumber: ['', Validators.required],
+      bloodGroup: ['', Validators.required],
+      licenseNumber: ['', Validators.required],
+      state: ['Kerala', Validators.required],
+      district: ['', Validators.required],
+      pinCode: ['', Validators.required],
+      driverType: ['', Validators.required],
+      driverCode: ['', Validators.required],
+      driverLocation: ['', Validators.required]
+    });
+  }
+
+  ngOnInit(): void {
+    this.fetchDistricts();
+  }
+
+  async fetchDistricts() {
+    const response = await fetch('../../../assets/Json/districts.json');
+    console.log(response);
+    const distResp = await response.json();
+    this.districts = distResp.districts;
+    console.log(this.districts);
+  }
+
+  async ngAfterViewInit(): Promise<void> {
+    const token = await this.utilityService.generateToken();
+    this.driverRegForm.controls['driverCode'].setValue(token);
+    console.log('token:', token);
+  }
+
+  addDriverBooking() {
+    this.firebaseService
+      .addDrivers(this.driverRegForm.value)
+      .then((res) => {
+        this.driverRegForm.reset();
+        this.snackBar.showMessage('Driver Booking Successfully Added');
+        console.log('Successfully added:', res);
+      })
+      .catch((error) => {
+        this.snackBar.showMessage('Error Adding Driver Booking');
+        console.error('Error adding driver booking:', error);
+      });
+  }
+}

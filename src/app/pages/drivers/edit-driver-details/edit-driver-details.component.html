@@ -1,0 +1,125 @@
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Edit Registered Driver Details</h5>
+      </div>
+
+      <form [formGroup]="driverRegForm">
+        <div class="card-body">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="driverName"
+            />
+            <label for="floatingInput">Driver Name</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <textarea
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="address"
+            ></textarea>
+            <label for="floatingInput">Address</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="number"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="mobileNumber"
+            />
+            <label for="floatingInput">Mobile Number</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="number"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="altMobileNumber"
+            />
+            <label for="floatingInput">Alternate Number</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="bloodGroup"
+            />
+            <label for="floatingInput">Blood Group</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="licenseNumber"
+            />
+            <label for="floatingInput">Driver License Number</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <label
+              for="floatingInput"
+              style="font-size: 12px; color: #6c757d; padding-top: 7px;"
+              >District</label
+            >
+            <select
+              class="form-control"
+              id="floatingInput"
+              formControlName="district"
+            >
+              <option selected disabled> </option>
+              <option
+                *ngFor="let district of districts"
+                [value]="district.districts"
+              >
+                {{ district.districts }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="driverType"
+            />
+            <label for="floatingInput">Driver Type</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="driverCode"
+            />
+            <label for="floatingInput">Driver Code</label>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [disabled]="!driverRegForm.valid"
+              (click)="addDriverBooking()"
+            >
+              Add Driver Details
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -15,43 +15,51 @@ const routes: Routes = [
       },
       {
         path: 'dashboard',
-        loadComponent: () => import('./demo/default/default.component')
+        loadComponent: () => import('./dashboard/dashboard.component')
       },
       {
         path: 'driverBookings',
-        loadComponent: () => import('./demo/elements/typography/typography.component')
+        loadComponent: () => import('./pages/drivers/add-driver-booking/add-driver-booking.component')
       },
-      {
-        path: 'color',
-        loadComponent: () => import('./demo/elements/element-color/element-color.component')
-      },
+      // {
+      //   path: 'color',
+      //   loadComponent: () => import('./demo/elements/element-color/element-color.component')
+      // },
       {
         path: 'addDrivers',
-        loadComponent: () => import('./demo/sample-page/sample-page.component')
+        loadComponent: () => import('./pages/drivers/add-driver-details/add-driver-details.component')
       },
       {
         path: 'driverBookingList',
-        loadComponent: () => import('./demo/elements/driver-booking-list/driver-booking-list.component')
+        loadComponent: () => import('./pages/drivers/driver-booking-list/driver-booking-list.component')
       },
       {
         path: 'applyDriverLeave',
-        loadComponent: () => import('./demo/apply-driver-leave/apply-driver-leave.component')
+        loadComponent: () => import('./pages/drivers/apply-driver-leave/apply-driver-leave.component')
       },
       {
         path: 'listDriverLeave',
-        loadComponent: () => import('./demo/list-driver-leave/list-driver-leave.component')
+        loadComponent: () => import('./pages/drivers/list-driver-leave/list-driver-leave.component')
       },
       {
-        path: 'addVehicle',
-        loadComponent: () => import('./demo/vehicles/add-vehicle/add-vehicle.component')
+        path: 'listDriverDetails',
+        loadComponent: () => import('./pages/drivers/list-driver-details/list-driver-details.component')
+      },
+      {
+        path: 'editDriverDetails',
+        loadComponent: () => import('./pages/drivers/edit-driver-details/edit-driver-details.component')
       },
       {
         path: 'listVehicle',
-        loadComponent: () => import('./demo/vehicles/list-vehicle/list-vehicle.component')
+        loadComponent: () => import('./pages/vehicles/list-vehicle/list-vehicle.component')
       },
       {
         path: 'editVehicle',
-        loadComponent: () => import('./demo/vehicles/add-vehicle/add-vehicle.component')
+        loadComponent: () => import('./pages/vehicles/add-vehicle/add-vehicle.component')
+      },
+      {
+        path: 'addVehicle',
+        loadComponent: () => import('./pages/vehicles/add-vehicle/add-vehicle.component')
       }
     ]
   },
@@ -61,7 +69,7 @@ const routes: Routes = [
     children: [
       {
         path: 'admin',
-        loadChildren: () => import('./demo/pages/authentication/authentication.module').then((m) => m.AuthenticationModule)
+        loadChildren: () => import('./authentication/authentication.module').then((m) => m.AuthenticationModule)
       }
     ]
   }
