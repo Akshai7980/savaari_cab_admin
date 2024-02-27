@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ListAllDriversComponent } from 'src/app/modals/list-all-drivers/list-all-drivers.component';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -29,7 +29,6 @@ export default class TypographyComponent implements OnInit {
     private readonly formBuilder: FormBuilder,
     private readonly utilityService: UtilityService,
     private readonly dialog: MatDialog,
-    public readonly route: ActivatedRoute,
     private readonly router: Router
   ) {
     this.driverBookingForm = this.formBuilder.group({
