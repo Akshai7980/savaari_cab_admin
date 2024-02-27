@@ -14,6 +14,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SpinnerComponent } from './components/spinner/spinner.component';
+import { ElementDetailedViewComponent } from './components/element-detailed-view/element-detailed-view.component';
 
 import { MatDialogModule } from '@angular/material/dialog';
 
@@ -53,8 +54,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatTableModule,
     MatPaginatorModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    ElementDetailedViewComponent
   ],
-  declarations: [SpinnerComponent]
+  declarations: [SpinnerComponent, ElementDetailedViewComponent]
 })
 export class SharedModule {}

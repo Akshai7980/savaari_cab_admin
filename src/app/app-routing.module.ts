@@ -40,6 +40,18 @@ const routes: Routes = [
       {
         path: 'listDriverLeave',
         loadComponent: () => import('./demo/list-driver-leave/list-driver-leave.component')
+      },
+      {
+        path: 'addVehicle',
+        loadComponent: () => import('./demo/vehicles/add-vehicle/add-vehicle.component')
+      },
+      {
+        path: 'listVehicle',
+        loadComponent: () => import('./demo/vehicles/list-vehicle/list-vehicle.component')
+      },
+      {
+        path: 'editVehicle',
+        loadComponent: () => import('./demo/vehicles/add-vehicle/add-vehicle.component')
       }
     ]
   },

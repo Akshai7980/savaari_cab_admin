@@ -89,7 +89,7 @@ const NavigationItems = [
       //   icon: 'ti ti-brush'
       // }
     ]
-  }
+  },
   // {
   //   id: 'other',
   //   title: 'Other',
@@ -106,6 +106,32 @@ const NavigationItems = [
   //     }
   //   ]
   // }
+  {
+    id: 'vehicle',
+    title: 'Vehicle',
+    type: 'group',
+    icon: 'icon-car',
+    children: [
+      {
+        id: 'add-vehicle',
+        title: 'Add Vehicle',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/addVehicle',
+        icon: 'ti ti-car',
+        breadcrumbs: true
+      },
+      {
+        id: 'list-vehicle',
+        title: 'List Vehicle',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/listVehicle',
+        icon: 'ti ti-car',
+        breadcrumbs: true
+      }
+    ]
+  },
 ];
 
 @Injectable()
