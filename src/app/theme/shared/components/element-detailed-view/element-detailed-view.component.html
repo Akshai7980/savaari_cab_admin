@@ -1,0 +1,26 @@
+<div class="wrapper">
+    <table mat-table [dataSource]="dataSource" *ngIf="dataSource.data.length > 0">
+        <!-- Key Column -->
+        <ng-container matColumnDef="key">
+            <th mat-header-cell *matHeaderCellDef colspan="2">{{data.heading}}</th>
+            <td mat-cell *matCellDef="let element">
+                {{ element?.key ? element.key : '--' }}
+            </td>
+        </ng-container>
+    
+        <!-- Value Column -->
+        <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+                {{ element?.value ? element.value : '--' }}
+            </td>
+        </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <div class="action-btn">
+        <button class="btn btn-secondary" (click)="edit()">Edit</button>
+        <button class="btn btn-secondary" (click)="delete()">Delete</button>
+    </div>
+</div>

@@ -48,6 +48,18 @@ const routes: Routes = [
       {
         path: 'editDriverDetails',
         loadComponent: () => import('./demo/edit-driver-details/edit-driver-details.component')
+      },
+      {
+        path: 'listVehicle',
+        loadComponent: () => import('./demo/vehicles/list-vehicle/list-vehicle.component')
+      },
+      {
+        path: 'editVehicle',
+        loadComponent: () => import('./demo/vehicles/add-vehicle/add-vehicle.component')
+      },
+      {
+        path: 'addVehicle',
+        loadComponent: () => import('./demo/vehicles/add-vehicle/add-vehicle.component')
       }
     ]
   },

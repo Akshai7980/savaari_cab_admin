@@ -1,0 +1,8 @@
+{
+    "fuelType": [
+      { "id": 1, "type": "Petrol" },
+      { "id": 2, "type": "Diesel" },
+      { "id": 3, "type": "Electric" }
+    ]
+  }
+  
