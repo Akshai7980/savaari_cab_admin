@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="mat-icon" *ngIf="data.icon">
+    <mat-icon
+      (click)="closeAlert()"
+      aria-hidden="false"
+      aria-label="Example icon"
+      fontIcon="{{data.icon}}"
+    ></mat-icon>
+  </div>
+
+  <img [src]="data.image" alt="" />
+
+  <h3 *ngIf="data.heading">{{ data.heading }}</h3>
+
+  <p *ngIf="data.heading">
+    {{ data.content }}
+  </p>
+
+  <div class="action-btn">
+    <button
+      class="btn"
+      *ngFor="let label of data.buttons; let i = index"
+      [ngClass]="{'btn-secondary': i !== 0, 'btn-primary': i === 0}"
+      (click)="onButtonClick(label)"
+    >
+      {{ label }}
+    </button>
+  </div>
+</div>

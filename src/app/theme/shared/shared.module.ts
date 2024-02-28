@@ -10,8 +10,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { NgbCollapseModule, NgbDropdownModule, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { BreadcrumbModule, CardModule, NoDataFoundModule } from './components';
+import { BreadcrumbModule, CardModule } from './components';
+import { AlertPopupComponent } from './components/alert-popup/alert-popup.component';
 import { ElementDetailedViewComponent } from './components/element-detailed-view/element-detailed-view.component';
+import { NoDataFoundComponent } from './components/no-data-found/no-data-found.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 
 @NgModule({
@@ -20,7 +22,6 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     FormsModule,
     ReactiveFormsModule,
     BreadcrumbModule,
-    NoDataFoundModule,
     CardModule,
     NgbModule,
     NgbDropdownModule,
@@ -40,7 +41,6 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     FormsModule,
     ReactiveFormsModule,
     BreadcrumbModule,
-    NoDataFoundModule,
     CardModule,
     SpinnerComponent,
     NgbModule,
@@ -55,8 +55,9 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
-    ElementDetailedViewComponent
+    ElementDetailedViewComponent,
+    NoDataFoundComponent
   ],
-  declarations: [SpinnerComponent, ElementDetailedViewComponent]
+  declarations: [SpinnerComponent, ElementDetailedViewComponent, NoDataFoundComponent, AlertPopupComponent]
 })
 export class SharedModule {}

@@ -1,9 +1,10 @@
 import { CommonModule, DatePipe, TitleCasePipe } from '@angular/common';
 import { AfterViewChecked, Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { FirebaseService } from 'src/app/services/firebase.service';
+import { AlertPopupComponent } from 'src/app/theme/shared/components/alert-popup/alert-popup.component';
 import { ElementDetailedViewComponent } from 'src/app/theme/shared/components/element-detailed-view/element-detailed-view.component';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
@@ -107,16 +108,49 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
     });
   }
 
-  toCancelLeave(rowData: any) {
-    console.log(rowData);
+  toCancelLeave(element) {
+    console.log(element);
 
-    const params = {
-      isLeaveCancelled: true,
-      leaveCancelledAt: new Date(),
-      cancelledBy: 'ADMIN',
-      docId: rowData.docId
-    };
-    this.firebaseService.updateLeaveStatus(params);
+    const startDate = this.datePipe.transform(element.leaveStartDate, 'longDate');
+    const endDate = this.datePipe.transform(element.leaveEndDate, 'longDate');
+    const driverName = this.titleCase.transform(element.driverName);
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.height = '400px';
+    dialogConfig.width = '600px';
+
+    this.dialogRef = this.matDialog.open(AlertPopupComponent, {
+      ...dialogConfig,
+      data: {
+        icon: 'close',
+        image: '../../../../assets/images/alert.svg',
+        heading: `${'Are you sure ?'}`,
+        content: `Are you sure you want to cancel ${driverName} leave from ${startDate} to ${endDate}`,
+        buttons: ['Cancel Leave', 'Don`t Cancel'],
+        onButtonClick: (e) => {
+          console.log('button click', e);
+
+          switch (e) {
+            case 'Cancel Leave':
+              this.dialogRef.close();
+
+              const params = {
+                isLeaveCancelled: true,
+                leaveCancelledAt: new Date(),
+                cancelledBy: 'ADMIN',
+                docId: element.docId
+              };
+
+              this.firebaseService.updateLeaveStatus(params);
+              break;
+
+            default:
+              this.dialogRef.close();
+              break;
+          }
+        }
+      }
+    });
   }
 
   toEditLeave(rowData: any) {
