@@ -57,7 +57,7 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const routerSubscription = this.router.queryParamMap.subscribe((params: any) => {
+    const subscription = this.router.queryParamMap.subscribe((params: any) => {
       const id = params.params['id'];
       if (id) {
         this.editForm = true;
@@ -67,7 +67,7 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.subscription.push(routerSubscription);
+    this.subscription.push(subscription);
 
     this.getAllDrivers();
   }
@@ -88,7 +88,7 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
       data: { drivers: this.allDrivers }
     });
 
-    dialogRef.afterClosed().subscribe((selectedDrivers: Driver[]) => {
+    const subscription = dialogRef.afterClosed().subscribe((selectedDrivers: Driver[]) => {
       console.log(`Dialog result:`, selectedDrivers);
 
       this.applyLeaveForm.controls['driverName'].setValue(selectedDrivers['type']); // yet to update
@@ -97,14 +97,18 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
       this.applyLeaveForm.controls['driverId'].setValue(''); // yet to update
       this.applyLeaveForm.controls['driverType'].setValue(''); // yet to update
     });
+
+    this.subscription.push(subscription);
   }
 
   getAllDrivers() {
-    this.firebaseService.getUserOTPs().subscribe((res: any) => {
+    const subscription = this.firebaseService.getUserOTPs().subscribe((res: any) => {
       if (res && res.length > 0) {
         this.allDrivers = res;
       }
     });
+
+    this.subscription.push(subscription);
   }
 
   async applyDriverLeave() {

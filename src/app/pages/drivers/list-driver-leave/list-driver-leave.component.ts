@@ -24,7 +24,7 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   showPaginator: boolean = false;
-  private subscription: Subscription[];
+  private subscription: Subscription[] = [];
   private dialogRef;
 
   constructor(
@@ -36,13 +36,13 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
   ) {}
 
   ngOnInit(): void {
-    const routerEvent = this.router.events.subscribe((event) => {
+    const subscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.matDialog.closeAll();
       }
     });
 
-    this.subscription.push(routerEvent);
+    this.subscription.push(subscription);
 
     this.getDriverAppliedLeaves();
   }
@@ -56,7 +56,7 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
   }
 
   getDriverAppliedLeaves() {
-    const driverAppliedLeaves = this.firebaseService.getDriverAppliedLeaves().subscribe(
+    const subscription = this.firebaseService.getDriverAppliedLeaves().subscribe(
       (res: AppliedLeaves[]) => {
         console.log(res);
         const response = [];
@@ -80,7 +80,7 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
       }
     );
 
-    this.subscription.push(driverAppliedLeaves);
+    this.subscription.push(subscription);
   }
 
   toViewLeave(element) {
