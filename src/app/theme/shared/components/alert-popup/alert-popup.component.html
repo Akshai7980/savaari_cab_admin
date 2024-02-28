@@ -12,9 +12,7 @@
 
   <h3 *ngIf="data.heading">{{ data.heading }}</h3>
 
-  <p *ngIf="data.heading">
-    {{ data.content }}
-  </p>
+  <p *ngIf="data.heading" [innerHTML]="data.content"></p>
 
   <div class="action-btn">
     <button

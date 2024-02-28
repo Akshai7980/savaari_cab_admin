@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -24,13 +26,16 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   allDrivers: Driver[];
   timeoutId: any;
   currentDate: string = '';
+  editForm: boolean;
+  private subscription: Subscription[];
 
   constructor(
     private readonly firebaseService: FirebaseService,
     private readonly snackBar: SnackbarService,
     private readonly formBuilder: FormBuilder,
     private readonly utilityService: UtilityService,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    private readonly router: ActivatedRoute
   ) {
     this.currentDate = utilityService.currentDate();
 
@@ -52,6 +57,18 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    const routerSubscription = this.router.queryParamMap.subscribe((params: any) => {
+      const id = params.params['id'];
+      if (id) {
+        this.editForm = true;
+        this.firebaseService.fetchVehicleDetails(id).then((data: any) => {
+          this.applyLeaveForm.patchValue(data);
+        });
+      }
+    });
+
+    this.subscription.push(routerSubscription);
+
     this.getAllDrivers();
   }
 
@@ -91,15 +108,33 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   }
 
   async applyDriverLeave() {
-    if (this.applyLeaveForm.valid) {
+    if (this.applyLeaveForm.valid && !this.editForm) {
       console.log(this.applyLeaveForm.value);
 
       const docId = this.firebaseService.createId();
       this.applyLeaveForm.controls['docId'].setValue(docId);
 
       try {
-        const res = await this.firebaseService.applyDriverLeave(this.applyLeaveForm.value);
-        console.log(res);
+        await this.firebaseService.applyDriverLeave(this.applyLeaveForm.value);
+        this.applyLeaveForm.reset();
+
+        this.timeoutId = setTimeout(() => {
+          this.applyLeaveForm.controls['leaveStartDate'].setValue(this.currentDate);
+          this.applyLeaveForm.controls['leaveEndDate'].setValue(this.currentDate);
+          this.applyLeaveForm.controls['numberOfDays'].setValue('1');
+        }, 100);
+
+        // Need to check the issue for snackBar here
+        this.timeoutId = setTimeout(() => {
+          this.snackBar.showMessage('Driver Leave Successfully Added');
+        }, 2000);
+      } catch (error) {
+        console.error('Error adding driver leave:', error);
+        this.snackBar.showMessage('Error Adding Driver leave');
+      }
+    } else {
+      try {
+        await this.firebaseService.updateLeaveStatus(this.applyLeaveForm.value);
         this.applyLeaveForm.reset();
 
         this.timeoutId = setTimeout(() => {
@@ -123,5 +158,10 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
+
+    if (this.subscription)
+      this.subscription.forEach((element) => {
+        element.unsubscribe();
+      });
   }
 }
