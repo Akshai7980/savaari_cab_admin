@@ -150,4 +150,10 @@ export class UtilityService {
     const currentTime = new Date().toTimeString().substring(0, 8);
     return currentTime;
   }
+
+  removeKeys(obj, keysToRemove) {
+    for (let key of keysToRemove) {
+      delete obj[key];
+    }
+  }
 }

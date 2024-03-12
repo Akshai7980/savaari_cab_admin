@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { DataShareService } from 'src/app/services/data-share.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -24,6 +25,7 @@ export default class AddVehicleComponent implements OnInit {
   constructor(
     private readonly utilityService: UtilityService,
     private readonly firebaseService: FirebaseService,
+    private readonly dataSharingService: DataShareService,
     private readonly snackBar: SnackbarService,
     private readonly formBuilder: FormBuilder,
     private readonly router: ActivatedRoute
@@ -46,13 +48,10 @@ export default class AddVehicleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const subscription = this.router.queryParamMap.subscribe((params: any) => {
-      const id = params.params['id'];
-      if (id) {
+    const subscription = this.dataSharingService.data$.subscribe((data) => {
+      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
         this.editForm = true;
-        this.firebaseService.fetchVehicleDetails(id).then((data: any) => {
-          this.vehicleRegForm.patchValue(data);
-        });
+        this.vehicleRegForm.patchValue(data);
       }
     });
 
