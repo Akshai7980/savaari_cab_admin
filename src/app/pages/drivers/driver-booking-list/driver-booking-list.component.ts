@@ -3,13 +3,14 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { NavigationExtras, Router } from '@angular/router';
+import { VehicleNumberPipe } from 'src/app/pipes/vehicle-number/vehicle-number.pipe';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
 @Component({
   selector: 'app-driver-booking-list',
   standalone: true,
-  imports: [CommonModule, SharedModule],
+  imports: [CommonModule, SharedModule, VehicleNumberPipe],
   templateUrl: './driver-booking-list.component.html',
   styleUrls: ['./driver-booking-list.component.scss']
 })

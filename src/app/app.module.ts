@@ -26,6 +26,7 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { environment } from '../environments/environment';
+import { VehicleNumberPipe } from './pipes/vehicle-number/vehicle-number.pipe';
 
 const app = initializeApp(environment.firebaseConfig);
 const analytics = getAnalytics(app);
@@ -53,9 +54,11 @@ const analytics = getAnalytics(app);
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    VehicleNumberPipe
   ],
   providers: [NavigationItem],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  exports: [VehicleNumberPipe]
 })
 export class AppModule {}

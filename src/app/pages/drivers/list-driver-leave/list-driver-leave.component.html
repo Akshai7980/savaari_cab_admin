@@ -14,7 +14,7 @@
     <ng-container matColumnDef="driverName">
       <th mat-header-cell *matHeaderCellDef>Driver Name</th>
       <td mat-cell *matCellDef="let element">
-        {{ element?.driverName ? element.driverName : '--' }}
+        {{ element?.driverName ? (element.driverName | titlecase) : '--' }}
       </td>
     </ng-container>
 
@@ -30,7 +30,7 @@
     <ng-container matColumnDef="leaveReason">
       <th mat-header-cell *matHeaderCellDef>Reason</th>
       <td mat-cell *matCellDef="let element">
-        {{ element.leaveReason ? element.leaveReason : '--' }}
+        {{ element.leaveReason ? (element.leaveReason | titlecase) : '--' }}
       </td>
     </ng-container>
 
@@ -38,7 +38,8 @@
     <ng-container matColumnDef="leaveType">
       <th mat-header-cell *matHeaderCellDef>Type</th>
       <td mat-cell *matCellDef="let element">
-        {{ element.leaveType ? element.leaveType : '--' }}
+        {{ element.leaveType ? (element.leaveType === 'FULL' || 'Full Day'?
+        'Full Day' : 'Half Day') : '--' }}
       </td>
     </ng-container>
 

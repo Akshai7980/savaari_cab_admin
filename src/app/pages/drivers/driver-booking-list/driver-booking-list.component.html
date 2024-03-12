@@ -46,8 +46,8 @@
     <ng-container matColumnDef="vehicleName">
       <th mat-header-cell *matHeaderCellDef>Vehicle Name (Type)</th>
       <td mat-cell *matCellDef="let element">
-        {{ element.cusVehicleName ? (element.cusVehicleName + ' ( ' +
-        element.cusVehicleType + ' )') : '--' }}
+        {{ element.cusVehicleName ? ((element.cusVehicleName | vehicleNumber) +
+        ' ( ' + element.cusVehicleType + ' )') : '--' }}
       </td>
     </ng-container>
 

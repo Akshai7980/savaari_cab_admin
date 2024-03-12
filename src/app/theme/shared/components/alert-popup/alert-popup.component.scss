@@ -1,0 +1,32 @@
+.container {
+  padding: 30px;
+  text-align: center;
+
+  .mat-icon {
+    float: right;
+  }
+
+  img {
+    height: 50%;
+    width: 35%;
+    margin-bottom: 25px;
+  }
+
+  p {
+    margin-top: 25px;
+    font-size: 15px;
+  }
+
+  .action-btn {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    top: 20px;
+    margin: 20px 0;
+
+    button {
+      width: 50%;
+      height: 55px;
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -18,7 +19,7 @@ export default class AddVehicleComponent implements OnInit {
   vehicleRegForm: FormGroup;
   fuelType;
   editForm: boolean = false;
-  paramSubscription: any;
+  private subscription: Subscription[] = [];
 
   constructor(
     private readonly utilityService: UtilityService,
@@ -45,7 +46,7 @@ export default class AddVehicleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.paramSubscription = this.router.queryParamMap.subscribe((params: any) => {
+    const subscription = this.router.queryParamMap.subscribe((params: any) => {
       const id = params.params['id'];
       if (id) {
         this.editForm = true;
@@ -54,15 +55,20 @@ export default class AddVehicleComponent implements OnInit {
         });
       }
     });
+
+    this.subscription.push(subscription);
+
     this.fetchFuelType();
   }
 
   ngAfterViewInit(): void {
     this.vehicleRegForm.controls['registeringAuthority'].disable();
-    this.vehicleRegForm.controls['registrationDate'].valueChanges.subscribe((value) => {
+    const subscription = this.vehicleRegForm.controls['registrationDate'].valueChanges.subscribe((value) => {
       var dayDifference = this.utilityService.calculateDaysDifference(value, new Date().toISOString());
       this.vehicleRegForm.controls['vehicleAge'].setValue(dayDifference);
     });
+
+    this.subscription.push(subscription);
   }
 
   async fetchFuelType() {
@@ -100,5 +106,12 @@ export default class AddVehicleComponent implements OnInit {
         );
       }
     }
+  }
+
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.forEach((element) => {
+        element.unsubscribe();
+      });
   }
 }

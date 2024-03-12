@@ -1,9 +1,12 @@
 import { CommonModule, DatePipe, TitleCasePipe } from '@angular/common';
 import { AfterViewChecked, Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { NavigationStart, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { FirebaseService } from 'src/app/services/firebase.service';
+import { AlertPopupComponent } from 'src/app/theme/shared/components/alert-popup/alert-popup.component';
 import { ElementDetailedViewComponent } from 'src/app/theme/shared/components/element-detailed-view/element-detailed-view.component';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
@@ -21,16 +24,26 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   showPaginator: boolean = false;
-  dialogRef;
+  private subscription: Subscription[] = [];
+  private dialogRef;
 
   constructor(
     private readonly firebaseService: FirebaseService,
     private readonly titleCase: TitleCasePipe,
     private readonly matDialog: MatDialog,
-    private readonly datePipe: DatePipe
+    private readonly datePipe: DatePipe,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
+    const subscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.matDialog.closeAll();
+      }
+    });
+
+    this.subscription.push(subscription);
+
     this.getDriverAppliedLeaves();
   }
 
@@ -43,7 +56,7 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
   }
 
   getDriverAppliedLeaves() {
-    this.firebaseService.getDriverAppliedLeaves().subscribe(
+    const subscription = this.firebaseService.getDriverAppliedLeaves().subscribe(
       (res: AppliedLeaves[]) => {
         console.log(res);
         const response = [];
@@ -66,14 +79,12 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
         console.error('Error fetching driver bookings:', error);
       }
     );
+
+    this.subscription.push(subscription);
   }
 
   toViewLeave(element) {
     console.log(element);
-
-    const data1 = Object.entries(element)
-      .map(([key, value]) => ({ key, value }))
-      .filter((entry) => entry.key !== 'position');
 
     const startDate = this.datePipe.transform(element.leaveStartDate, 'longDate');
     const endDate = this.datePipe.transform(element.leaveEndDate, 'longDate');
@@ -95,10 +106,12 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
         heading: `${element.driverName} | Leave From ${startDate} To ${endDate}`,
         buttons1: 'Edit',
         buttons2: 'Cancel',
+
         edit: () => {
           this.dialogRef.close();
           this.toEditLeave(element);
         },
+
         delete: () => {
           this.dialogRef.close();
           this.toCancelLeave(element);
@@ -107,27 +120,61 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
     });
   }
 
-  toCancelLeave(rowData: any) {
-    console.log(rowData);
+  toCancelLeave(element) {
+    console.log(element);
 
-    const params = {
-      isLeaveCancelled: true,
-      leaveCancelledAt: new Date(),
-      cancelledBy: 'ADMIN',
-      docId: rowData.docId
-    };
-    this.firebaseService.updateLeaveStatus(params);
+    const startDate = this.datePipe.transform(element.leaveStartDate, 'longDate');
+    const endDate = this.datePipe.transform(element.leaveEndDate, 'longDate');
+    const driverName = this.titleCase.transform(element.driverName);
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.height = '400px';
+    dialogConfig.width = '600px';
+
+    this.dialogRef = this.matDialog.open(AlertPopupComponent, {
+      ...dialogConfig,
+      data: {
+        icon: 'close',
+        image: '../../../../assets/images/alert.svg',
+        heading: `${'Are you sure ?'}`,
+        content: ` Are you sure you want to cancel Savaari Driver <strong> ${driverName} 's </strong> leave from <br> <strong> ${startDate} </strong> to <strong> ${endDate} </strong> `,
+        buttons: ['Cancel Leave', 'Don`t Cancel'],
+        onButtonClick: (e) => {
+          console.log('button click', e);
+
+          switch (e) {
+            case 'Cancel Leave':
+              this.dialogRef.close();
+
+              const params = {
+                isLeaveCancelled: true,
+                leaveCancelledAt: new Date(),
+                cancelledBy: 'ADMIN',
+                docId: element.docId
+              };
+
+              this.firebaseService.updateLeaveStatus(params);
+              break;
+
+            default:
+              this.dialogRef.close();
+              break;
+          }
+        }
+      }
+    });
   }
 
-  toEditLeave(rowData: any) {
-    console.log(rowData);
-    // const navigationExtras: NavigationExtras = {
-    //   state: {
-    //     rowData: rowData,
-    //     path: 'EDIT_DRIVER_BOOKING'
-    //   }
-    // };
-    // this.router.navigate(['/driverBookings'], navigationExtras);
+  toEditLeave(element) {
+    console.log(element);
+    this.router.navigate(['editVehicle'], { queryParams: { id: element.docId } });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.forEach((element) => {
+        element.unsubscribe();
+      });
   }
 }
 
