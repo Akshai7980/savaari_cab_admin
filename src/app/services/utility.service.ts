@@ -150,4 +150,19 @@ export class UtilityService {
     const currentTime = new Date().toTimeString().substring(0, 8);
     return currentTime;
   }
+
+  // Function to convert time to 24-hour format
+  convertTo24Hour(timeString) {
+    const [hours, minutes] = timeString.split(":");
+    const [minute, period] = minutes.split(' ')
+  
+    let convertedHours = hours;
+    if (period && period.toUpperCase() === "PM") {
+      convertedHours = parseInt(hours, 10) + 12;
+    } else if (period && period.toUpperCase() === "AM" && hours === "12") {
+      convertedHours = "00";
+    }
+
+    return `${convertedHours}:${minute} ${period}`;
+  }
 }

@@ -57,14 +57,6 @@ const NavigationItems = [
         icon: 'ti ti-file'
       },
       {
-        id: 'todayTrips',
-        title: 'Today`s Trips',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/driverBookingList',
-        icon: 'ti ti-calendar'
-      },
-      {
         id: 'applyDriverLeave',
         title: 'Apply Leave',
         type: 'item',
@@ -114,6 +106,46 @@ const NavigationItems = [
   //     }
   //   ]
   // }
+  {
+    id: 'trip',
+    title: 'Trip',
+    type: 'group',
+    icon: 'icon-car',
+    children: [
+      {
+        id: 'todayTrips',
+        title: 'Today`s Trips',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/driverBookingList',
+        icon: 'ti ti-plane-departure'
+      },
+      {
+        id: 'runningTrips',
+        title: 'Running Trips',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/runningTrip',
+        icon: 'ti ti-plane'
+      },
+      {
+        id: 'runningTrips',
+        title: 'Future Trips',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/upcomingTrip',
+        icon: 'ti ti-plane-departure'
+      },
+      {
+        id: 'runningTrips',
+        title: 'Closed Trips',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/closedTrip',
+        icon: 'ti ti-plane-arrival'
+      },
+    ]
+  },
   {
     id: 'vehicle',
     title: 'Vehicle',

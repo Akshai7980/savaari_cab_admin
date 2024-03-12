@@ -60,6 +60,22 @@ const routes: Routes = [
       {
         path: 'addVehicle',
         loadComponent: () => import('./pages/vehicles/add-vehicle/add-vehicle.component')
+      },
+      {
+        path: 'tripDetail/:type/:id',
+        loadComponent: () => import('./pages/drivers/trips/trip-detail-view/trip-detail-view.component')
+      },
+      {
+        path: 'runningTrip',
+        loadComponent: () => import('./pages/drivers/driver-booking-list/driver-booking-list.component')
+      },
+      {
+        path: 'upcomingTrip',
+        loadComponent: () => import('./pages/drivers/driver-booking-list/driver-booking-list.component')
+      },
+      {
+        path: 'closedTrip',
+        loadComponent: () => import('./pages/drivers/driver-booking-list/driver-booking-list.component')
       }
     ]
   },

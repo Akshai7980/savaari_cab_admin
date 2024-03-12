@@ -163,7 +163,7 @@
               (click)="addDriverBooking()"
               [disabled]="!driverBookingForm.valid"
             >
-              Add Driver Booking
+              {{editForm? 'Edit Driver Booking': 'Add Driver Booking'}}
             </button>
           </div>
         </div>
