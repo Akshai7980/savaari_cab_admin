@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { DataShareService } from 'src/app/services/data-share.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -26,16 +26,16 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   allDrivers: Driver[];
   timeoutId: any;
   currentDate: string = '';
-  editForm: boolean;
-  private subscription: Subscription[];
+  editForm: boolean = false;
+  private subscription: Subscription[] = [];
 
   constructor(
     private readonly firebaseService: FirebaseService,
+    private readonly dataSharingService: DataShareService,
     private readonly snackBar: SnackbarService,
     private readonly formBuilder: FormBuilder,
     private readonly utilityService: UtilityService,
-    private readonly dialog: MatDialog,
-    private readonly router: ActivatedRoute
+    private readonly dialog: MatDialog
   ) {
     this.currentDate = utilityService.currentDate();
 
@@ -57,13 +57,10 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const subscription = this.router.queryParamMap.subscribe((params: any) => {
-      const id = params.params['id'];
-      if (id) {
+    const subscription = this.dataSharingService.data$.subscribe((data) => {
+      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+        this.applyLeaveForm.patchValue(data);
         this.editForm = true;
-        this.firebaseService.fetchVehicleDetails(id).then((data: any) => {
-          this.applyLeaveForm.patchValue(data);
-        });
       }
     });
 
@@ -113,8 +110,6 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
 
   async applyDriverLeave() {
     if (this.applyLeaveForm.valid && !this.editForm) {
-      console.log(this.applyLeaveForm.value);
-
       const docId = this.firebaseService.createId();
       this.applyLeaveForm.controls['docId'].setValue(docId);
 

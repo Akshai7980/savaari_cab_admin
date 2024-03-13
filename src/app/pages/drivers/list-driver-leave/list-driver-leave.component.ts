@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { NavigationStart, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { DataShareService } from 'src/app/services/data-share.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { AlertPopupComponent } from 'src/app/theme/shared/components/alert-popup/alert-popup.component';
 import { ElementDetailedViewComponent } from 'src/app/theme/shared/components/element-detailed-view/element-detailed-view.component';
@@ -29,6 +30,7 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
 
   constructor(
     private readonly firebaseService: FirebaseService,
+    private readonly dataShareService: DataShareService,
     private readonly titleCase: TitleCasePipe,
     private readonly matDialog: MatDialog,
     private readonly datePipe: DatePipe,
@@ -85,6 +87,8 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
 
   toViewLeave(element) {
     console.log(element);
+
+    this.matDialog.closeAll();
 
     const startDate = this.datePipe.transform(element.leaveStartDate, 'longDate');
     const endDate = this.datePipe.transform(element.leaveEndDate, 'longDate');
@@ -167,7 +171,8 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
 
   toEditLeave(element) {
     console.log(element);
-    this.router.navigate(['editVehicle'], { queryParams: { id: element.docId } });
+    this.dataShareService.updateData(element);
+    this.router.navigate(['applyDriverLeave']);
   }
 
   ngOnDestroy() {

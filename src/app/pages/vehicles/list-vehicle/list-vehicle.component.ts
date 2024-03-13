@@ -53,9 +53,7 @@ export default class ListVehicleComponent implements OnInit {
   }
 
   toViewVehicle(element) {
-    const data1 = Object.entries(element)
-      .map(([key, value]) => ({ key, value }))
-      .filter((entry) => entry.key !== 'position');
+    this.matDialog.closeAll();
 
     const data = [
       { key: 'Owner Name', value: element.ownerName },

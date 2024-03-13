@@ -89,7 +89,7 @@
               type="button"
               class="btn btn-secondary"
               (click)="applyDriverLeave()"
-              [disabled]="!applyLeaveForm.valid"
+              [disabled]="!applyLeaveForm.valid || !applyLeaveForm.dirty"
             >
               Apply Driver Leave
             </button>

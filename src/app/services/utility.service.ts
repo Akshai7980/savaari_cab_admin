@@ -151,16 +151,22 @@ export class UtilityService {
     return currentTime;
   }
 
+  removeKeys(obj, keysToRemove) {
+    for (let key of keysToRemove) {
+      delete obj[key];
+    }
+  }
+
   // Function to convert time to 24-hour format
   convertTo24Hour(timeString) {
-    const [hours, minutes] = timeString.split(":");
-    const [minute, period] = minutes.split(' ')
-  
+    const [hours, minutes] = timeString.split(':');
+    const [minute, period] = minutes.split(' ');
+
     let convertedHours = hours;
-    if (period && period.toUpperCase() === "PM") {
+    if (period && period.toUpperCase() === 'PM') {
       convertedHours = parseInt(hours, 10) + 12;
-    } else if (period && period.toUpperCase() === "AM" && hours === "12") {
-      convertedHours = "00";
+    } else if (period && period.toUpperCase() === 'AM' && hours === '12') {
+      convertedHours = '00';
     }
 
     return `${convertedHours}:${minute} ${period}`;
