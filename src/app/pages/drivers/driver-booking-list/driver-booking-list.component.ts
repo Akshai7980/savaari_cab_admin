@@ -18,6 +18,7 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
   displayedColumns: string[] = ['position', 'tripTime', 'customerName', 'location', 'destination', 'vehicleName', 'actions'];
   dataSource = new MatTableDataSource<DriverBookings>([]);
   driverBookings: DriverBookings[] = [];
+  listType: string;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -27,10 +28,14 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
   ) {}
 
   ngOnInit(): void {
-    this.getTodaysDriverBookings();
+    this.getBookingList();
+    this.listType = this.router.url.includes('driverBookingList')? 'today':
+                    this.router.url.includes('runningTrip')? 'running':
+                    this.router.url.includes('upcomingTrip')? 'upcoming':
+                    'closed';
   }
 
-  getTodaysDriverBookings() {
+  getBookingList() {
     const today = new Date();
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth();
@@ -40,14 +45,46 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
 
     this.firebaseService.getDriverBooking().subscribe(
       (res: DriverBookings[]) => {
-        const todaysDriverBookings = res.filter((booking) => {
-          const bookingTimestamp = new Date(booking.startDate).getTime();
-          return bookingTimestamp >= todayStart && bookingTimestamp <= todayEnd && !booking.isTripCancelled;
-        });
+        let bookingList;
+        switch(this.listType) {
+          case 'today':
+            bookingList = res.filter((booking) => {
+              const bookingTimestamp = new Date(booking.startDate).getTime();
+              return (
+                bookingTimestamp >= todayStart &&
+                bookingTimestamp <= todayEnd &&
+                !booking.isTripCancelled &&
+                booking.status !== 'running' &&
+                booking.status !== 'canceled' &&
+                booking.status !== 'closed'
+              );
+            });
+            break;
+          
+          case 'running':
+            this.displayedColumns.splice(this.displayedColumns.length - 1, 0, 'selectedDriver');
+            bookingList = res.filter((booking) => {
+              return booking.status == 'running';
+            });
+            break;
 
-        console.log(todaysDriverBookings);
-        this.driverBookings = todaysDriverBookings;
-        this.dataSource.data = todaysDriverBookings;
+          case 'upcoming':
+            bookingList = res.filter((booking) => {
+              const bookingTimestamp = new Date(booking.startDate).getTime();
+              return booking.status == 'yts' && bookingTimestamp > todayEnd;
+            });
+            break;
+
+          case 'closed':
+            this.displayedColumns.splice(this.displayedColumns.length - 1, 0, 'selectedDriver');
+            bookingList = res.filter((booking) => {
+              return booking.status == 'closed';
+            });
+            break;
+        }
+
+        this.driverBookings = bookingList;
+        this.dataSource.data = bookingList;
 
         this.driverBookings.forEach((element, index) => {
           if (element) {
@@ -75,6 +112,16 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
 
   toViewTrip(rowData: any) {
     console.log(rowData);
+    this.router.navigate([`tripDetail/today/${rowData.docId}`]);
+  }
+
+  toCloseTrip(rowData: any) {
+    const params = {
+      status: 'closed',
+      tripCancelledBy: 'Admin',
+      docId: rowData.docId
+    }
+    this.firebaseService.updateTripStatus(params);
   }
 
   toCancelTrip(rowData: any) {
@@ -82,6 +129,7 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
 
     const params = {
       isTripCancelled: true,
+      status: 'canceled',
       tripCancellationTime: new Date(),
       tripCancelledBy: 'Admin',
       docId: rowData.docId
@@ -91,13 +139,23 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
 
   toEditTrip(rowData: any) {
     console.log(rowData);
-    const navigationExtras: NavigationExtras = {
-      state: {
-        rowData: rowData,
-        path: 'EDIT_DRIVER_BOOKING'
-      }
-    };
-    this.router.navigate(['/driverBookings'], navigationExtras);
+    if (this.listType === 'today') {
+
+      // Not Sure what it's for, so just commented to make the flow work
+
+      // const navigationExtras: NavigationExtras = {
+      //   state: {
+      //     rowData: rowData,
+      //     path: 'EDIT_DRIVER_BOOKING'
+      //   }
+      // };
+      // this.router.navigate(['/driverBookings'], navigationExtras);
+
+
+      this.router.navigate(['driverBookings'], { queryParams: { id: rowData.docId } })
+    } else {
+      this.router.navigate([`/tripDetail/running/${rowData.docId}`]);
+    }
   }
 }
 
@@ -114,4 +172,5 @@ export interface DriverBookings {
   startDate: string;
   startTime: string;
   isTripCancelled?: boolean;
+  status: string;
 }

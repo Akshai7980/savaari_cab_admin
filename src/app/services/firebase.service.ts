@@ -200,17 +200,17 @@ export class FirebaseService {
   // --- TO UPDATE TRIP STATUS ---
   updateLeaveStatus(params: any): Promise<void> {
     console.log(params);
-
+    
     const query = this.findDocumentById(params.docId);
 
     return this.fireStore
-      .collection('allAppliedLeaves')
-      .ref.where('docId', '==', params.docId)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.size === 1) {
-          const docRef = snapshot.docs[0].ref;
-
+    .collection('allAppliedLeaves')
+    .ref.where('docId', '==', params.docId)
+    .get()
+    .then((snapshot) => {
+      if (snapshot.size === 1) {
+        const docRef = snapshot.docs[0].ref;
+        
           return docRef.update(params);
         } else {
           throw new Error('Document not found or multiple documents match the ID.');
@@ -236,15 +236,15 @@ export class FirebaseService {
   getAllVehicleDetails(): Observable<any[]> {
     return this.fireStore.collection('addVehicleDetails').valueChanges();
   }
-
+  
   // TO FETCH VEHICLE DETAIL
   fetchVehicleDetails(docId: string) {
     return new Promise((resolve) => {
       this.fireStore
-        .collection('addVehicleDetails')
-        .ref.where('docId', '==', docId)
-        .get()
-        .then((snapshot) => {
+      .collection('addVehicleDetails')
+      .ref.where('docId', '==', docId)
+      .get()
+      .then((snapshot) => {
           if (snapshot.size === 1) {
             resolve(snapshot.docs[0].data());
           } else {
@@ -255,32 +255,32 @@ export class FirebaseService {
           console.error('Error getting data:', error);
           throw error;
         });
-    });
-  }
+      });
+    }
 
   // TO UPDATE VEHICLE DETAILS
   updateVehicleDetails(data) {
     return this.fireStore
-      .collection('addVehicleDetails')
-      .ref.where('docId', '==', data.docId)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.size === 1) {
-          const docRef = snapshot.docs[0].ref;
-          return docRef.update(data);
-        } else {
-          throw new Error('Vehicle not found or multiple vehicle match the ID.');
-        }
+    .collection('addVehicleDetails')
+    .ref.where('docId', '==', data.docId)
+    .get()
+    .then((snapshot) => {
+      if (snapshot.size === 1) {
+        const docRef = snapshot.docs[0].ref;
+        return docRef.update(data);
+      } else {
+        throw new Error('Vehicle not found or multiple vehicle match the ID.');
+      }
       })
       .catch((error) => {
         console.error('Error getting data:', error);
         throw error;
       });
-  }
-
-  // TO DELETE VEHICLE DETAILS
-  deleteVehicle(id: string) {
-    return this.fireStore
+    }
+    
+    // TO DELETE VEHICLE DETAILS
+    deleteVehicle(id: string) {
+      return this.fireStore
       .collection('addVehicleDetails')
       .ref.where('docId', '==', id)
       .get()
@@ -296,5 +296,48 @@ export class FirebaseService {
         console.error('Error getting data:', error);
         throw error;
       });
+    }
+
+  // TO GET BOOKING DETAIL BY ID
+  getBookingDetailById(id: string) {
+    return this.fireStore
+      .collection('driverBooking')
+      .ref.where('docId', '==', id)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0];
+          return docRef.data();
+        } else {
+          throw new Error('Booking Details not found or multiple booking match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error getting data:', error);
+        throw error;
+      });
   }
+
+
+  // FOR UPDATING THE BOOKING
+  updateBookingDetailById(params: any) {
+    return this.fireStore
+      .collection('driverBooking')
+      .ref.where('docId', '==', params.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+
+          return docRef.update(params);
+        } else {
+          throw new Error('Document not found or multiple documents match the ID.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating trip status:', error);
+        throw error;
+      });
+    }  
+
 }

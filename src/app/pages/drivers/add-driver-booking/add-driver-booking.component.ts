@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -37,8 +37,11 @@ export default class AddDriverBookingComponent implements OnInit {
     cusVehicleName: ['', Validators.required],
     cusVehicleType: ['', Validators.required],
     cusVehicleNumber: ['', Validators.required],
-    docId: ['']
+    docId: [''],
+    status: [''],
+    selectedDriver: ['']
   });
+  editForm: boolean;
 
   constructor(
     private readonly firebaseService: FirebaseService,
@@ -46,6 +49,7 @@ export default class AddDriverBookingComponent implements OnInit {
     private readonly snackBar: SnackbarService,
     private readonly formBuilder: FormBuilder,
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly dialog: MatDialog
   ) {
     this.handleEditState();
@@ -64,7 +68,9 @@ export default class AddDriverBookingComponent implements OnInit {
     this.route.queryParamMap.subscribe((params: any) => {
       const id = params.params['id'];
       if (id) {
-        this.firebaseService.fetchVehicleDetails(id).then((data: any) => {
+        this.editForm = true;
+        this.firebaseService.getBookingDetailById(id).then((data: any) => {
+          data.startTime = data.startTime? this.utilityService.convertTo24Hour(data.startTime): '';
           this.driverBookingForm.patchValue(data);
         });
       }
@@ -104,19 +110,26 @@ export default class AddDriverBookingComponent implements OnInit {
     const inputValue = this.driverBookingForm.controls['startTime'].value;
     this.driverBookingForm.controls['startTime'].setValue(this.utilityService.convertTo12HourFormat(inputValue));
 
-    const docId = this.firebaseService.createId();
-    this.driverBookingForm.controls['docId'].setValue(docId);
-
-    this.firebaseService
-      .addDriverBooking(this.driverBookingForm.value)
-      .then((res) => {
-        this.snackBar.showMessage('Driver Booking Successfully Added');
-        this.driverBookingForm.reset();
-      })
-      .catch((error) => {
-        console.error('Error adding driver booking:', error);
-        this.snackBar.showMessage('Error Adding Driver Booking');
+    this.driverBookingForm.controls['status'].setValue('yts');
+    
+    if(!this.editForm) {
+      const docId = this.firebaseService.createId();
+      this.driverBookingForm.controls['docId'].setValue(docId);
+      this.firebaseService
+        .addDriverBooking(this.driverBookingForm.value)
+        .then((res) => {
+          this.snackBar.showMessage('Driver Booking Successfully Added');
+          this.driverBookingForm.reset();
+        })
+        .catch((error) => {
+          console.error('Error adding driver booking:', error);
+          this.snackBar.showMessage('Error Adding Driver Booking');
+        });
+    } else {
+      this.firebaseService.updateBookingDetailById(this.driverBookingForm.value).then(() => {
+        this.router.navigate(['/driverBookingList'])
       });
+    }
   }
 }
 

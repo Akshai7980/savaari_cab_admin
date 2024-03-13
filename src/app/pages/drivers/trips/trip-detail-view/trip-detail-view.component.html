@@ -1,0 +1,63 @@
+<table mat-table [dataSource]="dataSource" *ngIf="dataSource.data.length > 0">
+  <!-- Key Column -->
+  <ng-container matColumnDef="key">
+    <th mat-header-cell *matHeaderCellDef>
+      {{bookingStatus !== 'running'? "Today's Trip": 'Running Trip' | titlecase}}
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element?.property ? element.property : '--' }}
+    </td>
+  </ng-container>
+
+  <!-- Value Column -->
+  <ng-container matColumnDef="value">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element">
+
+      <ng-container *ngIf="bookingStatus === 'running' && (element.key == 'startDate' || element.key ==  'endDate')">
+          <input matInput class="form-control" type="date" [value]="element.value" (change)="valueChange(element.key, $event)">
+      </ng-container>
+
+      <ng-container *ngIf="bookingStatus === 'running' && element.key == 'startTime'">
+        <input matInput class="form-control" type="time" [value]="element.value" (change)="valueChange(element.key, $event)">
+      </ng-container>
+
+      <ng-container *ngIf="bookingStatus === 'running' && (element.key == 'pickUpLocation' || element.key == 'dropOffLocation')">
+        <input matInput class="form-control" type="text" [value]="element.value" (keyup)="valueChange(element.key, $event)">
+      </ng-container>
+
+      <ng-container *ngIf="bookingStatus !== 'running' && bookingStatus !== 'closed' && element.key == 'selectedDriver'">
+        <input type="text" class="form-control" style="border: 1px solid #000; border-radius: 0;" [readOnly]="true" (click)="openDriversList($event)">
+      </ng-container>
+
+      <ng-container *ngIf="bookingStatus === 'running' && !excludedKeys.includes(element.key)">
+        {{ element?.value ? element.value : '--' }}
+      </ng-container>
+
+      <ng-container *ngIf="bookingStatus !== 'running' && element.key != 'selectedDriver'">
+        {{ element?.value? element.value : '--' }}
+      </ng-container>
+
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<div class="action-btns" *ngIf="dataSource.data.length > 0 && bookingStatus != 'closed'">
+  <button type="button" class="btn btn-secondary" style="margin-right: 10px;" *ngIf="bookingStatus !== 'running'" (click)="toStartTrip()">
+    Start Trip
+  </button>
+  <button type="button" class="btn btn-secondary" style="margin-right: 10px;" *ngIf="bookingStatus === 'running'" (click)="toCloseTrip()">
+    Close Trip
+  </button>
+  <button type="button" class="btn btn-secondary" style="margin-right: 10px;" (click)="toCancelTrip()">
+    Cancel Trip
+  </button>
+  <button type="button" class="btn btn-secondary" style="margin-right: 10px;" *ngIf="bookingStatus !== 'running'" (click)="toEditTrip()">
+    Edit
+  </button>
+  <button type="button" class="btn btn-secondary" style="margin-right: 10px;" *ngIf="bookingStatus === 'running'" (click)="bookingDetail.status = 'yts'; updateBooking()">
+    Update Trip
+  </button>
+</div>
