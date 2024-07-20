@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DataShareService } from 'src/app/services/data-share.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
@@ -17,9 +17,9 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
   styleUrls: ['./add-vehicle.component.scss']
 })
 export default class AddVehicleComponent implements OnInit {
-  vehicleRegForm: FormGroup;
-  fuelType;
-  editForm: boolean = false;
+  public vehicleRegForm: FormGroup;
+  public editForm: boolean = false;
+
   private subscription: Subscription[] = [];
 
   constructor(
@@ -27,22 +27,19 @@ export default class AddVehicleComponent implements OnInit {
     private readonly firebaseService: FirebaseService,
     private readonly dataSharingService: DataShareService,
     private readonly snackBar: SnackbarService,
-    private readonly formBuilder: FormBuilder,
-    private readonly router: ActivatedRoute
+    private readonly formBuilder: FormBuilder
   ) {
     this.vehicleRegForm = this.formBuilder.group({
       ownerName: [''],
-      vehicleNumber: ['', Validators.required],
-      insuranceDateStart: ['', Validators.required],
       insuranceDateEnd: ['', Validators.required],
       registrationDate: ['', Validators.required],
       registeringAuthority: ['Kerala'],
-      makeModel: ['', Validators.required],
-      fuelType: ['', Validators.required],
-      vehicleAge: ['', Validators.required],
-      vehicleClass: ['', Validators.required],
-      smokeClearanceDateStart: ['', Validators.required],
+      location: ['', Validators.required],
+      ownerContactNumber: ['', Validators.required],
+      CFDate: ['', Validators.required],
       smokeClearanceDateEnd: ['', Validators.required],
+      vehicleType: ['', Validators.required],
+      vehicleNumber: ['', Validators.required],
       docId: ['']
     });
   }
@@ -56,24 +53,16 @@ export default class AddVehicleComponent implements OnInit {
     });
 
     this.subscription.push(subscription);
-
-    this.fetchFuelType();
   }
 
   ngAfterViewInit(): void {
     this.vehicleRegForm.controls['registeringAuthority'].disable();
-    const subscription = this.vehicleRegForm.controls['registrationDate'].valueChanges.subscribe((value) => {
-      var dayDifference = this.utilityService.calculateDaysDifference(value, new Date().toISOString());
+    const subscription: Subscription = this.vehicleRegForm.controls['registrationDate'].valueChanges.subscribe((value) => {
+      const dayDifference: number = this.utilityService.calculateDaysDifference(value, new Date().toISOString());
       this.vehicleRegForm.controls['vehicleAge'].setValue(dayDifference);
     });
 
     this.subscription.push(subscription);
-  }
-
-  async fetchFuelType() {
-    const response = await fetch('../../../../assets/Json/fuelType.json');
-    const data = await response.json();
-    this.fuelType = data.fuelType;
   }
 
   addVehicle() {

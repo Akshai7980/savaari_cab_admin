@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AutocapitalizeDirective } from 'src/app/directives/autocapitalize.directive';
+import { VehicleNumberDirective } from 'src/app/directives/vehicle-number.directive';
 import { FirebaseService } from 'src/app/services/firebase.service';
-import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { ListAllDriversComponent } from 'src/app/theme/shared/components/list-all-drivers/list-all-drivers.component';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
@@ -12,7 +14,7 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 @Component({
   selector: 'app-add-driver-booking',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, AutocapitalizeDirective, VehicleNumberDirective],
   templateUrl: './add-driver-booking.component.html',
   styleUrls: ['./add-driver-booking.component.scss']
 })
@@ -20,7 +22,10 @@ export default class AddDriverBookingComponent implements OnInit {
   @ViewChild('startDateInput') startDateInput: HTMLInputElement;
   @ViewChild('endDateInput') endDateInput: HTMLInputElement;
 
-  drivers: Driver[] = [];
+  private drivers: Driver[] = [];
+  private readonly subscription: Subscription[] = [];
+
+  public editForm: boolean;
 
   driverBookingForm = this.formBuilder.group({
     customerName: ['', Validators.required],
@@ -41,16 +46,14 @@ export default class AddDriverBookingComponent implements OnInit {
     status: [''],
     selectedDriver: ['']
   });
-  editForm: boolean;
 
   constructor(
     private readonly firebaseService: FirebaseService,
     private readonly utilityService: UtilityService,
-    private readonly snackBar: SnackbarService,
     private readonly formBuilder: FormBuilder,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly dialog: MatDialog
+    private readonly matDialog: MatDialog
   ) {
     this.handleEditState();
   }
@@ -65,16 +68,17 @@ export default class AddDriverBookingComponent implements OnInit {
   }
 
   private handleEditState() {
-    this.route.queryParamMap.subscribe((params: any) => {
-      const id = params.params['id'];
+    const subscription = this.route.queryParamMap.subscribe((params: ParamMap) => {
+      const id = params.get('id');
       if (id) {
         this.editForm = true;
-        this.firebaseService.getBookingDetailById(id).then((data: any) => {
-          data.startTime = data.startTime? this.utilityService.convertTo24Hour(data.startTime): '';
+        this.firebaseService.getBookingDetailById(id).then((data: { startTime: string }) => {
+          data.startTime = data.startTime ? this.utilityService.convertTo24Hour(data.startTime) : '';
           this.driverBookingForm.patchValue(data);
         });
       }
     });
+    this.subscription.push(subscription);
   }
 
   private initializeDateValues() {
@@ -90,20 +94,23 @@ export default class AddDriverBookingComponent implements OnInit {
     dialogConfig.height = '400px';
     dialogConfig.width = '600px';
 
-    const dialogRef = this.dialog.open(ListAllDriversComponent, {
+    const dialogRef = this.matDialog.open(ListAllDriversComponent, {
       ...dialogConfig,
       data: { drivers: this.drivers }
     });
 
-    dialogRef.afterClosed().subscribe((selectedDrivers: Driver[]) => {
+    const subscription = dialogRef.afterClosed().subscribe((selectedDrivers: Driver[]) => {
       console.log(`Dialog result: ${selectedDrivers}`);
     });
+
+    this.subscription.push(subscription);
   }
 
   getDrivers() {
-    this.firebaseService.getUserOTPs().subscribe((drivers) => {
+    const subscription = this.firebaseService.getUserOTPs().subscribe((drivers) => {
       this.drivers = drivers || [];
     });
+    this.subscription.push(subscription);
   }
 
   addDriverBooking() {
@@ -111,25 +118,35 @@ export default class AddDriverBookingComponent implements OnInit {
     this.driverBookingForm.controls['startTime'].setValue(this.utilityService.convertTo12HourFormat(inputValue));
 
     this.driverBookingForm.controls['status'].setValue('yts');
-    
-    if(!this.editForm) {
+
+    if (!this.editForm) {
       const docId = this.firebaseService.createId();
       this.driverBookingForm.controls['docId'].setValue(docId);
       this.firebaseService
         .addDriverBooking(this.driverBookingForm.value)
-        .then((res) => {
-          this.snackBar.showMessage('Driver Booking Successfully Added');
+        .then(() => {
+          this.utilityService.successFailedPopup('SUCCESS');
           this.driverBookingForm.reset();
+          this.initializeDateValues();
         })
         .catch((error) => {
           console.error('Error adding driver booking:', error);
-          this.snackBar.showMessage('Error Adding Driver Booking');
+          this.utilityService.successFailedPopup('FAILED');
+          this.driverBookingForm.reset();
+          this.initializeDateValues();
         });
     } else {
       this.firebaseService.updateBookingDetailById(this.driverBookingForm.value).then(() => {
-        this.router.navigate(['/driverBookingList'])
+        this.router.navigate(['/driverBookingList']);
       });
     }
+  }
+
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.forEach((element) => {
+        element.unsubscribe();
+      });
   }
 }
 

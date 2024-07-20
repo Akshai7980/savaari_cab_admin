@@ -13,8 +13,6 @@
               class="form-control"
               id="floatingInput"
               formControlName="driverName"
-              autocapitalize="words"
-              appAutocapitalize
             />
             <label for="floatingInput">Driver Name</label>
           </div>
@@ -25,8 +23,6 @@
               class="form-control"
               id="floatingInput"
               formControlName="driverLocation"
-              autocapitalize="words"
-              appAutocapitalize
             />
             <label for="floatingInput">Driver Location</label>
           </div>
@@ -57,8 +53,6 @@
               class="form-control"
               id="floatingInput"
               formControlName="address"
-              autocapitalize="words"
-              appAutocapitalize
             ></textarea>
             <label for="floatingInput">Address</label>
           </div>
@@ -139,16 +133,18 @@
             <label
               for="floatingInput"
               style="font-size: 12px; color: #6c757d; padding-top: 7px;"
-              >Driver Grade</label
+              >Blood Group</label
             >
             <select
               class="form-control"
               id="floatingInput"
-              formControlName="driverGrade"
+              formControlName="bloodGroup"
             >
               <option selected disabled> </option>
-              <option *ngFor="let item of driverGrades" value="{{ item.grade }}"
-                >{{ item.grade }}</option
+              <option
+                *ngFor="let item of bloodGroups"
+                value="{{ item.bloodType }}"
+                >{{ item.bloodType }}</option
               >
             </select>
           </div>

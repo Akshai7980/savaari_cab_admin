@@ -1,27 +1,46 @@
 <div class="container">
-  <div class="mat-icon" *ngIf="data.icon">
+  <!-- Icon Section -->
+  <div class="mat-icon" *ngIf="data?.icon">
     <mat-icon
       (click)="closeAlert()"
       aria-hidden="false"
       aria-label="Example icon"
-      fontIcon="{{data.icon}}"
+      [fontIcon]="data?.icon"
     ></mat-icon>
   </div>
 
-  <img [src]="data.image" alt="" />
+  <!-- Image Section -->
+  <img [src]="data?.image" alt="Alert Image" />
 
-  <h3 *ngIf="data.heading">{{ data.heading }}</h3>
+  <!-- Heading Section -->
+  <h3 *ngIf="data?.heading">{{ data?.heading }}</h3>
 
-  <p *ngIf="data.heading" [innerHTML]="data.content"></p>
+  <!-- Content Section -->
+  <p *ngIf="data?.content" [innerHTML]="data?.content"></p>
 
-  <div class="action-btn">
+  <!-- Action Button Section for non FORM-SUBMIT popups or when popupType is not provided -->
+  <div
+    class="action-btn"
+    *ngIf="!data?.popupType || data?.popupType !== 'FORM-SUBMIT'"
+  >
     <button
       class="btn"
-      *ngFor="let label of data.buttons; let i = index"
-      [ngClass]="{'btn-secondary': i !== 0, 'btn-primary': i === 0}"
+      *ngFor="let label of data?.buttons; let i = index"
+      [ngClass]="{ 'btn-secondary': i !== 0, 'btn-primary': i === 0 }"
       (click)="onButtonClick(label)"
     >
       {{ label }}
+    </button>
+  </div>
+
+  <!-- Action Button Section for FORM-SUBMIT popups -->
+  <div class="action-btn-single" *ngIf="data?.popupType === 'FORM-SUBMIT'">
+    <button
+      class="btn"
+      [ngClass]="{ 'btn-primary': data?.alertType === 'SUCCESS', 'btn-secondary': data?.alertType !== 'SUCCESS' }"
+      (click)="onButtonClick(data?.buttons)"
+    >
+      {{ data?.buttons }}
     </button>
   </div>
 </div>

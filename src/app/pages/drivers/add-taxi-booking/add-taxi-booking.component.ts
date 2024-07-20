@@ -1,37 +1,35 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AutocapitalizeDirective } from 'src/app/directives/autocapitalize.directive';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirebaseService } from 'src/app/services/firebase.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
 @Component({
-  selector: 'app-add-driver-details',
+  selector: 'app-add-taxi-booking',
+  templateUrl: './add-taxi-booking.component.html',
+  styleUrls: ['./add-taxi-booking.component.scss'],
   standalone: true,
-  imports: [CommonModule, SharedModule, ReactiveFormsModule, AutocapitalizeDirective],
-  templateUrl: './add-driver-details.component.html',
-  styleUrls: ['./add-driver-details.component.scss']
+  imports: [CommonModule, SharedModule]
 })
-export default class AddDriverDetailsComponent implements AfterViewInit, OnInit {
+export default class AddTaxiBookingComponent implements AfterViewInit, OnInit {
   driverRegForm: FormGroup;
-
-  districts: District[] = [];
-  bloodGroups: BloodType[] = [];
-  driverGrades: Grade[] = [];
-
+  districts: any;
+  bloodGroups: any;
   assetsPath: string = '../../../assets/Json/';
 
   constructor(
     private readonly utilityService: UtilityService,
     private readonly firebaseService: FirebaseService,
+    private readonly snackBar: SnackbarService,
     private readonly formBuilder: FormBuilder
   ) {
     this.driverRegForm = this.formBuilder.group({
       driverName: ['', Validators.required],
       driverLocation: ['', Validators.required],
       mobileNumber: ['', Validators.required],
-      altMobileNumber: [''],
+      altMobileNumber: ['', Validators.required],
       address: ['', Validators.required],
       bloodGroup: ['', Validators.required],
       licenseNumber: ['', Validators.required],
@@ -49,11 +47,10 @@ export default class AddDriverDetailsComponent implements AfterViewInit, OnInit 
   ngOnInit(): void {
     this.fetchDistricts();
     this.fetchBloodGroups();
-    this.fetchDriverGrades();
   }
 
   fetchDistricts() {
-    this.utilityService.getData(this.assetsPath + 'districts.json').subscribe((response: District[]) => {
+    this.utilityService.getData(this.assetsPath + 'districts.json').subscribe((response: District) => {
       if (response) {
         this.districts = response;
       }
@@ -61,17 +58,9 @@ export default class AddDriverDetailsComponent implements AfterViewInit, OnInit 
   }
 
   fetchBloodGroups() {
-    this.utilityService.getData(this.assetsPath + 'bloodGroup.json').subscribe((response: BloodType[]) => {
+    this.utilityService.getData(this.assetsPath + 'bloodGroup.json').subscribe((response: BloodType) => {
       if (response) {
         this.bloodGroups = response;
-      }
-    });
-  }
-
-  fetchDriverGrades() {
-    this.utilityService.getData(this.assetsPath + 'driverGrade.json').subscribe((response: Grade[]) => {
-      if (response) {
-        this.driverGrades = response;
       }
     });
   }
@@ -99,12 +88,13 @@ export default class AddDriverDetailsComponent implements AfterViewInit, OnInit 
 
     this.firebaseService
       .addDrivers(this.driverRegForm.value)
-      .then(() => {
-        this.utilityService.successFailedPopup('SUCCESS');
+      .then(async (res) => {
         this.driverRegForm.reset();
+        await this.snackBar.showMessage('Driver Booking Successfully Added');
+        console.log('Successfully added:', res);
       })
       .catch((error) => {
-        this.utilityService.successFailedPopup('FAILED');
+        this.snackBar.showMessage('Error Adding Driver Booking');
         console.error('Error adding driver booking:', error);
       });
   }
@@ -112,15 +102,10 @@ export default class AddDriverDetailsComponent implements AfterViewInit, OnInit 
 
 interface District {
   id: number;
-  districts: string;
+  name: string;
 }
 
 interface BloodType {
   bloodType: string;
   Rh: string;
-}
-
-interface Grade {
-  id: string;
-  grade: string;
 }

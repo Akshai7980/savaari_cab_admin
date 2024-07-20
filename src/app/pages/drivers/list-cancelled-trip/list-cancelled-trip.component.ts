@@ -8,13 +8,13 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
 @Component({
-  selector: 'app-driver-booking-list',
+  selector: 'app-list-cancelled-trip',
+  templateUrl: './list-cancelled-trip.component.html',
+  styleUrls: ['./list-cancelled-trip.component.scss'],
   standalone: true,
-  imports: [CommonModule, SharedModule, VehicleNumberPipe],
-  templateUrl: './driver-booking-list.component.html',
-  styleUrls: ['./driver-booking-list.component.scss']
+  imports: [CommonModule, SharedModule, VehicleNumberPipe]
 })
-export default class DriverBookingListComponent implements OnInit, AfterViewInit {
+export default class ListCancelledTripComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['position', 'tripTime', 'customerName', 'location', 'destination', 'vehicleName', 'actions'];
   dataSource = new MatTableDataSource<DriverBookings>([]);
   driverBookings: DriverBookings[] = [];

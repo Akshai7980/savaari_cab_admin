@@ -1,12 +1,23 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
+import { AlertPopupComponent } from '../theme/shared/components/alert-popup/alert-popup.component';
 import { FirebaseService } from './firebase.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilityService {
-  constructor(private readonly firebaseService: FirebaseService) {}
+  private dialogRef;
+  private assetsPath: string = '../../../../../assets/images/';
+
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly http: HttpClient,
+    private readonly matDialog: MatDialog
+  ) {}
 
   /**
    * Calculate the difference in days between two dates.
@@ -100,40 +111,28 @@ export class UtilityService {
       return token;
     };
 
-    const checkTokenUniqueness = async (token: string, registeredDrivers: any[]) => {
+    const checkTokenUniqueness = (token: string, registeredDrivers: any[]) => {
       return !registeredDrivers.some((driver) => driver.driverCode === token);
     };
 
     const generateUniqueToken = async () => {
-      const registeredDrivers$ = this.firebaseService.getRegisteredDrivers();
-
-      return new Promise<string>((resolve, reject) => {
+      try {
+        const registeredDrivers = await firstValueFrom(this.firebaseService.getRegisteredDrivers());
         let token = generateRandomToken();
         let attempts = 0;
 
-        const subscription = registeredDrivers$.subscribe({
-          next: (registeredDrivers) => {
-            checkTokenUniqueness(token, registeredDrivers).then((isUnique) => {
-              if (isUnique) {
-                subscription.unsubscribe();
-                resolve(token);
-              } else {
-                token = generateRandomToken();
-                attempts++;
-
-                if (attempts >= maxAttempts) {
-                  subscription.unsubscribe();
-                  reject('Unable to generate a unique token.');
-                }
-              }
-            });
-          },
-          error: (error) => {
-            subscription.unsubscribe();
-            reject(error);
+        while (attempts < maxAttempts) {
+          if (checkTokenUniqueness(token, registeredDrivers)) {
+            return token;
           }
-        });
-      });
+          token = generateRandomToken();
+          attempts++;
+        }
+
+        throw new Error('Unable to generate a unique token.');
+      } catch (error) {
+        throw new Error(`Error generating token: ${error.message}`);
+      }
     };
 
     return generateUniqueToken();
@@ -170,5 +169,48 @@ export class UtilityService {
     }
 
     return `${convertedHours}:${minute} ${period}`;
+  }
+
+  getData(url: string) {
+    return this.http.get(url);
+  }
+
+  formatLicensePlate(input: string): string {
+    const sanitizedValue = input.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+    const vehicleNumberRegex = /^[A-Z]{2}[0-9]{2}[A-Z]{1,3}[0-9]{4}$/;
+    const validVehicleNumber = vehicleNumberRegex.test(sanitizedValue);
+
+    let formattedValue = sanitizedValue;
+    if (validVehicleNumber) {
+      formattedValue = sanitizedValue.replace(/^([A-Z]{2})([0-9]{2})([A-Z]{1,3})([0-9]{4})$/, '$1 $2 $3 $4');
+    }
+
+    return formattedValue;
+  }
+
+  successFailedPopup(alertType: string) {
+    const isSuccess = alertType === 'SUCCESS';
+
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.height = '400px';
+    dialogConfig.width = '600px';
+
+    dialogConfig.data = {
+      icon: 'close',
+      image: `${this.assetsPath}${isSuccess ? 'success-check-mark.png' : 'failed-icon.png'}`,
+      popupType: 'FORM-SUBMIT',
+      alertType: alertType,
+      heading: isSuccess ? 'Form Submission Successful' : 'Form Submission Failed',
+      content: isSuccess ? 'Your form has been submitted successfully. Thank you!' : 'Your form submission failed. Please try again later.',
+      buttons: isSuccess ? ['Continue...'] : ['Try Again !'],
+
+      onButtonClick: () => {
+        this.dialogRef.close();
+      }
+    };
+
+    this.dialogRef = this.matDialog.open(AlertPopupComponent, dialogConfig);
   }
 }

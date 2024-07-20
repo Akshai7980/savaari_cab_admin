@@ -1,0 +1,34 @@
+[
+  {
+    "bloodType": "A+",
+    "Rh": "positive"
+  },
+  {
+    "bloodType": "A-",
+    "Rh": "negative"
+  },
+  {
+    "bloodType": "B+",
+    "Rh": "positive"
+  },
+  {
+    "bloodType": "B-",
+    "Rh": "negative"
+  },
+  {
+    "bloodType": "O+",
+    "Rh": "positive"
+  },
+  {
+    "bloodType": "O-",
+    "Rh": "negative"
+  },
+  {
+    "bloodType": "AB+",
+    "Rh": "positive"
+  },
+  {
+    "bloodType": "AB-",
+    "Rh": "negative"
+  }
+]

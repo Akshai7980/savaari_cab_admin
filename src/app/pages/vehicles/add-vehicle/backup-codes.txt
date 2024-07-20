@@ -1,0 +1,48 @@
+interface FuelType {
+  id: number;
+  type: string;
+}
+
+interface FuelData {
+  fuelType: FuelType[];
+}
+
+  public fuelType: FuelType[];
+
+      this.fetchFuelType();
+
+
+  async fetchFuelType() {
+    const response: Response = await fetch('../../../../assets/Json/fuelType.json');
+    const data: FuelData = await response.json();
+    this.fuelType = data.fuelType;
+  }
+
+
+            <!-- <div class="form-floating mb-3">
+            <label
+              for="floatingInput"
+              style="font-size: 12px; color: #6c757d; padding-top: 7px;"
+              >Fuel Type</label
+            >
+            <select
+              class="form-control"
+              id="floatingInput"
+              formControlName="fuelType"
+            >
+              <option selected disabled> </option>
+              <option *ngFor="let type of fuelType" value="{{ type.type }}">
+                {{ type.type }}</option
+              >
+            </select>
+          </div> -->
+
+                    <div class="form-floating mb-3">
+            <input
+              type="date"
+              class="form-control no-spinners"
+              id="floatingInput"
+              formControlName="insuranceDateStart"
+            />
+            <label for="floatingInput">Insurance Date Start</label>
+          </div>
