@@ -76,6 +76,18 @@ const routes: Routes = [
       {
         path: 'closedTrip',
         loadComponent: () => import('./pages/drivers/driver-booking-list/driver-booking-list.component')
+      },
+      {
+        path: 'addTaxiBooking',
+        loadComponent: () => import('./pages/drivers/add-taxi-booking/add-taxi-booking.component')
+      },
+      {
+        path: 'cancelledTrips',
+        loadComponent: () => import('./pages/drivers/list-cancelled-trip/list-cancelled-trip.component')
+      },
+      {
+        path: 'listCustomers',
+        loadComponent: () => import('./pages/drivers/list-customers/list-customers.component')
       }
     ]
   },

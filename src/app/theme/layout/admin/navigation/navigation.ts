@@ -16,6 +16,7 @@ export interface NavigationItem {
 export interface Navigation extends NavigationItem {
   children?: NavigationItem[];
 }
+
 const NavigationItems = [
   {
     id: 'dashboard',
@@ -41,20 +42,31 @@ const NavigationItems = [
     icon: 'icon-navigation',
     children: [
       {
-        id: 'addDrivers',
-        title: 'Add Drivers',
-        type: 'item',
-        url: '/addDrivers',
-        classes: 'nav-item',
-        icon: 'ti ti-user'
-      },
-      {
         id: 'driverBookings',
         title: 'Add Booking',
         type: 'item',
         classes: 'nav-item',
         url: '/driverBookings',
-        icon: 'ti ti-file'
+        icon: 'ti ti-file',
+        breadcrumbs: true
+      },
+      {
+        id: 'addDrivers',
+        title: 'Add Drivers Booking',
+        type: 'item',
+        url: '/addDrivers',
+        classes: 'nav-item',
+        icon: 'ti ti-user',
+        breadcrumbs: true
+      },
+      {
+        id: 'addTaxiBooking',
+        title: 'Add Taxi Booking',
+        type: 'item',
+        url: '/addTaxiBooking',
+        classes: 'nav-item',
+        icon: 'ti ti-user',
+        breadcrumbs: true
       },
       {
         id: 'applyDriverLeave',
@@ -62,7 +74,8 @@ const NavigationItems = [
         type: 'item',
         classes: 'nav-item',
         url: '/applyDriverLeave',
-        icon: 'ti ti-calendar'
+        icon: 'ti ti-calendar',
+        breadcrumbs: true
       },
       {
         id: 'listDriverLeave',
@@ -70,7 +83,8 @@ const NavigationItems = [
         type: 'item',
         classes: 'nav-item',
         url: '/listDriverLeave',
-        icon: 'ti ti-calendar'
+        icon: 'ti ti-calendar',
+        breadcrumbs: true
       },
       {
         id: 'listDriverDetails',
@@ -78,7 +92,8 @@ const NavigationItems = [
         type: 'item',
         classes: 'nav-item',
         url: '/listDriverDetails',
-        icon: 'ti ti-calendar'
+        icon: 'ti ti-calendar',
+        breadcrumbs: true
       }
       // {
       //   id: 'color',
@@ -90,22 +105,6 @@ const NavigationItems = [
       // }
     ]
   },
-  // {
-  //   id: 'other',
-  //   title: 'Other',
-  //   type: 'group',
-  //   icon: 'icon-navigation',
-  //   children: [
-  //     {
-  //       id: 'addDrivers',
-  //       title: 'Add Drivers',
-  //       type: 'item',
-  //       url: '/addDrivers',
-  //       classes: 'nav-item',
-  //       icon: 'ti ti-brand-chrome'
-  //     }
-  //   ]
-  // }
   {
     id: 'trip',
     title: 'Trip',
@@ -118,7 +117,8 @@ const NavigationItems = [
         type: 'item',
         classes: 'nav-item',
         url: '/driverBookingList',
-        icon: 'ti ti-plane-departure'
+        icon: 'ti ti-plane-departure',
+        breadcrumbs: true
       },
       {
         id: 'runningTrips',
@@ -126,24 +126,36 @@ const NavigationItems = [
         type: 'item',
         classes: 'nav-item',
         url: '/runningTrip',
-        icon: 'ti ti-plane'
+        icon: 'ti ti-plane',
+        breadcrumbs: true
       },
       {
-        id: 'runningTrips',
-        title: 'Future Trips',
+        id: 'tomorrowTrips',
+        title: 'Tomorrow`s Trips',
         type: 'item',
         classes: 'nav-item',
         url: '/upcomingTrip',
-        icon: 'ti ti-plane-departure'
+        icon: 'ti ti-plane-departure',
+        breadcrumbs: true
       },
       {
-        id: 'runningTrips',
+        id: 'closedTrips',
         title: 'Closed Trips',
         type: 'item',
         classes: 'nav-item',
         url: '/closedTrip',
-        icon: 'ti ti-plane-arrival'
+        icon: 'ti ti-plane-arrival',
+        breadcrumbs: true
       },
+      {
+        id: 'cancelledTrips',
+        title: 'Cancelled Trips',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/cancelledTrips',
+        icon: 'ti ti-plane-arrival',
+        breadcrumbs: true
+      }
     ]
   },
   {
@@ -169,9 +181,18 @@ const NavigationItems = [
         url: '/listVehicle',
         icon: 'ti ti-car',
         breadcrumbs: true
+      },
+      {
+        id: 'list-customers',
+        title: 'List Customers',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/listCustomers',
+        icon: 'ti ti-car',
+        breadcrumbs: true
       }
     ]
-  },
+  }
 ];
 
 @Injectable()

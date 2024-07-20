@@ -5,7 +5,6 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { DataShareService } from 'src/app/services/data-share.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
-import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { ListAllDriversComponent } from 'src/app/theme/shared/components/list-all-drivers/list-all-drivers.component';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
@@ -22,17 +21,15 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   @ViewChild('startDateInput') startDateInput: HTMLInputElement;
   @ViewChild('endDateInput') endDateInput: HTMLInputElement;
 
-  applyLeaveForm: FormGroup;
-  allDrivers: Driver[];
-  timeoutId: any;
-  currentDate: string = '';
-  editForm: boolean = false;
-  private subscription: Subscription[] = [];
+  public readonly applyLeaveForm: FormGroup;
+  private allDrivers: Driver[];
+  private readonly currentDate: string = '';
+  public editForm: boolean = false;
+  private readonly subscription: Subscription[] = [];
 
   constructor(
     private readonly firebaseService: FirebaseService,
     private readonly dataSharingService: DataShareService,
-    private readonly snackBar: SnackbarService,
     private readonly formBuilder: FormBuilder,
     private readonly utilityService: UtilityService,
     private readonly dialog: MatDialog
@@ -75,6 +72,7 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
 
   openDialog() {
     const dialogConfig = new MatDialogConfig();
+
     dialogConfig.height = '400px';
     dialogConfig.width = '600px';
     dialogConfig.hasBackdrop = true;
@@ -99,7 +97,7 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   }
 
   getAllDrivers() {
-    const subscription = this.firebaseService.getUserOTPs().subscribe((res: any) => {
+    const subscription = this.firebaseService.getUserOTPs().subscribe((res) => {
       if (res && res.length > 0) {
         this.allDrivers = res;
       }
@@ -108,56 +106,49 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
     this.subscription.push(subscription);
   }
 
-  async applyDriverLeave() {
+  settingValuesToForm() {
+    this.applyLeaveForm.controls['leaveStartDate'].setValue(this.currentDate);
+    this.applyLeaveForm.controls['leaveEndDate'].setValue(this.currentDate);
+    this.applyLeaveForm.controls['numberOfDays'].setValue('1');
+  }
+
+  applyDriverLeave() {
     if (this.applyLeaveForm.valid && !this.editForm) {
       const docId = this.firebaseService.createId();
+
       this.applyLeaveForm.controls['docId'].setValue(docId);
 
-      try {
-        await this.firebaseService.applyDriverLeave(this.applyLeaveForm.value);
-        this.applyLeaveForm.reset();
-
-        this.timeoutId = setTimeout(() => {
-          this.applyLeaveForm.controls['leaveStartDate'].setValue(this.currentDate);
-          this.applyLeaveForm.controls['leaveEndDate'].setValue(this.currentDate);
-          this.applyLeaveForm.controls['numberOfDays'].setValue('1');
-        }, 100);
-
-        // Need to check the issue for snackBar here
-        this.timeoutId = setTimeout(() => {
-          this.snackBar.showMessage('Driver Leave Successfully Added');
-        }, 2000);
-      } catch (error) {
-        console.error('Error adding driver leave:', error);
-        this.snackBar.showMessage('Error Adding Driver leave');
-      }
+      this.firebaseService
+        .applyDriverLeave(this.applyLeaveForm.value)
+        .then(() => {
+          this.utilityService.successFailedPopup('SUCCESS');
+          this.applyLeaveForm.reset();
+          this.settingValuesToForm();
+        })
+        .catch((error) => {
+          console.error('Error adding driver booking:', error);
+          this.utilityService.successFailedPopup('FAILED');
+          this.applyLeaveForm.reset();
+          this.settingValuesToForm();
+        });
     } else {
-      try {
-        await this.firebaseService.updateLeaveStatus(this.applyLeaveForm.value);
-        this.applyLeaveForm.reset();
-
-        this.timeoutId = setTimeout(() => {
-          this.applyLeaveForm.controls['leaveStartDate'].setValue(this.currentDate);
-          this.applyLeaveForm.controls['leaveEndDate'].setValue(this.currentDate);
-          this.applyLeaveForm.controls['numberOfDays'].setValue('1');
-        }, 100);
-
-        // Need to check the issue for snackBar here
-        this.timeoutId = setTimeout(() => {
-          this.snackBar.showMessage('Driver Leave Successfully Added');
-        }, 2000);
-      } catch (error) {
-        console.error('Error adding driver leave:', error);
-        this.snackBar.showMessage('Error Adding Driver leave');
-      }
+      this.firebaseService
+        .updateLeaveStatus(this.applyLeaveForm.value)
+        .then(() => {
+          this.utilityService.successFailedPopup('SUCCESS');
+          this.applyLeaveForm.reset();
+          this.settingValuesToForm();
+        })
+        .catch((error) => {
+          console.error('Error adding driver booking:', error);
+          this.utilityService.successFailedPopup('FAILED');
+          this.applyLeaveForm.reset();
+          this.settingValuesToForm();
+        });
     }
   }
 
   ngOnDestroy() {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
-
     if (this.subscription)
       this.subscription.forEach((element) => {
         element.unsubscribe();

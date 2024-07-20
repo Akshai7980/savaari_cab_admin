@@ -22,6 +22,7 @@ import { SharedModule } from './theme/shared/shared.module';
 import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
 
+import { HttpClientModule } from '@angular/common/http';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
@@ -55,7 +56,8 @@ const analytics = getAnalytics(app);
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
-    VehicleNumberPipe
+    VehicleNumberPipe,
+    HttpClientModule
   ],
   providers: [NavigationItem],
   bootstrap: [AppComponent],

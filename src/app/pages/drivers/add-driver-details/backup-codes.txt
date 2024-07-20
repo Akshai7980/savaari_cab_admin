@@ -1,0 +1,26 @@
+          <!-- <div class="form-floating mb-3">
+            <label
+              for="floatingInput"
+              style="font-size: 12px; color: #6c757d; padding-top: 7px;"
+              >Driver Type</label
+            >
+            <select
+              class="form-control"
+              id="floatingInput"
+              formControlName="driverType"
+            >
+              <option selected disabled> </option>
+              <option value="Taxi Driver"> Taxi Driver</option>
+              <option value="Call Driver"> Call Driver</option>
+            </select>
+          </div> -->
+
+                    <!-- <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              formControlName="bloodGroup"
+            />
+            <label for="floatingInput">Blood Group</label>
+          </div> -->

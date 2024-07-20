@@ -1,0 +1,18 @@
+[
+  {
+    "id": "Excellent",
+    "grade": "Excellent"
+  },
+  {
+    "id": "Good",
+    "grade": "Good"
+  },
+  {
+    "id": "very Good",
+    "grade": "veryGood"
+  },
+  {
+    "id": "Average",
+    "grade": "Average"
+  }
+]

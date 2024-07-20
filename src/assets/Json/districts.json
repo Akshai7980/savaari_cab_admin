@@ -1,19 +1,58 @@
-{
-  "state": "Kerala",
-  "districts": [
-    { "id": 1, "districts": "Alappuzha" },
-    { "id": 2, "districts": "Ernakulam" },
-    { "id": 3, "districts": "Idukki" },
-    { "id": 4, "districts": "Kannur" },
-    { "id": 5, "districts": "Kasaragod" },
-    { "id": 6, "districts": "Kollam" },
-    { "id": 7, "districts": "Kottayam" },
-    { "id": 8, "districts": "Kozhikode" },
-    { "id": 9, "districts": "Malappuram" },
-    { "id": 10, "districts": "Palakkad" },
-    { "id": 11, "districts": "Pathanamthitta" },
-    { "id": 12, "districts": "Thiruvananthapuram" },
-    { "id": 13, "districts": "Thrissur" },
-    { "id": 14, "districts": "Wayanad" }
-  ]
-}
+[
+  {
+    "id": 1,
+    "districts": "Alappuzha"
+  },
+  {
+    "id": 2,
+    "districts": "Ernakulam"
+  },
+  {
+    "id": 3,
+    "districts": "Idukki"
+  },
+  {
+    "id": 4,
+    "districts": "Kannur"
+  },
+  {
+    "id": 5,
+    "districts": "Kasaragod"
+  },
+  {
+    "id": 6,
+    "districts": "Kollam"
+  },
+  {
+    "id": 7,
+    "districts": "Kottayam"
+  },
+  {
+    "id": 8,
+    "districts": "Kozhikode"
+  },
+  {
+    "id": 9,
+    "districts": "Malappuram"
+  },
+  {
+    "id": 10,
+    "districts": "Palakkad"
+  },
+  {
+    "id": 11,
+    "districts": "Pathanamthitta"
+  },
+  {
+    "id": 12,
+    "districts": "Thiruvananthapuram"
+  },
+  {
+    "id": 13,
+    "districts": "Thrissur"
+  },
+  {
+    "id": 14,
+    "districts": "Wayanad"
+  }
+]
