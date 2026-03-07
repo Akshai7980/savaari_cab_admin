@@ -1,126 +1,90 @@
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AutocapitalizeDirective } from 'src/app/shared/directives/autocapitalize.directive';
+import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { FirebaseService } from 'src/app/core/services/firebase.service';
 import { UtilityService } from 'src/app/core/services/utility.service';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { FormGeneratorService } from 'src/app/core/services/form-generator.service';
+import { FormConfig } from 'src/app/core/models/form-field.model';
+import { DynamicFormContainerComponent } from 'src/app/shared/components/dynamic-form-container/dynamic-form-container.component';
+import { FormLoaderComponent } from 'src/app/shared/components/form-loader/form-loader.component';
 
 @Component({
   selector: 'app-add-driver-details',
   standalone: true,
-  imports: [CommonModule, SharedModule, ReactiveFormsModule, AutocapitalizeDirective],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicFormContainerComponent,
+    FormLoaderComponent
+  ],
   templateUrl: './add-driver-details.component.html',
   styleUrls: ['./add-driver-details.component.scss']
 })
-export default class AddDriverDetailsComponent implements AfterViewInit, OnInit {
-  driverRegForm: FormGroup;
+export default class AddDriverDetailsComponent implements OnInit {
+  private firebaseService = inject(FirebaseService);
+  private utilityService = inject(UtilityService);
+  private formGeneratorService = inject(FormGeneratorService);
+  private router = inject(Router);
 
-  districts: District[] = [];
-  bloodGroups: BloodType[] = [];
-  driverGrades: Grade[] = [];
-
-  assetsPath: string = '../../../assets/Json/';
-
-  constructor(
-    private readonly utilityService: UtilityService,
-    private readonly firebaseService: FirebaseService,
-    private readonly formBuilder: FormBuilder
-  ) {
-    this.driverRegForm = this.formBuilder.group({
-      driverName: ['', Validators.required],
-      driverLocation: ['', Validators.required],
-      mobileNumber: ['', Validators.required],
-      altMobileNumber: [''],
-      address: ['', Validators.required],
-      bloodGroup: ['', Validators.required],
-      licenseNumber: ['', Validators.required],
-      state: ['Kerala', Validators.required],
-      district: ['', Validators.required],
-      pinCode: ['', Validators.required],
-      driverGrade: ['', Validators.required],
-      driverCode: ['', Validators.required],
-      dateOfJoining: ['', Validators.required],
-      dateOfResigning: [''],
-      docId: ['']
-    });
-  }
+  driverRegForm!: FormGroup;
+  formConfig!: FormConfig;
+  isLoading = signal<boolean>(true);
 
   ngOnInit(): void {
-    this.fetchDistricts();
-    this.fetchBloodGroups();
-    this.fetchDriverGrades();
+    this.loadFormConfig();
   }
 
-  fetchDistricts() {
-    this.utilityService.getData(this.assetsPath + 'districts.json').subscribe((response: District[]) => {
-      if (response) {
-        this.districts = response;
-      }
-    });
+  loadFormConfig() {
+    this.utilityService.getJSON('assets/configs/driver-registration.json')
+      .subscribe((data: FormConfig) => {
+        this.formConfig = data;
+        this.driverRegForm = this.formGeneratorService.generateForm(this.formConfig);
+        this.generateDriverToken();
+        // Artificial delay for smooth Premium UX loader transition
+        setTimeout(() => {
+          this.isLoading.set(false);
+        }, 600);
+      });
   }
 
-  fetchBloodGroups() {
-    this.utilityService.getData(this.assetsPath + 'bloodGroup.json').subscribe((response: BloodType[]) => {
-      if (response) {
-        this.bloodGroups = response;
-      }
-    });
-  }
-
-  fetchDriverGrades() {
-    this.utilityService.getData(this.assetsPath + 'driverGrade.json').subscribe((response: Grade[]) => {
-      if (response) {
-        this.driverGrades = response;
-      }
-    });
-  }
-
-  onLicenseKeyUp(event: KeyboardEvent) {
-    const input = event.target as HTMLInputElement;
-    input.value = this.utilityService.formatLicensePlate(input.value);
-  }
-
-  ngAfterViewInit(): void {
-    this.utilityService
-      .generateToken()
+  generateDriverToken() {
+    this.utilityService.generateToken()
       .then((token) => {
-        this.driverRegForm.controls['driverCode'].setValue(token);
-        console.log('token:', token);
+        if (this.driverRegForm) {
+          this.driverRegForm.patchValue({ driverCode: token });
+        }
       })
       .catch((error) => {
         console.error('Error generating token:', error);
       });
   }
 
-  async addDriverBooking() {
-    const docId = this.firebaseService.createId();
-    this.driverRegForm.controls['docId'].setValue(docId);
-
-    this.firebaseService
-      .addDrivers(this.driverRegForm.value)
-      .then(() => {
-        this.utilityService.successFailedPopup('SUCCESS');
-        this.driverRegForm.reset();
-      })
-      .catch((error) => {
-        this.utilityService.successFailedPopup('FAILED');
-        console.error('Error adding driver booking:', error);
-      });
+  onCancel() {
+    this.driverRegForm.reset();
+    this.generateDriverToken();
   }
-}
 
-interface District {
-  id: number;
-  districts: string;
-}
+  async onSubmit() {
+    if (this.driverRegForm.valid) {
+      const driverData = this.driverRegForm.getRawValue(); // include disabled field values like driverCode
 
-interface BloodType {
-  bloodType: string;
-  Rh: string;
-}
+      const docId = this.firebaseService.createId();
+      driverData.docId = docId;
 
-interface Grade {
-  id: string;
-  grade: string;
+      this.firebaseService.addDrivers(driverData)
+        .then(() => {
+          this.utilityService.successFailedPopup('SUCCESS');
+          this.driverRegForm.reset();
+          this.generateDriverToken();
+          this.router.navigate(['/drivers/list-driver-details']);
+        })
+        .catch((error) => {
+          this.utilityService.successFailedPopup('FAILED');
+          console.error('Error adding driver details:', error);
+        });
+    } else {
+      this.driverRegForm.markAllAsTouched();
+    }
+  }
 }
