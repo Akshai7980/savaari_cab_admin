@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AdminComponent } from './theme/layout/admin/admin.component';
-import { GuestComponent } from './theme/layout/guest/guest.component';
+import { AdminComponent } from './core/layout/admin/admin.component';
+import { GuestComponent } from './core/layout/guest/guest.component';
 
 const routes: Routes = [
   {
@@ -15,79 +15,75 @@ const routes: Routes = [
       },
       {
         path: 'dashboard',
-        loadComponent: () => import('./dashboard/dashboard.component')
+        loadComponent: () => import('./features/dashboard/dashboard.component')
       },
       {
         path: 'driverBookings',
-        loadComponent: () => import('./pages/drivers/add-driver-booking/add-driver-booking.component')
+        loadComponent: () => import('./features/drivers/add-driver-booking/add-driver-booking.component')
       },
-      // {
-      //   path: 'color',
-      //   loadComponent: () => import('./demo/elements/element-color/element-color.component')
-      // },
       {
         path: 'addDrivers',
-        loadComponent: () => import('./pages/drivers/add-driver-details/add-driver-details.component')
+        loadComponent: () => import('./features/drivers/add-driver-details/add-driver-details.component')
       },
       {
         path: 'driverBookingList',
-        loadComponent: () => import('./pages/drivers/driver-booking-list/driver-booking-list.component')
+        loadComponent: () => import('./features/drivers/driver-booking-list/driver-booking-list.component')
       },
       {
         path: 'applyDriverLeave',
-        loadComponent: () => import('./pages/drivers/apply-driver-leave/apply-driver-leave.component')
+        loadComponent: () => import('./features/drivers/apply-driver-leave/apply-driver-leave.component')
       },
       {
         path: 'listDriverLeave',
-        loadComponent: () => import('./pages/drivers/list-driver-leave/list-driver-leave.component')
+        loadComponent: () => import('./features/drivers/list-driver-leave/list-driver-leave.component')
       },
       {
         path: 'listDriverDetails',
-        loadComponent: () => import('./pages/drivers/list-driver-details/list-driver-details.component')
+        loadComponent: () => import('./features/drivers/list-driver-details/list-driver-details.component')
       },
       {
         path: 'editDriverDetails',
-        loadComponent: () => import('./pages/drivers/edit-driver-details/edit-driver-details.component')
+        loadComponent: () => import('./features/drivers/edit-driver-details/edit-driver-details.component')
       },
       {
         path: 'listVehicle',
-        loadComponent: () => import('./pages/vehicles/list-vehicle/list-vehicle.component')
+        loadComponent: () => import('./features/vehicles/list-vehicle/list-vehicle.component')
       },
       {
         path: 'editVehicle',
-        loadComponent: () => import('./pages/vehicles/add-vehicle/add-vehicle.component')
+        loadComponent: () => import('./features/vehicles/add-vehicle/add-vehicle.component')
       },
       {
         path: 'addVehicle',
-        loadComponent: () => import('./pages/vehicles/add-vehicle/add-vehicle.component')
+        loadComponent: () => import('./features/vehicles/add-vehicle/add-vehicle.component')
       },
       {
         path: 'tripDetail/:type/:id',
-        loadComponent: () => import('./pages/drivers/trips/trip-detail-view/trip-detail-view.component')
+        loadComponent: () => import('./features/drivers/trips/trip-detail-view/trip-detail-view.component')
       },
       {
         path: 'runningTrip',
-        loadComponent: () => import('./pages/drivers/driver-booking-list/driver-booking-list.component')
+        loadComponent: () => import('./features/drivers/driver-booking-list/driver-booking-list.component')
       },
       {
         path: 'upcomingTrip',
-        loadComponent: () => import('./pages/drivers/driver-booking-list/driver-booking-list.component')
+        loadComponent: () => import('./features/drivers/driver-booking-list/driver-booking-list.component')
       },
       {
         path: 'closedTrip',
-        loadComponent: () => import('./pages/drivers/driver-booking-list/driver-booking-list.component')
+        loadComponent: () => import('./features/drivers/driver-booking-list/driver-booking-list.component')
       },
       {
         path: 'addTaxiBooking',
-        loadComponent: () => import('./pages/drivers/add-taxi-booking/add-taxi-booking.component')
+        loadComponent: () => import('./features/drivers/add-taxi-booking/add-taxi-booking.component')
       },
       {
         path: 'cancelledTrips',
-        loadComponent: () => import('./pages/drivers/list-cancelled-trip/list-cancelled-trip.component')
+        loadComponent: () => import('./features/drivers/list-cancelled-trip/list-cancelled-trip.component')
       },
       {
         path: 'listCustomers',
-        loadComponent: () => import('./pages/drivers/list-customers/list-customers.component')
+        loadComponent: () => import('./features/drivers/list-customers/list-customers.component')
       }
     ]
   },
@@ -97,7 +93,7 @@ const routes: Routes = [
     children: [
       {
         path: 'admin',
-        loadChildren: () => import('./authentication/authentication.module').then((m) => m.AuthenticationModule)
+        loadChildren: () => import('./features/auth/authentication.module').then((m) => m.AuthenticationModule)
       }
     ]
   }
@@ -107,4 +103,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
