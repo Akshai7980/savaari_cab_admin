@@ -41,10 +41,6 @@ const analytics = getAnalytics(app);
         NavRightComponent,
         NavigationComponent,
         NavLogoComponent,
-        NavContentComponent,
-        NavGroupComponent,
-        NavItemComponent,
-        NavCollapseComponent,
         ConfigurationComponent,
         GuestComponent
     ],
@@ -56,6 +52,11 @@ const analytics = getAnalytics(app);
         AngularFireModule.initializeApp(environment.firebaseConfig),
         AngularFirestoreModule,
         AngularFireAuthModule,
-        VehicleNumberPipe], providers: [NavigationItem, provideHttpClient(withInterceptorsFromDi())]
+        VehicleNumberPipe,
+        NavContentComponent,
+        NavItemComponent,
+        NavCollapseComponent,
+        NavGroupComponent],
+    providers: [NavigationItem, provideHttpClient(withInterceptorsFromDi())]
 })
 export class AppModule { }

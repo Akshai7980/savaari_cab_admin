@@ -1,12 +1,17 @@
-// Angular import
-import { Component, Input } from '@angular/core';
-
-// project import
-import { NavigationItem, NavigationItemInterface } from '../../navigation';
+import { CommonModule } from '@angular/common';
+import { Component, Input, forwardRef } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { NavigationItemInterface } from '../../navigation';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { SharedModule } from 'src/app/shared/shared.module';
+
+import { NavItemComponent } from '../nav-item/nav-item.component';
+import { NavGroupComponent } from '../nav-group/nav-group.component';
 
 @Component({
   selector: 'app-nav-collapse',
+  standalone: true,
+  imports: [CommonModule, RouterModule, SharedModule, NavItemComponent, NavGroupComponent, forwardRef(() => NavCollapseComponent)],
   templateUrl: './nav-collapse.component.html',
   styleUrls: ['./nav-collapse.component.scss'],
   animations: [
@@ -20,34 +25,31 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ]
 })
 export class NavCollapseComponent {
-  // public props
   @Input() item!: NavigationItemInterface;
 
   windowWidth = window.innerWidth;
 
-  // public method
-  navCollapse(e: any) {
-    let parent = e.target;
-    parent = parent.parentElement;
-    const sections = document.querySelectorAll('.coded-hasmenu');
-    for (let i = 0; i < sections.length; i++) {
-      if (sections[i] !== parent) {
-        sections[i].classList.remove('coded-trigger');
-      }
+  navCollapse(e: MouseEvent): void {
+    const parent = (e.target as HTMLElement).parentElement;
+    if (!parent) return;
+
+    const menu = parent.closest('.coded-inner-navbar');
+    if (menu) {
+      const allMenus = menu.querySelectorAll('.coded-hasmenu');
+      allMenus.forEach((m) => {
+        if (m !== parent) {
+          m.classList.remove('coded-trigger');
+        }
+      });
     }
-    let first_parent = parent.parentElement;
-    let pre_parent = parent.parentElement.parentElement;
-    if (first_parent.classList.contains('coded-hasmenu')) {
-      do {
-        first_parent.classList.add('coded-trigger');
-        first_parent = first_parent.parentElement.parentElement.parentElement;
-      } while (first_parent.classList.contains('coded-hasmenu'));
-    } else if (pre_parent.classList.contains('coded-submenu')) {
-      do {
-        pre_parent.parentElement.classList.add('coded-trigger');
-        pre_parent = pre_parent.parentElement.parentElement.parentElement;
-      } while (pre_parent.classList.contains('coded-submenu'));
+
+    let current: HTMLElement | null = parent;
+    while (current && current.classList.contains('coded-hasmenu')) {
+      current.classList.add('coded-trigger');
+      const grandParent = current.parentElement?.parentElement;
+      current = grandParent && grandParent.classList.contains('coded-hasmenu') ? grandParent : null;
     }
+
     parent.classList.toggle('coded-trigger');
   }
 }

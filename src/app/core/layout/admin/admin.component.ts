@@ -1,8 +1,6 @@
-// Angular import
 import { Component, NgZone } from '@angular/core';
 import { Location, LocationStrategy } from '@angular/common';
 
-// Project import
 import { BerryConfig } from '../../../app-config';
 
 @Component({
@@ -11,13 +9,11 @@ import { BerryConfig } from '../../../app-config';
   styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent {
-  // public props
   berryConfig;
   navCollapsed: boolean;
   navCollapsedMob = false;
   windowWidth: number;
 
-  // Constructor
   constructor(
     private zone: NgZone,
     private location: Location,
@@ -39,7 +35,6 @@ export class AdminComponent {
     this.navCollapsed = this.windowWidth >= 1025 ? BerryConfig.isCollapse_menu : false;
   }
 
-  // public method
   navMobClick() {
     if (this.navCollapsedMob && !document.querySelector('app-navigation.coded-navbar')?.classList.contains('mob-open')) {
       this.navCollapsedMob = !this.navCollapsedMob;

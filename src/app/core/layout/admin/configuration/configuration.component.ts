@@ -7,7 +7,6 @@ import { BerryConfig } from 'src/app/app-config';
   styleUrls: ['./configuration.component.scss']
 })
 export class ConfigurationComponent implements OnInit {
-  // public method
   styleSelectorToggle!: boolean; // open configuration menu
   fontFamily: string;
   setFontFamily!: string;

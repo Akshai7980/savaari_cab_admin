@@ -9,6 +9,11 @@ import { FirebaseService } from 'src/app/core/services/firebase.service';
 import { AlertPopupComponent } from 'src/app/shared/components/alert-popup/alert-popup.component';
 import { ElementDetailedViewComponent } from 'src/app/shared/components/element-detailed-view/element-detailed-view.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { Driver } from 'src/app/core/models/driver.model';
+
+export interface DriverDisplay extends Driver {
+  position?: number;
+}
 
 @Component({
   selector: 'app-list-driver-details',
@@ -20,11 +25,11 @@ import { SharedModule } from 'src/app/shared/shared.module';
 })
 export default class ListDriverDetailsComponent implements OnInit, AfterViewChecked {
   displayedColumns: string[] = ['position', 'driverName', 'mobileNumber', 'driverType', 'district', 'actions'];
-  dataSource = new MatTableDataSource<ListAllDrivers>([]);
+  dataSource = new MatTableDataSource<DriverDisplay>([]);
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  showPaginator: boolean = false;
-  private dialogRef;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  showPaginator = false;
+  private dialogRef: any;
 
   constructor(
     private readonly dataSharingService: DataShareService,
@@ -32,13 +37,13 @@ export default class ListDriverDetailsComponent implements OnInit, AfterViewChec
     private readonly titleCase: TitleCasePipe,
     private readonly matDialog: MatDialog,
     private readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getDriverList();
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewChecked(): void {
     if (this.showPaginator && !this.dataSource.paginator) {
       this.dataSource.paginator = this.paginator;
     } else if (!this.showPaginator && this.dataSource.paginator) {
@@ -46,30 +51,24 @@ export default class ListDriverDetailsComponent implements OnInit, AfterViewChec
     }
   }
 
-  getDriverList() {
+  getDriverList(): void {
     this.firebaseService.getDriverList().subscribe(
-      (res: ListAllDrivers[]) => {
-        console.log(res);
+      (res: Driver[]) => {
+        const mappedData: DriverDisplay[] = res.map((item, index) => ({
+          ...item,
+          position: index + 1
+        }));
 
-        const response = [];
-        let position = 1;
-
-        res.forEach((element) => {
-          element.position = position++;
-          response.push(element);
-        });
-
-        this.dataSource.data = response;
-        if (this.dataSource.data.length > 5) this.showPaginator = true;
-        else this.showPaginator = false;
+        this.dataSource.data = mappedData;
+        this.showPaginator = mappedData.length > 5;
       },
       (error) => {
-        console.error('Error fetching driver bookings:', error);
+        console.error('Error fetching driver registrations:', error);
       }
     );
   }
 
-  toViewDriverDetails(element: ListAllDrivers) {
+  toViewDriverDetails(element: DriverDisplay): void {
     this.matDialog.closeAll();
 
     const data = [
@@ -77,19 +76,19 @@ export default class ListDriverDetailsComponent implements OnInit, AfterViewChec
         key: 'Driver Name',
         value: this.titleCase.transform(element?.driverName ?? element?.fullName ?? '')
       },
-      { key: 'Driver Mobile Number', value: `+91-${element.mobileNumber}` },
-      { key: 'Driver Type', value: this.titleCase.transform(element.driverType) },
-      { key: 'Address', value: this.titleCase.transform(element.address) },
-      { key: 'Location', value: this.titleCase.transform(element.district) },
-      { key: 'Driver Code', value: element.driverCode },
-      { key: 'Driving License', value: element.licenseNumber },
-      { key: 'Alternate Mobile Number', value: `+91-${element.altMobileNumber}` }
+      { key: 'Driver Mobile Number', value: `+91-${element.mobileNumber || ''}` },
+      { key: 'Driver Type', value: this.titleCase.transform(element.driverType || '') },
+      { key: 'Address', value: this.titleCase.transform(element.address || '') },
+      { key: 'Location', value: this.titleCase.transform(element.district || '') },
+      { key: 'Driver Code', value: element.driverCode || '' },
+      { key: 'Driving License', value: element.licenseNumber || '' },
+      { key: 'Alternate Mobile Number', value: `+91-${element.altMobileNumber || ''}` }
     ];
 
     this.dialogRef = this.matDialog.open(ElementDetailedViewComponent, {
       data: {
         data: data,
-        heading: `${this.titleCase.transform(element?.driverName ?? element?.fullName ?? '')} | ${element.driverType}`,
+        heading: `${this.titleCase.transform(element?.driverName ?? element?.fullName ?? '')} | ${element.driverType || ''}`,
         buttons1: 'Edit',
         buttons2: 'Cancel',
 
@@ -106,7 +105,7 @@ export default class ListDriverDetailsComponent implements OnInit, AfterViewChec
     });
   }
 
-  toDeleteDriverDetails(element: ListAllDrivers) {
+  toDeleteDriverDetails(element: DriverDisplay): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.height = '400px';
     dialogConfig.width = '600px';
@@ -117,61 +116,32 @@ export default class ListDriverDetailsComponent implements OnInit, AfterViewChec
       data: {
         icon: 'close',
         image: '../../../../assets/images/alert.svg',
-        heading: `${'Are you sure ?'}`,
-        content: ` Are you sure you want to delete Savaari Driver <strong> ${this.titleCase.transform(
+        heading: 'Are you sure?',
+        content: `Are you sure you want to delete Savaari Driver <strong> ${this.titleCase.transform(
           element?.driverName ?? element?.fullName ?? ''
-        )} 's </strong> from drivers list ? <br> This will delete the driver details from Savaari Database, but we will keep a backup for future use.`,
+        )}'s </strong> from drivers list? <br> This will delete the driver details from Savaari Database, but we will keep a backup for future use.`,
         buttons: ['Close Window', 'Delete Driver'],
-        onButtonClick: (e) => {
-          console.log('button click', e);
-
-          switch (e) {
-            case 'Delete Driver':
-              this.dialogRef.close();
-
-              const params = {
-                isLeaveCancelled: true,
-                leaveCancelledAt: new Date(),
-                cancelledBy: 'ADMIN',
-                docId: element.id
-              };
-
-              this.firebaseService.updateLeaveStatus(params);
-              break;
-
-            default:
-              this.dialogRef.close();
-              break;
+        onButtonClick: (e: string) => {
+          if (e === 'Delete Driver') {
+            this.dialogRef.close();
+            const params = {
+              isLeaveCancelled: true,
+              leaveCancelledAt: new Date(),
+              cancelledBy: 'ADMIN',
+              docId: element.id || element.docId
+            };
+            this.firebaseService.updateLeaveStatus(params as any);
+          } else {
+            this.dialogRef.close();
           }
         }
       }
     });
   }
 
-  toEditDriverDetails(rowData: ListAllDrivers) {
-    console.log(rowData);
+  toEditDriverDetails(rowData: DriverDisplay): void {
     rowData.path = 'EDIT_DRIVER_DETAILS';
     this.dataSharingService.updateData(rowData);
     this.router.navigate(['/editDriverDetails']);
   }
-}
-
-export interface ListAllDrivers {
-  path: string;
-  aadhaarNumber: string;
-  address: string;
-  altMobileNumber: number;
-  bloodGroup: string;
-  dateOfBirth: string;
-  district: string;
-  driverCode: string;
-  driverType: string;
-  firstName: string;
-  fullName: string;
-  id: string;
-  lastName: string;
-  licenseNumber: string;
-  mobileNumber: number;
-  position: number;
-  driverName: string;
 }

@@ -4,6 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
+export interface DriverOtp {
+  type: string;
+  otp: string | number;
+  driverName?: string;
+}
+
 @Component({
   selector: 'app-list-all-drivers',
   templateUrl: './list-all-drivers.component.html',
@@ -12,40 +18,32 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
   imports: [MatDialogModule, MatButtonModule, CommonModule, FormsModule]
 })
 export class ListAllDriversComponent implements OnInit {
-  allDrivers: any[] = [];
-  filteredDrivers: any[] = [];
+  filteredDrivers: DriverOtp[] = [];
   searchQuery: string = '';
-  drivers: Driver[];
+  drivers: DriverOtp[] = [];
 
   constructor(
     private readonly dialogRef: MatDialogRef<ListAllDriversComponent>,
-    @Inject(MAT_DIALOG_DATA) public readonly data: any
+    @Inject(MAT_DIALOG_DATA) public readonly data: { drivers: DriverOtp[] }
   ) {
-    this.drivers = data.drivers;
-    console.log(this.drivers);
+    this.drivers = data.drivers || [];
   }
 
   ngOnInit(): void {
     this.filteredDrivers = this.drivers;
   }
 
-  closeDialog(driverDetails: Driver) {
+  closeDialog(driverDetails: DriverOtp): void {
     this.dialogRef.close(driverDetails);
   }
 
-  searchDrivers(event: Event) {
-    const searchQuery = (event.target as HTMLInputElement).value.toLowerCase();
-
-    // Filter drivers based on the search query
-    this.filteredDrivers = this.allDrivers.filter((driver) => {
-      // Customize this condition based on your search criteria
-      // Here, it searches for drivers whose "type" or "otp" contains the search query
-      return driver.type.toLowerCase().includes(searchQuery) || driver.otp > toString().toLowerCase().includes(searchQuery);
+  searchDrivers(event: Event): void {
+    const query = (event.target as HTMLInputElement).value.toLowerCase();
+    this.filteredDrivers = this.drivers.filter((driver) => {
+      const typeStr = (driver.type || '').toLowerCase();
+      const otpStr = (driver.otp || '').toString().toLowerCase();
+      const nameStr = (driver.driverName || '').toLowerCase();
+      return typeStr.includes(query) || otpStr.includes(query) || nameStr.includes(query);
     });
   }
-}
-
-export interface Driver {
-  type: '';
-  otp: '';
 }

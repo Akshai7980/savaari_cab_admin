@@ -17,7 +17,7 @@ export interface Navigation extends NavigationItemInterface {
   children?: NavigationItemInterface[];
 }
 
-const NavigationItems = [
+const NavigationItems: Navigation[] = [
   {
     id: 'dashboard',
     title: 'Dashboard',

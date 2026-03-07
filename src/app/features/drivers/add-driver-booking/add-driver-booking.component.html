@@ -8,148 +8,76 @@
       <form [formGroup]="driverBookingForm">
         <div class="card-body">
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="customerName"
-              autocapitalize="words"
-              appAutocapitalize
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="customerName"
+              autocapitalize="words" appAutocapitalize />
             <label for="floatingInput">Customer Name</label>
           </div>
 
           <div class="form-floating mb-3">
-            <textarea
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="address"
-              autocapitalize="words"
-              appAutocapitalize
-            ></textarea>
+            <textarea type="text" class="form-control" id="floatingInput" formControlName="address"
+              autocapitalize="words" appAutocapitalize></textarea>
             <label for="floatingInput">Address</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="pickUpLocation"
-              autocapitalize="words"
-              appAutocapitalize
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="pickUpLocation"
+              autocapitalize="words" appAutocapitalize />
             <label for="floatingInput">Pick Up Location</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="dropOffLocation"
-              autocapitalize="words"
-              appAutocapitalize
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="dropOffLocation"
+              autocapitalize="words" appAutocapitalize />
             <label for="floatingInput">Purpose Of Travel</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="number"
-              class="form-control no-spinners"
-              id="floatingInput"
-              formControlName="customerNumber"
-            />
+            <input type="number" class="form-control no-spinners" id="floatingInput" formControlName="customerNumber" />
             <label for="floatingInput">Mobile Number</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="date"
-              class="form-control"
-              #startDateInput
-              formControlName="startDate"
-              (input)="onInputDate()"
-            />
+            <input type="date" class="form-control" #startDateInput formControlName="startDate"
+              (input)="onInputDate()" />
             <label for="floatingInput">Trip Start Date</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="date"
-              class="form-control"
-              #endDateInput
-              formControlName="endDate"
-              (input)="onInputDate()"
-            />
+            <input type="date" class="form-control" #endDateInput formControlName="endDate" (input)="onInputDate()" />
             <label for="floatingInput">Trip End Date</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="time"
-              class="form-control"
-              formControlName="startTime"
-            />
+            <input type="time" class="form-control" formControlName="startTime" />
             <label for="floatingInput">Trip Start Time</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="number"
-              class="form-control no-spinners"
-              id="floatingInput"
-              formControlName="numberOfDays"
-              [readOnly]="true"
-            />
+            <input type="number" class="form-control no-spinners" id="floatingInput" formControlName="numberOfDays"
+              [readOnly]="true" />
             <label for="floatingInput">Number Of Days</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="requiredDriver"
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="requiredDriver" />
             <label for="floatingInput">Required Driver</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="rejectedDriver"
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="rejectedDriver" />
             <label for="floatingInput">Rejected Driver</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="cusVehicleName"
-              autocapitalize="words"
-              appAutocapitalize
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="cusVehicleName"
+              autocapitalize="words" appAutocapitalize />
             <label for="floatingInput">Customer Vehicle Name</label>
           </div>
 
           <div class="form-floating mb-3">
-            <label
-              for="floatingInput"
-              style="font-size: 12px; color: #6c757d; padding-top: 7px;"
-              >Customer Vehicle Type</label
-            >
-            <select
-              class="form-control"
-              id="floatingInput"
-              formControlName="cusVehicleType"
-            >
+            <label for="floatingInput" style="font-size: 12px; color: #6c757d; padding-top: 7px;">Customer Vehicle
+              Type</label>
+            <select class="form-control" id="floatingInput" formControlName="cusVehicleType">
               <option selected disabled> </option>
               <option value="Automatic"> Automatic </option>
               <option value="Manual"> Manual </option>
@@ -157,24 +85,15 @@
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="cusVehicleNumber"
-              appVehicleNumber
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="cusVehicleNumber"
+              appVehicleNumber />
             <label for="floatingInput">Customer Vehicle Number</label>
           </div>
 
           <div class="d-grid mt-4">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              (click)="addDriverBooking()"
-              [disabled]="!driverBookingForm.valid"
-            >
-              {{editForm? 'Edit Driver Booking': 'Add Driver Booking'}}
+            <button type="button" class="btn btn-secondary" (click)="addDriverBooking()"
+              [disabled]="!driverBookingForm.valid">
+              {{isEditMode()? 'Edit Driver Booking': 'Add Driver Booking'}}
             </button>
           </div>
         </div>

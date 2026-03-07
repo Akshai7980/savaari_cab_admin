@@ -3,9 +3,14 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { VehicleNumberPipe } from 'src/app/shared/pipes/vehicle-number/vehicle-number.pipe';
 import { FirebaseService } from 'src/app/core/services/firebase.service';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { VehicleNumberPipe } from 'src/app/shared/pipes/vehicle-number/vehicle-number.pipe';
+import { DriverBooking } from 'src/app/core/models/booking.model';
+
+export interface DriverBookingDisplay extends DriverBooking {
+  position?: number;
+}
 
 @Component({
   selector: 'app-driver-booking-list',
@@ -16,40 +21,34 @@ import { SharedModule } from 'src/app/shared/shared.module';
 })
 export default class DriverBookingListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['position', 'tripTime', 'customerName', 'location', 'destination', 'vehicleName', 'actions'];
-  dataSource = new MatTableDataSource<DriverBookings>([]);
-  driverBookings: DriverBookings[] = [];
+  dataSource = new MatTableDataSource<DriverBookingDisplay>([]);
+  driverBookings: DriverBookingDisplay[] = [];
   listType: string;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private readonly firebaseService: FirebaseService,
     private readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getBookingList();
 
-    this.listType = this.router.url.includes('driverBookingList')
-      ? 'today'
-      : this.router.url.includes('runningTrip')
-      ? 'running'
-      : this.router.url.includes('upcomingTrip')
-      ? 'upcoming'
-      : 'closed';
+    const url = this.router.url;
+    this.listType = url.includes('driverBookingList') ? 'today' :
+      url.includes('runningTrip') ? 'running' :
+        url.includes('upcomingTrip') ? 'upcoming' : 'closed';
   }
 
-  getBookingList() {
+  getBookingList(): void {
     const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth();
-    const currentDate = today.getDate();
-    const todayStart = new Date(currentYear, currentMonth, currentDate, 0, 0, 0, 0).getTime();
-    const todayEnd = new Date(currentYear, currentMonth, currentDate, 23, 59, 59, 999).getTime();
+    const todayStart = new Date(today.setHours(0, 0, 0, 0)).getTime();
+    const todayEnd = new Date(today.setHours(23, 59, 59, 999)).getTime();
 
     this.firebaseService.getDriverBooking().subscribe(
-      (res: DriverBookings[]) => {
-        let bookingList;
+      (res: DriverBooking[]) => {
+        let bookingList: DriverBookingDisplay[] = [];
 
         switch (this.listType) {
           case 'today':
@@ -67,35 +66,32 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
             break;
 
           case 'running':
-            this.displayedColumns.splice(this.displayedColumns.length - 1, 0, 'selectedDriver');
-            bookingList = res.filter((booking) => {
-              return booking.status == 'running';
-            });
+            if (!this.displayedColumns.includes('selectedDriver')) {
+              this.displayedColumns.splice(this.displayedColumns.length - 1, 0, 'selectedDriver');
+            }
+            bookingList = res.filter(booking => booking.status === 'running');
             break;
 
           case 'upcoming':
             bookingList = res.filter((booking) => {
               const bookingTimestamp = new Date(booking.startDate).getTime();
-              return booking.status == 'yts' && bookingTimestamp > todayEnd;
+              return booking.status === 'yts' && bookingTimestamp > todayEnd;
             });
             break;
 
           case 'closed':
-            this.displayedColumns.splice(this.displayedColumns.length - 1, 0, 'selectedDriver');
-            bookingList = res.filter((booking) => {
-              return booking.status == 'closed';
-            });
+            if (!this.displayedColumns.includes('selectedDriver')) {
+              this.displayedColumns.splice(this.displayedColumns.length - 1, 0, 'selectedDriver');
+            }
+            bookingList = res.filter(booking => booking.status === 'closed');
             break;
         }
 
-        this.driverBookings = bookingList;
-        this.dataSource.data = bookingList;
-
-        this.driverBookings.forEach((element, index) => {
-          if (element) {
-            element.position = index + 1;
-          }
-        });
+        this.driverBookings = bookingList.map((item, index) => ({
+          ...item,
+          position: index + 1
+        }));
+        this.dataSource.data = this.driverBookings;
       },
       (error) => {
         console.error('Error fetching driver bookings:', error);
@@ -103,61 +99,43 @@ export default class DriverBookingListComponent implements OnInit, AfterViewInit
     );
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
 
-  toViewTrip(rowData: any) {
-    console.log(rowData);
+  toViewTrip(rowData: DriverBookingDisplay): void {
     this.router.navigate([`tripDetail/today/${rowData.docId}`]);
   }
 
-  toCloseTrip(rowData: any) {
-    const params = {
-      status: 'closed',
-      tripCancelledBy: 'Admin',
-      docId: rowData.docId
-    };
-
-    this.firebaseService.updateTripStatus(params);
+  toCloseTrip(rowData: DriverBookingDisplay): void {
+    if (rowData.docId) {
+      const params = {
+        status: 'closed',
+        tripCancelledBy: 'Admin',
+        docId: rowData.docId
+      } as any;
+      this.firebaseService.updateTripStatus(params);
+    }
   }
 
-  toCancelTrip(rowData: any) {
-    console.log(rowData);
-
-    const params = {
-      isTripCancelled: true,
-      status: 'canceled',
-      tripCancellationTime: new Date(),
-      tripCancelledBy: 'Admin',
-      docId: rowData.docId
-    };
-
-    this.firebaseService.updateTripStatus(params);
+  toCancelTrip(rowData: DriverBookingDisplay): void {
+    if (rowData.docId) {
+      const params = {
+        isTripCancelled: true,
+        status: 'canceled',
+        tripCancellationTime: new Date().toISOString(),
+        tripCancelledBy: 'Admin',
+        docId: rowData.docId
+      } as any;
+      this.firebaseService.updateTripStatus(params);
+    }
   }
 
-  toEditTrip(rowData: any) {
-    console.log(rowData);
+  toEditTrip(rowData: DriverBookingDisplay): void {
     if (this.listType === 'today') {
       this.router.navigate(['driverBookings'], { queryParams: { id: rowData.docId } });
     } else {
       this.router.navigate([`/tripDetail/running/${rowData.docId}`]);
     }
   }
-}
-
-export interface DriverBookings {
-  position: number;
-  customerName: string;
-  customerNumber: string;
-  driverName: string;
-  driverNumber: string;
-  bookingDate: string;
-  bookingTime: string;
-  ref: any;
-  docId: string;
-  startDate: string;
-  startTime: string;
-  isTripCancelled?: boolean;
-  status: string;
 }

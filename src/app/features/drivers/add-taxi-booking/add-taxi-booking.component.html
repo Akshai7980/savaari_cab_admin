@@ -8,184 +8,90 @@
       <form [formGroup]="driverRegForm">
         <div class="card-body">
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="driverName"
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="driverName" />
             <label for="floatingInput">Driver Name</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="driverLocation"
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="driverLocation" />
             <label for="floatingInput">Driver Location</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="number"
-              class="form-control no-spinners"
-              id="floatingInput"
-              formControlName="mobileNumber"
-            />
+            <input type="number" class="form-control no-spinners" id="floatingInput" formControlName="mobileNumber" />
             <label for="floatingInput">Mobile Number</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="number"
-              class="form-control no-spinners"
-              id="floatingInput"
-              formControlName="altMobileNumber"
-            />
+            <input type="number" class="form-control no-spinners" id="floatingInput"
+              formControlName="altMobileNumber" />
             <label for="floatingInput">Alternate Mobile Number</label>
           </div>
 
           <div class="form-floating mb-3">
-            <textarea
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="address"
-            ></textarea>
+            <textarea type="text" class="form-control" id="floatingInput" formControlName="address"></textarea>
             <label for="floatingInput">Address</label>
           </div>
 
           <div class="form-floating mb-3">
-            <label
-              for="floatingInput"
-              style="font-size: 12px; color: #6c757d; padding-top: 7px;"
-              >Blood Group</label
-            >
-            <select
-              class="form-control"
-              id="floatingInput"
-              formControlName="bloodGroup"
-            >
+            <label for="floatingInput" style="font-size: 12px; color: #6c757d; padding-top: 7px;">Blood Group</label>
+            <select class="form-control" id="floatingInput" formControlName="bloodGroup">
               <option selected disabled> </option>
-              <option
-                *ngFor="let item of bloodGroups"
-                value="{{ item.bloodType }}"
-                >{{ item.bloodType }}</option
-              >
+              <option *ngFor="let item of bloodGroups()" value="{{ item.bloodType }}">{{ item.bloodType }}</option>
             </select>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control no-spinners"
-              id="floatingInput"
-              formControlName="licenseNumber"
-              (keyup)="onLicenseKeyUp($event)"
-            />
+            <input type="text" class="form-control no-spinners" id="floatingInput" formControlName="licenseNumber"
+              (keyup)="onLicenseKeyUp($event)" />
             <label for="floatingInput">Driver License Number</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              [readOnly]="true"
-              formControlName="state"
-            />
+            <input type="text" class="form-control" id="floatingInput" [readOnly]="true" formControlName="state" />
             <label for="floatingInput">State</label>
           </div>
 
           <div class="form-floating mb-3">
-            <label
-              for="floatingInput"
-              style="font-size: 12px; color: #6c757d; padding-top: 7px;"
-              >District</label
-            >
-            <select
-              class="form-control"
-              id="floatingInput"
-              formControlName="district"
-            >
+            <label for="floatingInput" style="font-size: 12px; color: #6c757d; padding-top: 7px;">District</label>
+            <select class="form-control" id="floatingInput" formControlName="district">
               <option selected disabled> </option>
-              <option
-                *ngFor="let district of districts"
-                value="{{ district.districts }}"
-                >{{ district.districts }}</option
-              >
+              <option *ngFor="let district of districts()" value="{{ district.districts }}">{{ district.districts }}
+              </option>
             </select>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="number"
-              class="form-control no-spinners"
-              id="floatingInput"
-              formControlName="pinCode"
-            />
+            <input type="number" class="form-control no-spinners" id="floatingInput" formControlName="pinCode" />
             <label for="floatingInput">Pin code</label>
           </div>
 
           <div class="form-floating mb-3">
-            <label
-              for="floatingInput"
-              style="font-size: 12px; color: #6c757d; padding-top: 7px;"
-              >Blood Group</label
-            >
-            <select
-              class="form-control"
-              id="floatingInput"
-              formControlName="bloodGroup"
-            >
+            <label for="floatingInput" style="font-size: 12px; color: #6c757d; padding-top: 7px;">Blood Group</label>
+            <select class="form-control" id="floatingInput" formControlName="bloodGroup">
               <option selected disabled> </option>
-              <option
-                *ngFor="let item of bloodGroups"
-                value="{{ item.bloodType }}"
-                >{{ item.bloodType }}</option
-              >
+              <option *ngFor="let item of bloodGroups()" value="{{ item.bloodType }}">{{ item.bloodType }}</option>
             </select>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              formControlName="driverCode"
-            />
+            <input type="text" class="form-control" id="floatingInput" formControlName="driverCode" />
             <label for="floatingInput">Driver Code</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="date"
-              class="form-control no-spinners"
-              id="floatingInput"
-              formControlName="dateOfJoining"
-            />
+            <input type="date" class="form-control no-spinners" id="floatingInput" formControlName="dateOfJoining" />
             <label for="floatingInput">Date of Joining</label>
           </div>
 
           <div class="form-floating mb-3">
-            <input
-              type="date"
-              class="form-control no-spinners"
-              id="floatingInput"
-              formControlName="dateOfResigning"
-            />
+            <input type="date" class="form-control no-spinners" id="floatingInput" formControlName="dateOfResigning" />
             <label for="floatingInput">Date of Resigning</label>
           </div>
 
           <div class="d-grid mt-4">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              [disabled]="!driverRegForm.valid"
-              (click)="addDriverBooking()"
-            >
+            <button type="button" class="btn btn-secondary" [disabled]="!driverRegForm.valid"
+              (click)="addDriverBooking()">
               Add Driver Details
             </button>
           </div>

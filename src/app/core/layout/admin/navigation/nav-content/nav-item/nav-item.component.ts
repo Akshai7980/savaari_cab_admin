@@ -1,44 +1,41 @@
-// Angular import
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-
-// Project import
-import { NavigationItem, NavigationItemInterface } from '../../navigation';
+import { RouterModule } from '@angular/router';
+import { NavigationItemInterface } from '../../navigation';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
   selector: 'app-nav-item',
+  standalone: true,
+  imports: [CommonModule, RouterModule, SharedModule],
   templateUrl: './nav-item.component.html',
   styleUrls: ['./nav-item.component.scss']
 })
 export class NavItemComponent {
-  // public props
   @Input() item!: NavigationItemInterface;
 
-  // public method
-  closeOtherMenu(event: any) {
-    const ele = event.target;
-    if (ele !== null && ele !== undefined) {
-      const parent = ele.parentElement;
-      const up_parent = parent.parentElement.parentElement;
-      const last_parent = up_parent.parentElement;
-      const sections = document.querySelectorAll('.coded-hasmenu');
-      for (let i = 0; i < sections.length; i++) {
-        sections[i].classList.remove('active');
-        sections[i].classList.remove('coded-trigger');
+  closeOtherMenu(event: MouseEvent): void {
+    const ele = event.target as HTMLElement;
+    if (ele) {
+      const menu = ele.closest('.coded-inner-navbar');
+      if (menu) {
+        const triggers = menu.querySelectorAll('.coded-trigger');
+        triggers.forEach(t => t.classList.remove('coded-trigger', 'active'));
       }
 
-      if (parent.classList.contains('coded-hasmenu')) {
-        parent.classList.add('coded-trigger');
+      const parent = ele.parentElement;
+      if (parent) {
         parent.classList.add('active');
-      } else if (up_parent.classList.contains('coded-hasmenu')) {
-        up_parent.classList.add('coded-trigger');
-        up_parent.classList.add('active');
-      } else if (last_parent.classList.contains('coded-hasmenu')) {
-        last_parent.classList.add('coded-trigger');
-        last_parent.classList.add('active');
+        const hasMenu = parent.closest('.coded-hasmenu');
+        if (hasMenu) {
+          hasMenu.classList.add('coded-trigger', 'active');
+        }
       }
     }
-    if ((document.querySelector('app-navigation.coded-navbar') as HTMLDivElement).classList.contains('mob-open')) {
-      (document.querySelector('app-navigation.coded-navbar') as HTMLDivElement).classList.remove('mob-open');
+
+    const navbar = document.querySelector('app-navigation.coded-navbar');
+    if (navbar?.classList.contains('mob-open')) {
+      navbar.classList.remove('mob-open');
     }
   }
 }

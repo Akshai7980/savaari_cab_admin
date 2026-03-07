@@ -1,8 +1,6 @@
-// Angular Imports
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// project import
 import { CardComponent } from './card.component';
 
 @NgModule({

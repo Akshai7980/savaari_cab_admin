@@ -1,4 +1,3 @@
-// Angular import
 import { Component, Input } from '@angular/core';
 
 @Component({
@@ -7,7 +6,6 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./card.component.scss']
 })
 export class CardComponent {
-  // public props
   @Input() cardTitle: string;
   @Input() customHeader: boolean;
 }

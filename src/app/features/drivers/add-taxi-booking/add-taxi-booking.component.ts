@@ -1,23 +1,39 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FirebaseService } from 'src/app/core/services/firebase.service';
 import { SnackbarService } from 'src/app/core/services/snackbar.service';
 import { UtilityService } from 'src/app/core/services/utility.service';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { Driver } from 'src/app/core/models/driver.model';
+
+interface District {
+  id: number;
+  districts: string;
+}
+
+interface BloodType {
+  bloodType: string;
+  Rh: string;
+}
 
 @Component({
   selector: 'app-add-taxi-booking',
   templateUrl: './add-taxi-booking.component.html',
   styleUrls: ['./add-taxi-booking.component.scss'],
   standalone: true,
-  imports: [CommonModule, SharedModule]
+  imports: [CommonModule, SharedModule, ReactiveFormsModule]
 })
 export default class AddTaxiBookingComponent implements AfterViewInit, OnInit {
   driverRegForm: FormGroup;
-  districts: any;
-  bloodGroups: any;
+
+  // Using Signals for reactive state
+  districts = signal<District[]>([]);
+  bloodGroups = signal<BloodType[]>([]);
+
   assetsPath: string = '../../../assets/Json/';
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private readonly utilityService: UtilityService,
@@ -49,23 +65,27 @@ export default class AddTaxiBookingComponent implements AfterViewInit, OnInit {
     this.fetchBloodGroups();
   }
 
-  fetchDistricts() {
-    this.utilityService.getData(this.assetsPath + 'districts.json').subscribe((response: District) => {
-      if (response) {
-        this.districts = response;
-      }
-    });
+  fetchDistricts(): void {
+    this.utilityService.getData(this.assetsPath + 'districts.json')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((response: any) => {
+        if (response) {
+          this.districts.set(response as District[]);
+        }
+      });
   }
 
-  fetchBloodGroups() {
-    this.utilityService.getData(this.assetsPath + 'bloodGroup.json').subscribe((response: BloodType) => {
-      if (response) {
-        this.bloodGroups = response;
-      }
-    });
+  fetchBloodGroups(): void {
+    this.utilityService.getData(this.assetsPath + 'bloodGroup.json')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((response: any) => {
+        if (response) {
+          this.bloodGroups.set(response as BloodType[]);
+        }
+      });
   }
 
-  onLicenseKeyUp(event: KeyboardEvent) {
+  onLicenseKeyUp(event: Event): void {
     const input = event.target as HTMLInputElement;
     input.value = this.utilityService.formatLicensePlate(input.value);
   }
@@ -75,37 +95,25 @@ export default class AddTaxiBookingComponent implements AfterViewInit, OnInit {
       .generateToken()
       .then((token) => {
         this.driverRegForm.controls['driverCode'].setValue(token);
-        console.log('token:', token);
       })
       .catch((error) => {
         console.error('Error generating token:', error);
       });
   }
 
-  async addDriverBooking() {
+  async addDriverBooking(): Promise<void> {
     const docId = this.firebaseService.createId();
     this.driverRegForm.controls['docId'].setValue(docId);
 
-    this.firebaseService
-      .addDrivers(this.driverRegForm.value)
-      .then(async (res) => {
-        this.driverRegForm.reset();
-        await this.snackBar.showMessage('Driver Booking Successfully Added');
-        console.log('Successfully added:', res);
-      })
-      .catch((error) => {
-        this.snackBar.showMessage('Error Adding Driver Booking');
-        console.error('Error adding driver booking:', error);
-      });
+    const driverData = this.driverRegForm.value as Driver;
+
+    try {
+      await this.firebaseService.addDrivers(driverData);
+      this.driverRegForm.reset();
+      this.snackBar.showMessage('Driver Booking Successfully Added');
+    } catch (error) {
+      this.snackBar.showMessage('Error Adding Driver Booking');
+      console.error('Error adding driver booking:', error);
+    }
   }
-}
-
-interface District {
-  id: number;
-  name: string;
-}
-
-interface BloodType {
-  bloodType: string;
-  Rh: string;
 }

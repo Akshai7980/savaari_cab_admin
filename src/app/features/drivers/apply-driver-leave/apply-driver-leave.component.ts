@@ -8,7 +8,7 @@ import { FirebaseService } from 'src/app/core/services/firebase.service';
 import { UtilityService } from 'src/app/core/services/utility.service';
 import { ListAllDriversComponent } from 'src/app/shared/components/list-all-drivers/list-all-drivers.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { Driver } from '../add-driver-booking/add-driver-booking.component';
+import { Driver } from 'src/app/core/models/driver.model';
 
 @Component({
   selector: 'apply-driver-leave',

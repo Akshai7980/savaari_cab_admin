@@ -1,71 +1,76 @@
-// Angular import
-import { Component, EventEmitter, NgZone, OnInit, Output } from '@angular/core';
-import { Location, LocationStrategy } from '@angular/common';
-import { environment } from 'src/environments/environment';
-
-// project import
-import { NavigationItem } from '../navigation';
+import { CommonModule, Location, LocationStrategy } from '@angular/common';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { NavigationItem, NavigationItemInterface } from '../navigation';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { NavItemComponent } from './nav-item/nav-item.component';
+import { NavCollapseComponent } from './nav-collapse/nav-collapse.component';
+import { NavGroupComponent } from './nav-group/nav-group.component';
 
 @Component({
   selector: 'app-nav-content',
+  standalone: true,
+  imports: [CommonModule, RouterModule, SharedModule, NavItemComponent, NavCollapseComponent, NavGroupComponent],
   templateUrl: './nav-content.component.html',
   styleUrls: ['./nav-content.component.scss']
 })
 export class NavContentComponent implements OnInit {
-  // public props
-  @Output() NavCollapsedMob: EventEmitter<any> = new EventEmitter();
+  @Output() NavCollapsedMob = new EventEmitter();
 
-  // version
-  currentApplicationVersion = environment.appVersion;
+  navigation: NavigationItemInterface[];
+  windowWidth: number;
 
-  navigation: any;
-  windowWidth = window.innerWidth;
-
-  // Constructor
   constructor(
     public nav: NavigationItem,
-    private zone: NgZone,
-    private location: Location,
-    private locationStrategy: LocationStrategy
+    private readonly location: Location,
+    private readonly locationStrategy: LocationStrategy
   ) {
     this.navigation = this.nav.get();
+    this.windowWidth = window.innerWidth;
   }
 
-  // Life cycle events
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.windowWidth < 1025) {
-      (document.querySelector('.coded-navbar') as HTMLDivElement).classList.add('menupos-static');
-    }
-  }
-
-  fireOutClick() {
-    let current_url = this.location.path();
-    const baseHref = this.locationStrategy.getBaseHref();
-    if (baseHref) {
-      current_url = baseHref + this.location.path();
-    }
-    const link = "a.nav-link[ href='" + current_url + "' ]";
-    const ele = document.querySelector(link);
-    if (ele !== null && ele !== undefined) {
-      const parent = ele.parentElement;
-      const up_parent = parent?.parentElement?.parentElement;
-      const last_parent = up_parent?.parentElement;
-      if (parent?.classList.contains('coded-hasmenu')) {
-        parent.classList.add('coded-trigger');
-        parent.classList.add('active');
-      } else if (up_parent?.classList.contains('coded-hasmenu')) {
-        up_parent.classList.add('coded-trigger');
-        up_parent.classList.add('active');
-      } else if (last_parent?.classList.contains('coded-hasmenu')) {
-        last_parent.classList.add('coded-trigger');
-        last_parent.classList.add('active');
+      const el = document.querySelector('.coded-navbar') as HTMLElement;
+      if (el) {
+        el.classList.add('menuposition-static');
       }
     }
   }
 
-  navMob() {
-    if (this.windowWidth < 1025 && document.querySelector('app-navigation.coded-navbar').classList.contains('mob-open')) {
-      this.NavCollapsedMob.emit();
+  navMob(): void {
+    if (this.windowWidth < 1025) {
+      const nav = document.querySelector('app-navigation.coded-navbar');
+      if (nav && nav.classList.contains('mob-open')) {
+        this.NavCollapsedMob.emit();
+      }
+    }
+  }
+
+  fireOutClick(): void {
+    let currentUrl = this.location.path();
+    const baseHref = this.locationStrategy.getBaseHref();
+    if (baseHref) {
+      currentUrl = baseHref + this.location.path();
+    }
+    const link = `a.nav-link[ href="${currentUrl}" ]`;
+    const upEle = document.querySelector(link);
+    if (upEle?.parentElement) {
+      const menu = upEle.closest('.coded-inner-navbar');
+      if (menu) {
+        const activeItem = menu.querySelector('li.active');
+        if (activeItem) {
+          activeItem.classList.remove('active');
+        }
+        upEle.parentElement.classList.add('active');
+      }
+    }
+
+    if (this.windowWidth < 1025) {
+      const nav = document.querySelector('app-navigation.coded-navbar');
+      if (nav && nav.classList.contains('mob-open')) {
+        this.NavCollapsedMob.emit();
+      }
     }
   }
 }

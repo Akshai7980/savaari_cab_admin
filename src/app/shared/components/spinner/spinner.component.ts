@@ -1,9 +1,7 @@
-// Angular import
 import { Component, Input, OnDestroy, Inject, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
-// project import
 import { Spinkit } from './spinkits';
 
 @Component({
@@ -13,13 +11,11 @@ import { Spinkit } from './spinkits';
   encapsulation: ViewEncapsulation.None
 })
 export class SpinnerComponent implements OnDestroy {
-  // public props
   isSpinnerVisible = true;
   Spinkit = Spinkit;
   @Input() backgroundColor = '#2689E2';
   @Input() spinner = Spinkit.skLine;
 
-  // Constructor
   constructor(
     private router: Router,
     @Inject(DOCUMENT) private document: Document

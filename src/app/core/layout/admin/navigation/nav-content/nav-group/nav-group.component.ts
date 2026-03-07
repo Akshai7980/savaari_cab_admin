@@ -1,27 +1,26 @@
-// Angular import
-import { Component, Input, NgZone, OnInit } from '@angular/core';
-
-// project import
-import { NavigationItem, NavigationItemInterface } from '../../navigation';
-import { Location, LocationStrategy } from '@angular/common';
+import { Component, Input, NgZone, OnInit, forwardRef } from '@angular/core';
+import { CommonModule, Location, LocationStrategy } from '@angular/common';
+import { NavigationItemInterface } from '../../navigation';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { NavItemComponent } from '../nav-item/nav-item.component';
+import { NavCollapseComponent } from '../nav-collapse/nav-collapse.component';
 
 @Component({
   selector: 'app-nav-group',
+  standalone: true,
+  imports: [CommonModule, SharedModule, NavItemComponent, forwardRef(() => NavCollapseComponent)],
   templateUrl: './nav-group.component.html',
   styleUrls: ['./nav-group.component.scss']
 })
 export class NavGroupComponent implements OnInit {
-  // public props
   @Input() item!: NavigationItemInterface;
 
-  // Constructor
   constructor(
     private zone: NgZone,
     private location: Location,
     private locationStrategy: LocationStrategy
   ) { }
 
-  // Life cycle events
   ngOnInit() {
     // at reload time active and trigger link
     let current_url = this.location.path();

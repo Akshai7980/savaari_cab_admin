@@ -1,15 +1,20 @@
 import { CommonModule, DatePipe, TitleCasePipe } from '@angular/common';
-import { AfterViewChecked, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, OnInit, ViewChild, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { NavigationStart, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { DataShareService } from 'src/app/core/services/data-share.service';
 import { FirebaseService } from 'src/app/core/services/firebase.service';
 import { AlertPopupComponent } from 'src/app/shared/components/alert-popup/alert-popup.component';
 import { ElementDetailedViewComponent } from 'src/app/shared/components/element-detailed-view/element-detailed-view.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { DriverLeave } from 'src/app/core/models/leave.model';
+
+export interface DriverLeaveDisplay extends DriverLeave {
+  position?: number;
+}
 
 @Component({
   selector: 'list-driver-leave',
@@ -21,12 +26,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 })
 export default class ListDriverLeaveComponent implements OnInit, AfterViewChecked {
   displayedColumns: string[] = ['position', 'driverName', 'driverMobileNumber', 'leaveReason', 'leaveType', 'numberOfDays', 'actions'];
-  dataSource = new MatTableDataSource<AppliedLeaves>([]);
+  dataSource = new MatTableDataSource<DriverLeaveDisplay>([]);
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  showPaginator: boolean = false;
-  private subscription: Subscription[] = [];
-  private dialogRef;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  showPaginator = false;
+  private readonly destroyRef = inject(DestroyRef);
+  private dialogRef: any;
 
   constructor(
     private readonly firebaseService: FirebaseService,
@@ -35,21 +40,19 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
     private readonly matDialog: MatDialog,
     private readonly datePipe: DatePipe,
     private readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    const subscription = this.router.events.subscribe((event) => {
+    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.matDialog.closeAll();
       }
     });
 
-    this.subscription.push(subscription);
-
     this.getDriverAppliedLeaves();
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewChecked(): void {
     if (this.showPaginator && !this.dataSource.paginator) {
       this.dataSource.paginator = this.paginator;
     } else if (!this.showPaginator && this.dataSource.paginator) {
@@ -57,37 +60,26 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
     }
   }
 
-  getDriverAppliedLeaves() {
-    const subscription = this.firebaseService.getDriverAppliedLeaves().subscribe(
-      (res: AppliedLeaves[]) => {
-        console.log(res);
-        const response = [];
-        let position = 1;
-
-        res.forEach((element) => {
-          if (!element.isLeaveCancelled) {
-            element.position = position++;
-            element.isLeaveCancelled = false;
-          }
-
-          if (!element.isLeaveCancelled) response.push(element);
-        });
+  getDriverAppliedLeaves(): void {
+    this.firebaseService.getDriverAppliedLeaves().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+      (res: DriverLeave[]) => {
+        const response: DriverLeaveDisplay[] = res
+          .filter(leave => !leave.isLeaveCancelled)
+          .map((item, index) => ({
+            ...item,
+            position: index + 1
+          }));
 
         this.dataSource.data = response;
-        if (this.dataSource.data.length > 5) this.showPaginator = true;
-        else this.showPaginator = false;
+        this.showPaginator = response.length > 5;
       },
       (error) => {
-        console.error('Error fetching driver bookings:', error);
+        console.error('Error fetching driver applied leaves:', error);
       }
     );
-
-    this.subscription.push(subscription);
   }
 
-  toViewLeave(element) {
-    console.log(element);
-
+  toViewLeave(element: DriverLeaveDisplay): void {
     this.matDialog.closeAll();
 
     const startDate = this.datePipe.transform(element.leaveStartDate, 'longDate');
@@ -95,11 +87,11 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
 
     const data = [
       { key: 'Driver Name', value: this.titleCase.transform(element.driverName) },
-      { key: 'Driver Mobile Number', value: '+91-' + element.driverMobileNumber },
+      { key: 'Driver Mobile Number', value: `+91-${element.driverMobileNumber || ''}` },
       { key: 'Leave Reason', value: this.titleCase.transform(element.leaveReason) },
       { key: 'Leave Type', value: element?.leaveType === 'FULL' ? 'Full Day' : 'Half Day' },
       { key: 'No: Of Days Leave', value: element.numberOfDays },
-      { key: 'Driver Type', value: this.titleCase.transform(element.driverType) },
+      { key: 'Driver Type', value: this.titleCase.transform(element.driverType || '') },
       { key: 'Leave Start Date', value: startDate },
       { key: 'Leave End Date', value: endDate }
     ];
@@ -124,9 +116,7 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
     });
   }
 
-  toCancelLeave(element) {
-    console.log(element);
-
+  toCancelLeave(element: DriverLeaveDisplay): void {
     const startDate = this.datePipe.transform(element.leaveStartDate, 'longDate');
     const endDate = this.datePipe.transform(element.leaveEndDate, 'longDate');
     const driverName = this.titleCase.transform(element.driverName);
@@ -140,55 +130,29 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
       data: {
         icon: 'close',
         image: '../../../../assets/images/alert.svg',
-        heading: `${'Are you sure ?'}`,
-        content: ` Are you sure you want to cancel Savaari Driver <strong> ${driverName} 's </strong> leave from <br> <strong> ${startDate} </strong> to <strong> ${endDate} </strong> `,
-        buttons: ['Cancel Leave', 'Don`t Cancel'],
-        onButtonClick: (e) => {
-          console.log('button click', e);
-
-          switch (e) {
-            case 'Cancel Leave':
-              this.dialogRef.close();
-
-              const params = {
-                isLeaveCancelled: true,
-                leaveCancelledAt: new Date(),
-                cancelledBy: 'ADMIN',
-                docId: element.docId
-              };
-
-              this.firebaseService.updateLeaveStatus(params);
-              break;
-
-            default:
-              this.dialogRef.close();
-              break;
+        heading: 'Are you sure?',
+        content: `Are you sure you want to cancel Savaari Driver <strong> ${driverName} 's </strong> leave from <br> <strong> ${startDate} </strong> to <strong> ${endDate} </strong> `,
+        buttons: ['Cancel Leave', "Don't Cancel"],
+        onButtonClick: (e: string) => {
+          if (e === 'Cancel Leave' && element.docId) {
+            this.dialogRef.close();
+            const params = {
+              isLeaveCancelled: true,
+              leaveCancelledAt: new Date(),
+              cancelledBy: 'ADMIN',
+              docId: element.docId
+            };
+            this.firebaseService.updateLeaveStatus(params as any);
+          } else {
+            this.dialogRef.close();
           }
         }
       }
     });
   }
 
-  toEditLeave(element) {
-    console.log(element);
+  toEditLeave(element: DriverLeaveDisplay): void {
     this.dataShareService.updateData(element);
     this.router.navigate(['applyDriverLeave']);
   }
-
-  ngOnDestroy() {
-    if (this.subscription)
-      this.subscription.forEach((element) => {
-        element.unsubscribe();
-      });
-  }
-}
-
-export interface AppliedLeaves {
-  position: number;
-  driverName: string;
-  driverMobileNumber: number;
-  leaveReason: string;
-  leaveType: string;
-  numberOfDays: string;
-  isLeaveCancelled: boolean;
 }

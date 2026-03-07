@@ -34,7 +34,8 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     MatSnackBarModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    AlertPopupComponent
   ],
   exports: [
     CommonModule,
@@ -58,6 +59,6 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     ElementDetailedViewComponent,
     NoDataFoundComponent
   ],
-  declarations: [SpinnerComponent, ElementDetailedViewComponent, NoDataFoundComponent, AlertPopupComponent]
+  declarations: [SpinnerComponent, ElementDetailedViewComponent, NoDataFoundComponent]
 })
-export class SharedModule {}
+export class SharedModule { }

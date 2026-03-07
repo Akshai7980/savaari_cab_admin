@@ -1,9 +1,7 @@
-// Angular import
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
-// project import
 import { NavigationItem } from '../../../core/layout/admin/navigation/navigation';
 
 @Component({
@@ -12,13 +10,11 @@ import { NavigationItem } from '../../../core/layout/admin/navigation/navigation
   styleUrls: ['./breadcrumb.component.scss']
 })
 export class BreadcrumbComponent {
-  // public props
   @Input() type: string;
   navigation: any;
   breadcrumbList: Array<any> = [];
   navigationList: any;
 
-  // Constructor
   constructor(
     private _router: Router,
     public nav: NavigationItem,
@@ -28,7 +24,6 @@ export class BreadcrumbComponent {
     this.setBreadcrumb();
   }
 
-  // public method
   setBreadcrumb() {
     let routerUrl: string;
     this._router.events.subscribe((router: any) => {

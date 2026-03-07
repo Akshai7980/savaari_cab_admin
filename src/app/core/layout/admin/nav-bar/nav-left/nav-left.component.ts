@@ -1,4 +1,3 @@
-// Angular import
 import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
@@ -7,6 +6,5 @@ import { Component, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./nav-left.component.scss']
 })
 export class NavLeftComponent {
-  // public props
   @Output() NavCollapsedMob = new EventEmitter();
 }
