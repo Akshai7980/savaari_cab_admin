@@ -22,7 +22,7 @@ import { SharedModule } from './theme/shared/shared.module';
 import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
 
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
@@ -32,35 +32,28 @@ import { VehicleNumberPipe } from './pipes/vehicle-number/vehicle-number.pipe';
 const app = initializeApp(environment.firebaseConfig);
 const analytics = getAnalytics(app);
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    AdminComponent,
-    NavBarComponent,
-    NavLeftComponent,
-    NavRightComponent,
-    NavigationComponent,
-    NavLogoComponent,
-    NavContentComponent,
-    NavGroupComponent,
-    NavItemComponent,
-    NavCollapseComponent,
-    ConfigurationComponent,
-    GuestComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    SharedModule,
-    BrowserAnimationsModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule,
-    AngularFireAuthModule,
-    VehicleNumberPipe,
-    HttpClientModule
-  ],
-  providers: [NavigationItem],
-  bootstrap: [AppComponent],
-  exports: [VehicleNumberPipe]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        AdminComponent,
+        NavBarComponent,
+        NavLeftComponent,
+        NavRightComponent,
+        NavigationComponent,
+        NavLogoComponent,
+        NavContentComponent,
+        NavGroupComponent,
+        NavItemComponent,
+        NavCollapseComponent,
+        ConfigurationComponent,
+        GuestComponent
+    ],
+    bootstrap: [AppComponent],
+    exports: [VehicleNumberPipe], imports: [BrowserModule,
+        AppRoutingModule,
+        SharedModule,
+        BrowserAnimationsModule,
+        AngularFireModule.initializeApp(environment.firebaseConfig),
+        AngularFirestoreModule,
+        AngularFireAuthModule,
+        VehicleNumberPipe], providers: [NavigationItem, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {}
