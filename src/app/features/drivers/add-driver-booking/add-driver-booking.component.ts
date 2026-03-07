@@ -1,156 +1,165 @@
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, ViewChild, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AutocapitalizeDirective } from 'src/app/shared/directives/autocapitalize.directive';
-import { VehicleNumberDirective } from 'src/app/shared/directives/vehicle-number.directive';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { FirebaseService } from 'src/app/core/services/firebase.service';
 import { UtilityService } from 'src/app/core/services/utility.service';
-import { ListAllDriversComponent } from 'src/app/shared/components/list-all-drivers/list-all-drivers.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { Driver } from 'src/app/core/models/driver.model';
+import { FormGeneratorService } from 'src/app/core/services/form-generator.service';
+import { FormConfig } from 'src/app/core/models/form-field.model';
 import { DriverBooking } from 'src/app/core/models/booking.model';
+import { DynamicFormContainerComponent } from 'src/app/shared/components/dynamic-form-container/dynamic-form-container.component';
+import { ListAllDriversComponent } from 'src/app/shared/components/list-all-drivers/list-all-drivers.component';
 
 @Component({
   selector: 'app-add-driver-booking',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule, AutocapitalizeDirective, VehicleNumberDirective],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicFormContainerComponent,
+  ],
   templateUrl: './add-driver-booking.component.html',
   styleUrls: ['./add-driver-booking.component.scss']
 })
-export default class AddDriverBookingComponent implements OnInit {
-  @ViewChild('startDateInput') startDateInput: HTMLInputElement;
-  @ViewChild('endDateInput') endDateInput: HTMLInputElement;
-
-  private drivers: Driver[] = [];
+export class AddDriverBookingComponent implements OnInit {
+  private firebaseService = inject(FirebaseService);
+  private utilityService = inject(UtilityService);
+  private formGeneratorService = inject(FormGeneratorService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private dialog = inject(MatDialog);
 
-  // Modern Signal for reactive state
-  public isEditMode = signal(false);
+  bookingForm!: FormGroup;
+  formConfig!: FormConfig;
+  bookingId: string | null = null;
+  isEditMode = signal<boolean>(false);
+  drivers: any[] = [];
 
-  driverBookingForm = this.formBuilder.group({
-    customerName: ['', Validators.required],
-    address: ['', Validators.required],
-    pickUpLocation: ['', Validators.required],
-    dropOffLocation: ['', Validators.required],
-    customerNumber: ['', Validators.required],
-    startDate: ['', Validators.required],
-    endDate: ['', Validators.required],
-    startTime: ['', Validators.required],
-    numberOfDays: ['', Validators.required],
-    requiredDriver: ['', Validators.required],
-    rejectedDriver: [''],
-    cusVehicleName: ['', Validators.required],
-    cusVehicleType: ['', Validators.required],
-    cusVehicleNumber: ['', Validators.required],
-    docId: [''],
-    status: [''],
-    selectedDriver: ['']
-  });
-
-  constructor(
-    private readonly firebaseService: FirebaseService,
-    private readonly utilityService: UtilityService,
-    private readonly formBuilder: FormBuilder,
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    private readonly matDialog: MatDialog
-  ) {
-    this.handleEditState();
-  }
-
-  ngOnInit(): void {
+  ngOnInit() {
+    this.loadFormConfig();
     this.getDrivers();
-    this.initializeDateValues();
-  }
 
-  onInputDate() {
-    this.utilityService.updateDaysDifference(this.driverBookingForm);
-  }
-
-  private handleEditState() {
-    this.route.queryParamMap
+    this.route.paramMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params: ParamMap) => {
-        const id = params.get('id');
-        if (id) {
+        this.bookingId = params.get('id');
+        if (this.bookingId) {
           this.isEditMode.set(true);
-          this.firebaseService.getBookingDetailById(id).subscribe((data: DriverBooking | null) => {
-            if (data) {
-              const patchedData = {
-                ...data,
-                startTime: data.startTime ? this.utilityService.convertTo24Hour(data.startTime) : ''
-              };
-              this.driverBookingForm.patchValue(patchedData);
-            }
-          });
+          this.loadBookingData(this.bookingId);
         }
       });
   }
 
-  private initializeDateValues() {
-    const currentDate = this.utilityService.currentDate();
-    this.driverBookingForm.controls['startDate'].setValue(currentDate);
-    this.driverBookingForm.controls['endDate'].setValue(currentDate);
-    this.driverBookingForm.controls['startTime'].setValue(this.utilityService.currentTime());
-    this.driverBookingForm.controls['numberOfDays'].setValue('1');
-  }
-
-  openDialog() {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.height = '400px';
-    dialogConfig.width = '600px';
-
-    const dialogRef = this.matDialog.open(ListAllDriversComponent, {
-      ...dialogConfig,
-      data: { drivers: this.drivers }
-    });
-
-    dialogRef.afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((selectedDrivers: Driver[]) => {
-        console.log(`Dialog result: ${selectedDrivers}`);
+  loadFormConfig() {
+    this.utilityService.getJSON('assets/configs/driver-booking.json')
+      .subscribe((data: FormConfig) => {
+        this.formConfig = data;
+        this.bookingForm = this.formGeneratorService.generateForm(this.formConfig);
+        if (!this.isEditMode()) {
+          this.initializeDateValues();
+        }
       });
   }
 
+  loadBookingData(id: string) {
+    this.firebaseService.getDocument('driver_bookings', id)
+      .subscribe((data: any) => {
+        if (data && this.bookingForm) {
+          this.bookingForm.patchValue(data);
+        }
+      });
+  }
+
+  initializeDateValues() {
+    if (!this.bookingForm) return;
+    const currentDate = this.utilityService.currentDate();
+    this.bookingForm.patchValue({
+      startDate: currentDate,
+      endDate: currentDate,
+      startTime: this.utilityService.currentTime(),
+      numberOfDays: 1
+    });
+  }
+
   getDrivers() {
-    this.firebaseService.getUserOTPs()
+    this.firebaseService.getRegisteredDrivers()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((drivers) => {
         this.drivers = drivers || [];
       });
   }
 
-  addDriverBooking() {
-    const inputValue = this.driverBookingForm.controls['startTime'].value;
-    this.driverBookingForm.controls['startTime'].setValue(this.utilityService.convertTo12HourFormat(inputValue));
-    this.driverBookingForm.controls['status'].setValue('yts');
+  selectDriver() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.height = '400px';
+    dialogConfig.width = '600px';
 
-    const bookingData = this.driverBookingForm.getRawValue() as DriverBooking;
+    const dialogRef = this.dialog.open(ListAllDriversComponent, {
+      ...dialogConfig,
+      data: { drivers: this.drivers }
+    });
 
+    dialogRef.afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result: any) => {
+        if (result) {
+          this.bookingForm.patchValue({
+            requiredDriver: result.name
+          });
+        }
+      });
+  }
+
+  onCancel() {
+    this.bookingForm.reset();
     if (!this.isEditMode()) {
-      const docId = this.firebaseService.createId();
-      bookingData.docId = docId;
-
-      this.firebaseService
-        .addDriverBooking(bookingData)
-        .then(() => {
-          this.utilityService.successFailedPopup('SUCCESS');
-          this.driverBookingForm.reset();
-          this.initializeDateValues();
-        })
-        .catch((error) => {
-          console.error('Error adding driver booking:', error);
-          this.utilityService.successFailedPopup('FAILED');
-        });
+      this.initializeDateValues();
     } else {
-      if (bookingData.docId) {
-        this.firebaseService.updateBookingDetailById(bookingData as DriverBooking & { docId: string }).then(() => {
-          this.router.navigate(['/driverBookingList']);
-        });
+      this.loadBookingData(this.bookingId!);
+    }
+  }
+
+  onSubmit() {
+    if (this.bookingForm.valid) {
+      const bookingData = this.bookingForm.value as DriverBooking;
+
+      // Post-processing for time format as per business requirements
+      if (bookingData.startTime) {
+        bookingData.startTime = this.utilityService.convertTo12HourFormat(bookingData.startTime) || bookingData.startTime;
       }
+
+      if (this.isEditMode()) {
+        this.firebaseService.updateDocument('driver_bookings', this.bookingId!, bookingData)
+          .then(() => {
+            this.utilityService.successFailedPopup('SUCCESS');
+            this.router.navigate(['/drivers/bookings']);
+          })
+          .catch(error => {
+            console.error(error);
+            this.utilityService.successFailedPopup('FAILED');
+          });
+      } else {
+        const docId = this.firebaseService.createId();
+        bookingData.docId = docId;
+        bookingData.status = 'yts';
+
+        this.firebaseService.addDocument('driver_bookings', bookingData)
+          .then(() => {
+            this.utilityService.successFailedPopup('SUCCESS');
+            this.bookingForm.reset();
+            this.initializeDateValues();
+            this.router.navigate(['/drivers/bookings']);
+          })
+          .catch(error => {
+            console.error(error);
+            this.utilityService.successFailedPopup('FAILED');
+          });
+      }
+    } else {
+      this.bookingForm.markAllAsTouched();
     }
   }
 }

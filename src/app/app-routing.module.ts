@@ -19,7 +19,7 @@ const routes: Routes = [
       },
       {
         path: 'driverBookings',
-        loadComponent: () => import('./features/drivers/add-driver-booking/add-driver-booking.component')
+        loadComponent: () => import('./features/drivers/add-driver-booking/add-driver-booking.component').then(m => m.AddDriverBookingComponent)
       },
       {
         path: 'addDrivers',

@@ -53,6 +53,7 @@ $pc-secondary: map-get($preset-colors, 'preset-1', 'secondary');
 // main framework
 @import 'scss/themes/generic';
 @import 'scss/themes/general';
+@import 'scss/themes/utilities';
 
 // Layouts
 @import 'scss/themes/layouts/layouts';

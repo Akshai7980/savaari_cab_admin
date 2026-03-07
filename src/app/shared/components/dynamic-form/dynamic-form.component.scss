@@ -1,0 +1,87 @@
+.form-field-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .form-label {
+        font-size: 0.85rem;
+        color: #4B5563;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.2px;
+
+        .text-danger {
+            margin-left: 2px;
+        }
+    }
+
+    .form-control,
+    .form-select {
+        height: 50px; // Standardized vertical height
+        padding: 0.5rem 0.85rem;
+        font-size: 0.95rem;
+        border: 1.5px solid #E5E7EB;
+        border-radius: 8px;
+        transition: all 0.2s ease-in-out;
+        width: 100%; // Unified width
+
+        &::placeholder {
+            color: #9CA3AF;
+            font-size: 0.9rem;
+        }
+
+        &:focus {
+            background-color: white;
+            border-color: #673ab7;
+            box-shadow: 0 0 0 4px rgba(103, 58, 183, 0.1);
+            outline: none;
+        }
+
+        &:disabled {
+            background-color: #F3F4F6;
+            cursor: not-allowed;
+        }
+    }
+
+    textarea.form-control {
+        height: auto; // Allow height for multi-line
+        min-height: 100px;
+        padding-top: 0.75rem;
+    }
+
+    .form-check {
+        padding-top: 0.5rem;
+
+        .form-check-input {
+            width: 1.15rem;
+            height: 1.15rem;
+            margin-top: 0.15rem;
+            cursor: pointer;
+
+            &:checked {
+                background-color: #673ab7;
+                border-color: #673ab7;
+            }
+        }
+
+        .form-check-label {
+            font-size: 0.9rem;
+            color: #374151;
+            padding-left: 0.5rem;
+            cursor: pointer;
+        }
+    }
+
+    .invalid-feedback {
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin-top: 0.35rem;
+        display: flex;
+        align-items: center;
+
+        &::before {
+            content: "\e933"; // Tabler icon for warning if available, or simple dash
+            font-family: 'tabler-icons' !important;
+            margin-right: 4px;
+        }
+    }
+}

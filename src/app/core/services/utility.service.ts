@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { AlertPopupComponent } from '../../shared/components/alert-popup/alert-popup.component';
 import { FirebaseService } from './firebase.service';
 
@@ -173,6 +173,10 @@ export class UtilityService {
   }
 
   getData(url: string) {
+    return this.http.get(url);
+  }
+
+  getJSON(url: string): Observable<any> {
     return this.http.get(url);
   }
 

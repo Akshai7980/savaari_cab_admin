@@ -1,0 +1,131 @@
+{
+    "formID": "DRIVER_BOOKING_FORM",
+    "formTitle": "Add Driver Booking",
+    "formSectionConfig": [
+        {
+            "sectionID": "secBookingDetails",
+            "sectionLabel": "Booking Details",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "customerName",
+                    "fieldLabel": "Customer Name",
+                    "controlType": "TextBox",
+                    "type": "text",
+                    "colspan": 2,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "address",
+                    "fieldLabel": "Address",
+                    "controlType": "TextArea",
+                    "colspan": 2,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "pickUpLocation",
+                    "fieldLabel": "Pick Up Location",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "dropOffLocation",
+                    "fieldLabel": "Purpose Of Travel",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "customerNumber",
+                    "fieldLabel": "Mobile Number",
+                    "controlType": "Number",
+                    "colspan": 2,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "startDate",
+                    "fieldLabel": "Trip Start Date",
+                    "controlType": "Date",
+                    "colspan": 1,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "endDate",
+                    "fieldLabel": "Trip End Date",
+                    "controlType": "Date",
+                    "colspan": 1,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "startTime",
+                    "fieldLabel": "Trip Start Time",
+                    "controlType": "TextBox",
+                    "type": "time",
+                    "colspan": 1,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "numberOfDays",
+                    "fieldLabel": "Number Of Days",
+                    "controlType": "Number",
+                    "colspan": 1,
+                    "mandatory": true
+                }
+            ]
+        },
+        {
+            "sectionID": "secDriverVehicleDetails",
+            "sectionLabel": "Driver & Vehicle Details",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "requiredDriver",
+                    "fieldLabel": "Required Driver",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "rejectedDriver",
+                    "fieldLabel": "Rejected Driver",
+                    "controlType": "TextBox",
+                    "colspan": 1
+                },
+                {
+                    "fieldID": "cusVehicleName",
+                    "fieldLabel": "Customer Vehicle Name",
+                    "controlType": "TextBox",
+                    "colspan": 2,
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "cusVehicleType",
+                    "fieldLabel": "Customer Vehicle Type",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "options": [
+                        {
+                            "label": "Automatic",
+                            "value": "Automatic"
+                        },
+                        {
+                            "label": "Manual",
+                            "value": "Manual"
+                        }
+                    ],
+                    "mandatory": true
+                },
+                {
+                    "fieldID": "cusVehicleNumber",
+                    "fieldLabel": "Customer Vehicle Number",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "formatType": "VehicleNumber",
+                    "hint": "Format: XX 00 XX 0000 (e.g., KL 04 BA 0405)"
+                }
+            ]
+        }
+    ]
+}

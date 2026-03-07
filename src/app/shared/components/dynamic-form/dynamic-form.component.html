@@ -1,0 +1,55 @@
+<div [formGroup]="formGroup" class="form-field-container mb-3">
+    <label [for]="config.fieldID" class="form-label font-weight-bold" *ngIf="config.fieldLabel">
+        {{ config.fieldLabel }}
+        <span *ngIf="config.mandatory" class="text-danger">*</span>
+    </label>
+
+    <ng-container [ngSwitch]="config.controlType">
+        <!-- TextBox -->
+        <input *ngSwitchCase="'TextBox'" [type]="config.type || 'text'" [id]="config.fieldID"
+            [formControlName]="config.fieldID" class="form-control shadow-sm" [placeholder]="config.placeholder || ''"
+            [attr.disabled]="config.disable ? true : null" (blur)="onBlur()">
+
+        <div class="field-hint text-muted small mt-1" *ngIf="config.hint && !getError()">
+            <i class="ti ti-info-circle me-1"></i> {{ config.hint }}
+        </div>
+
+        <!-- Dropdown -->
+        <select *ngSwitchCase="'Dropdown'" [id]="config.fieldID" [formControlName]="config.fieldID"
+            class="form-select shadow-sm" [attr.disabled]="config.disable ? true : null">
+            <option value="" disabled selected>{{ config.placeholder || 'Select ' + config.fieldLabel }}</option>
+            <option *ngFor="let opt of config.options" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+
+        <!-- Radio -->
+        <div *ngSwitchCase="'Radio'" class="radio-group mt-2">
+            <div class="form-check form-check-inline" *ngFor="let opt of config.options; let i = index">
+                <input class="form-check-input" type="radio" [id]="config.fieldID + '_' + i" [value]="opt.value"
+                    [formControlName]="config.fieldID">
+                <label class="form-check-label" [for]="config.fieldID + '_' + i">{{ opt.label }}</label>
+            </div>
+        </div>
+
+        <!-- Checkbox -->
+        <div *ngSwitchCase="'Checkbox'" class="form-check">
+            <input class="form-check-input" type="checkbox" [id]="config.fieldID" [formControlName]="config.fieldID">
+            <label class="form-check-label" [for]="config.fieldID">{{ config.fieldLabel }}</label>
+        </div>
+
+        <!-- TextArea -->
+        <textarea *ngSwitchCase="'TextArea'" [id]="config.fieldID" [formControlName]="config.fieldID"
+            class="form-control shadow-sm" [placeholder]="config.placeholder || ''" rows="3"></textarea>
+
+        <!-- Date -->
+        <input *ngSwitchCase="'Date'" type="date" [id]="config.fieldID" [formControlName]="config.fieldID"
+            class="form-control shadow-sm">
+
+        <!-- Number -->
+        <input *ngSwitchCase="'Number'" type="number" [id]="config.fieldID" [formControlName]="config.fieldID"
+            class="form-control shadow-sm">
+    </ng-container>
+
+    <div class="invalid-feedback d-block text-danger small mt-1" *ngIf="getError()">
+        {{ getError() }}
+    </div>
+</div>

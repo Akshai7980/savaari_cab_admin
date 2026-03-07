@@ -346,4 +346,23 @@ export class FirebaseService {
       });
   }
 
+  getDocument(collection: string, docId: string): Observable<any> {
+    // Note: This expects a 'docId' field in the document content as per previous patterns
+    return this.fireStore.collection(collection, ref => ref.where('docId', '==', docId)).valueChanges().pipe(first());
+  }
+
+  updateDocument(collection: string, docId: string, data: any): Promise<void> {
+    return this.fireStore.collection(collection).ref.where('docId', '==', docId).get().then(snapshot => {
+      if (!snapshot.empty) {
+        return snapshot.docs[0].ref.update(data);
+      } else {
+        throw new Error('Document not found');
+      }
+    });
+  }
+
+  addDocument(collection: string, data: any): Promise<any> {
+    return this.fireStore.collection(collection).add(data);
+  }
+
 }
