@@ -1,8 +1,9 @@
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FirebaseService } from 'src/app/core/services/firebase.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-login',

@@ -1,0 +1,30 @@
+[
+    {
+        "label": "Select Customer Vehicle Type",
+        "value": ""
+    },
+    {
+        "label": "Sedan",
+        "value": "Sedan"
+    },
+    {
+        "label": "SUV",
+        "value": "SUV"
+    },
+    {
+        "label": "Hatchback",
+        "value": "Hatchback"
+    },
+    {
+        "label": "Luxury",
+        "value": "Luxury"
+    },
+    {
+        "label": "EV (Electric Vehicle)",
+        "value": "EV"
+    },
+    {
+        "label": "MUV",
+        "value": "MUV"
+    }
+]

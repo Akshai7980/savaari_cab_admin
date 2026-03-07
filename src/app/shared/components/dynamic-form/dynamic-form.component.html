@@ -5,10 +5,17 @@
     </label>
 
     <ng-container [ngSwitch]="config.controlType">
-        <!-- TextBox -->
-        <input *ngSwitchCase="'TextBox'" [type]="config.type || 'text'" [id]="config.fieldID"
-            [formControlName]="config.fieldID" class="form-control shadow-sm" [placeholder]="config.placeholder || ''"
-            [attr.disabled]="config.disable ? true : null" (blur)="onBlur()">
+        <div class="input-group-container" [class.large-prefix]="config.prefixText && config.prefixText.length > 3">
+            <div class="prefix-container" *ngIf="config.prefixIcon || config.prefixText">
+                <span class="flag-icon" *ngIf="config.prefixIcon">{{ config.prefixIcon }}</span>
+                <div class="vertical-divider" *ngIf="config.prefixIcon && config.prefixText"></div>
+                <span *ngIf="config.prefixText">{{ config.prefixText }}</span>
+            </div>
+            <input *ngSwitchCase="'TextBox'" [type]="config.type || 'text'" [id]="config.fieldID"
+                [formControlName]="config.fieldID" class="form-control" [placeholder]="config.placeholder || ''"
+                [attr.disabled]="config.disable ? true : null" [disabled]="config.disable ? true : null"
+                (blur)="onBlur()" (input)="onInput($event)" [class.has-prefix]="config.prefixIcon || config.prefixText">
+        </div>
 
         <div class="field-hint text-muted small mt-1" *ngIf="config.hint && !getError()">
             <i class="ti ti-info-circle me-1"></i> {{ config.hint }}
@@ -37,16 +44,22 @@
         </div>
 
         <!-- TextArea -->
-        <textarea *ngSwitchCase="'TextArea'" [id]="config.fieldID" [formControlName]="config.fieldID"
-            class="form-control shadow-sm" [placeholder]="config.placeholder || ''" rows="3"></textarea>
+        <div class="textarea-container">
+            <textarea *ngSwitchCase="'TextArea'" [id]="config.fieldID" [formControlName]="config.fieldID"
+                class="form-control" [placeholder]="config.placeholder || ''" rows="3" (input)="onInput($event)"
+                [attr.maxlength]="config.maxLength || null"></textarea>
+            <div class="char-counter text-muted small text-end mt-1" *ngIf="config.showCounter">
+                {{ (control?.value?.length || 0) }} / {{ config.maxLength || 100 }}
+            </div>
+        </div>
 
         <!-- Date -->
         <input *ngSwitchCase="'Date'" type="date" [id]="config.fieldID" [formControlName]="config.fieldID"
             class="form-control shadow-sm">
 
         <!-- Number -->
-        <input *ngSwitchCase="'Number'" type="number" [id]="config.fieldID" [formControlName]="config.fieldID"
-            class="form-control shadow-sm">
+        <input *ngSwitchCase="'Number'" type="tel" [id]="config.fieldID" [formControlName]="config.fieldID"
+            class="form-control" (keypress)="onNumberKeyPress($event)">
     </ng-container>
 
     <div class="invalid-feedback d-block text-danger small mt-1" *ngIf="getError()">

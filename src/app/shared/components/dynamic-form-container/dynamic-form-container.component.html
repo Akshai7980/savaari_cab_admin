@@ -1,4 +1,7 @@
 <form [formGroup]="formGroup" *ngIf="config" class="form-container">
+    <div class="info-icon-container" *ngIf="config.infoTooltip" [title]="config.infoTooltip">
+        <i class="ti ti-info-circle"></i>
+    </div>
     <div *ngFor="let section of config.formSectionConfig" class="form-section">
         <h3 *ngIf="section.sectionLabel" class="section-title text-uppercase font-weight-bold">
             {{ section.sectionLabel }}

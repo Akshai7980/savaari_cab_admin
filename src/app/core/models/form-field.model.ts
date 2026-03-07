@@ -22,11 +22,18 @@ export interface FormFieldConfig {
     hideOnLoad?: boolean;
     disable?: boolean;
     dataSourceKey?: string;
+    dependsOn?: string;
     dataPath?: string;
     defaultValue?: any;
     value?: any;
     hint?: string;
     formatType?: 'VehicleNumber' | string;
+    autoCapitalize?: boolean;
+    prefixIcon?: string;
+    prefixText?: string;
+    showCounter?: boolean;
+    maxLength?: number;
+    infoTooltip?: string;
 }
 
 export interface FormSectionConfig {
@@ -39,8 +46,8 @@ export interface FormSectionConfig {
 
 export interface FormConfig {
     formID: string;
-    formTitle?: string;
-    formDescription?: string;
+    formTitle: string;
+    infoTooltip?: string;
     formLayout?: number;
     formSectionConfig: FormSectionConfig[];
 }

@@ -1,0 +1,46 @@
+[
+    {
+        "label": "Select Brand",
+        "value": ""
+    },
+    {
+        "label": "Maruti",
+        "value": "Maruti"
+    },
+    {
+        "label": "Hyundai",
+        "value": "Hyundai"
+    },
+    {
+        "label": "Tata",
+        "value": "Tata"
+    },
+    {
+        "label": "Toyota",
+        "value": "Toyota"
+    },
+    {
+        "label": "Mahindra",
+        "value": "Mahindra"
+    },
+    {
+        "label": "Honda",
+        "value": "Honda"
+    },
+    {
+        "label": "Kia",
+        "value": "Kia"
+    },
+    {
+        "label": "MG",
+        "value": "MG"
+    },
+    {
+        "label": "Skoda",
+        "value": "Skoda"
+    },
+    {
+        "label": "Volkswagen",
+        "value": "Volkswagen"
+    }
+]

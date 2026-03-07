@@ -1,6 +1,7 @@
 {
     "formID": "DRIVER_BOOKING_FORM",
     "formTitle": "Add Driver Booking",
+    "infoTooltip": "Complete all mandatory fields to enable 'Schedule Booking'.",
     "formSectionConfig": [
         {
             "sectionID": "secBookingDetails",
@@ -13,13 +14,33 @@
                     "controlType": "TextBox",
                     "type": "text",
                     "colspan": 2,
-                    "mandatory": true
+                    "mandatory": true,
+                    "autoCapitalize": true
                 },
                 {
                     "fieldID": "address",
                     "fieldLabel": "Address",
                     "controlType": "TextArea",
                     "colspan": 2,
+                    "mandatory": true,
+                    "autoCapitalize": true,
+                    "showCounter": true,
+                    "maxLength": 100
+                },
+                {
+                    "fieldID": "dialCode",
+                    "fieldLabel": "Dial Code",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "prefixIcon": "🇮🇳",
+                    "prefixText": "+ 91",
+                    "disable": true
+                },
+                {
+                    "fieldID": "customerNumber",
+                    "fieldLabel": "Mobile Number",
+                    "controlType": "Number",
+                    "colspan": 1,
                     "mandatory": true
                 },
                 {
@@ -27,20 +48,64 @@
                     "fieldLabel": "Pick Up Location",
                     "controlType": "TextBox",
                     "colspan": 1,
-                    "mandatory": true
+                    "mandatory": true,
+                    "autoCapitalize": true
                 },
                 {
-                    "fieldID": "dropOffLocation",
+                    "fieldID": "purposeOfTravel",
                     "fieldLabel": "Purpose Of Travel",
-                    "controlType": "TextBox",
+                    "controlType": "Dropdown",
                     "colspan": 1,
-                    "mandatory": true
-                },
-                {
-                    "fieldID": "customerNumber",
-                    "fieldLabel": "Mobile Number",
-                    "controlType": "Number",
-                    "colspan": 2,
+                    "options": [
+                        {
+                            "label": "Select Purpose",
+                            "value": ""
+                        },
+                        {
+                            "label": "Business",
+                            "value": "Business"
+                        },
+                        {
+                            "label": "Vacation",
+                            "value": "Vacation"
+                        },
+                        {
+                            "label": "Family Visit",
+                            "value": "Family Visit"
+                        },
+                        {
+                            "label": "Medical",
+                            "value": "Medical"
+                        },
+                        {
+                            "label": "Education",
+                            "value": "Education"
+                        },
+                        {
+                            "label": "Pilgrimage",
+                            "value": "Pilgrimage"
+                        },
+                        {
+                            "label": "Shopping",
+                            "value": "Shopping"
+                        },
+                        {
+                            "label": "Event/Wedding",
+                            "value": "Event/Wedding"
+                        },
+                        {
+                            "label": "Solo Trip",
+                            "value": "Solo Trip"
+                        },
+                        {
+                            "label": "Relocation",
+                            "value": "Relocation"
+                        },
+                        {
+                            "label": "Other",
+                            "value": "Other"
+                        }
+                    ],
                     "mandatory": true
                 },
                 {
@@ -68,8 +133,58 @@
                 {
                     "fieldID": "numberOfDays",
                     "fieldLabel": "Number Of Days",
-                    "controlType": "Number",
+                    "controlType": "Dropdown",
                     "colspan": 1,
+                    "options": [
+                        {
+                            "label": "Select Days",
+                            "value": ""
+                        },
+                        {
+                            "label": "0",
+                            "value": 0
+                        },
+                        {
+                            "label": "1",
+                            "value": 1
+                        },
+                        {
+                            "label": "2",
+                            "value": 2
+                        },
+                        {
+                            "label": "3",
+                            "value": 3
+                        },
+                        {
+                            "label": "4",
+                            "value": 4
+                        },
+                        {
+                            "label": "5",
+                            "value": 5
+                        },
+                        {
+                            "label": "6",
+                            "value": 6
+                        },
+                        {
+                            "label": "7",
+                            "value": 7
+                        },
+                        {
+                            "label": "8",
+                            "value": 8
+                        },
+                        {
+                            "label": "9",
+                            "value": 9
+                        },
+                        {
+                            "label": "10",
+                            "value": 10
+                        }
+                    ],
                     "mandatory": true
                 }
             ]
@@ -84,36 +199,46 @@
                     "fieldLabel": "Required Driver",
                     "controlType": "TextBox",
                     "colspan": 1,
-                    "mandatory": true
+                    "mandatory": true,
+                    "autoCapitalize": true
                 },
                 {
                     "fieldID": "rejectedDriver",
                     "fieldLabel": "Rejected Driver",
                     "controlType": "TextBox",
-                    "colspan": 1
+                    "colspan": 1,
+                    "autoCapitalize": true
                 },
                 {
-                    "fieldID": "cusVehicleName",
-                    "fieldLabel": "Customer Vehicle Name",
-                    "controlType": "TextBox",
-                    "colspan": 2,
+                    "fieldID": "cusVehicleBrand",
+                    "fieldLabel": "Customer Vehicle Brand",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "dataSourceKey": "lov-data/driver-booking/vehicle-brands",
                     "mandatory": true
+                },
+                {
+                    "fieldID": "cusVehicleModel",
+                    "fieldLabel": "Customer Vehicle Model",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "dependsOn": "cusVehicleBrand",
+                    "dataSourceKey": "lov-data/driver-booking/vehicle-models",
+                    "placeholder": "Select Model",
+                    "mandatory": true,
+                    "options": [
+                        {
+                            "label": "Select Model",
+                            "value": ""
+                        }
+                    ]
                 },
                 {
                     "fieldID": "cusVehicleType",
                     "fieldLabel": "Customer Vehicle Type",
                     "controlType": "Dropdown",
                     "colspan": 1,
-                    "options": [
-                        {
-                            "label": "Automatic",
-                            "value": "Automatic"
-                        },
-                        {
-                            "label": "Manual",
-                            "value": "Manual"
-                        }
-                    ],
+                    "dataSourceKey": "lov-data/driver-booking/vehicle-types",
                     "mandatory": true
                 },
                 {

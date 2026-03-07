@@ -36,6 +36,7 @@ export class AddDriverBookingComponent implements OnInit {
   formConfig!: FormConfig;
   bookingId: string | null = null;
   isEditMode = signal<boolean>(false);
+  isLoading = signal<boolean>(true);
   drivers: any[] = [];
 
   ngOnInit() {
@@ -61,6 +62,7 @@ export class AddDriverBookingComponent implements OnInit {
         if (!this.isEditMode()) {
           this.initializeDateValues();
         }
+        this.isLoading.set(false);
       });
   }
 
@@ -75,11 +77,24 @@ export class AddDriverBookingComponent implements OnInit {
 
   initializeDateValues() {
     if (!this.bookingForm) return;
-    const currentDate = this.utilityService.currentDate();
+    const now = new Date();
+    const futureDate = new Date(now.getTime() + 15 * 60000); // Add 15 minutes
+
+    // Format date as yyyy-mm-dd
+    const year = futureDate.getFullYear();
+    const month = String(futureDate.getMonth() + 1).padStart(2, '0');
+    const day = String(futureDate.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    // Format time as HH:mm (24h format for the time input)
+    const hours = String(futureDate.getHours()).padStart(2, '0');
+    const minutes = String(futureDate.getMinutes()).padStart(2, '0');
+    const formattedTime = `${hours}:${minutes}`;
+
     this.bookingForm.patchValue({
-      startDate: currentDate,
-      endDate: currentDate,
-      startTime: this.utilityService.currentTime(),
+      startDate: formattedDate,
+      endDate: formattedDate,
+      startTime: formattedTime,
       numberOfDays: 1
     });
   }

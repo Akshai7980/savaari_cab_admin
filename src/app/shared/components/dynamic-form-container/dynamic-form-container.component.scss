@@ -2,6 +2,23 @@ $grid-gap: 1.5rem;
 $mobile-breakpoint: 768px;
 
 .form-container {
+    position: relative;
+
+    .info-icon-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+        cursor: pointer;
+        color: #673ab7;
+        font-size: 1.25rem;
+        z-index: 100;
+        transition: transform 0.2s ease;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+
     padding: 1rem;
 }
 

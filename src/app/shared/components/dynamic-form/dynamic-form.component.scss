@@ -26,19 +26,70 @@
 
         &::placeholder {
             color: #9CA3AF;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         &:focus {
             background-color: white;
             border-color: #673ab7;
-            box-shadow: 0 0 0 4px rgba(103, 58, 183, 0.1);
+            box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.1);
             outline: none;
         }
 
         &:disabled {
             background-color: #F3F4F6;
             cursor: not-allowed;
+        }
+    }
+
+    .input-group-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+
+        .prefix-container {
+            position: absolute;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: #4B5563;
+            pointer-events: none;
+            z-index: 10;
+
+            .flag-icon {
+                font-size: 1.2rem;
+                line-height: 1;
+            }
+
+            .vertical-divider {
+                width: 1.5px;
+                height: 20px;
+                background-color: #E5E7EB;
+                margin: 0 4px;
+            }
+        }
+
+        .form-control.has-prefix {
+            padding-left: 3.5rem; // Adjusted for divider
+        }
+
+        &.large-prefix {
+            .form-control.has-prefix {
+                padding-left: 4.5rem;
+            }
+        }
+    }
+
+    .textarea-container {
+        width: 100%;
+
+        .char-counter {
+            font-size: 0.75rem;
+            color: #6B7280;
+            margin-top: 4px;
         }
     }
 

@@ -1,0 +1,50 @@
+[
+    {
+        "label": "Select Purpose",
+        "value": ""
+    },
+    {
+        "label": "Business",
+        "value": "Business"
+    },
+    {
+        "label": "Vacation",
+        "value": "Vacation"
+    },
+    {
+        "label": "Family Visit",
+        "value": "Family Visit"
+    },
+    {
+        "label": "Medical",
+        "value": "Medical"
+    },
+    {
+        "label": "Education",
+        "value": "Education"
+    },
+    {
+        "label": "Pilgrimage",
+        "value": "Pilgrimage"
+    },
+    {
+        "label": "Shopping",
+        "value": "Shopping"
+    },
+    {
+        "label": "Event/Wedding",
+        "value": "Event/Wedding"
+    },
+    {
+        "label": "Solo Trip",
+        "value": "Solo Trip"
+    },
+    {
+        "label": "Relocation",
+        "value": "Relocation"
+    },
+    {
+        "label": "Other",
+        "value": "Other"
+    }
+]

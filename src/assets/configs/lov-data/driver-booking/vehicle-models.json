@@ -1,0 +1,222 @@
+{
+    "Maruti": [
+        {
+            "label": "800",
+            "value": "800"
+        },
+        {
+            "label": "Swift",
+            "value": "Swift"
+        },
+        {
+            "label": "Baleno",
+            "value": "Baleno"
+        },
+        {
+            "label": "Dzire",
+            "value": "Dzire"
+        },
+        {
+            "label": "Brezza",
+            "value": "Brezza"
+        }
+    ],
+    "Hyundai": [
+        {
+            "label": "i20",
+            "value": "i20"
+        },
+        {
+            "label": "Creta",
+            "value": "Creta"
+        },
+        {
+            "label": "Verna",
+            "value": "Verna"
+        },
+        {
+            "label": "Venue",
+            "value": "Venue"
+        },
+        {
+            "label": "Alcazar",
+            "value": "Alcazar"
+        }
+    ],
+    "Tata": [
+        {
+            "label": "Nexon",
+            "value": "Nexon"
+        },
+        {
+            "label": "Harrier",
+            "value": "Harrier"
+        },
+        {
+            "label": "Safari",
+            "value": "Safari"
+        },
+        {
+            "label": "Altroz",
+            "value": "Altroz"
+        },
+        {
+            "label": "Tiago",
+            "value": "Tiago"
+        }
+    ],
+    "Toyota": [
+        {
+            "label": "Innova",
+            "value": "Innova"
+        },
+        {
+            "label": "Fortuner",
+            "value": "Fortuner"
+        },
+        {
+            "label": "Glanza",
+            "value": "Glanza"
+        },
+        {
+            "label": "Urban Cruiser",
+            "value": "Urban Cruiser"
+        },
+        {
+            "label": "Camry",
+            "value": "Camry"
+        }
+    ],
+    "Mahindra": [
+        {
+            "label": "XUV700",
+            "value": "XUV700"
+        },
+        {
+            "label": "Scorpio",
+            "value": "Scorpio"
+        },
+        {
+            "label": "Thar",
+            "value": "Thar"
+        },
+        {
+            "label": "Bolero",
+            "value": "Bolero"
+        },
+        {
+            "label": "XUV300",
+            "value": "XUV300"
+        }
+    ],
+    "Honda": [
+        {
+            "label": "City",
+            "value": "City"
+        },
+        {
+            "label": "Amaze",
+            "value": "Amaze"
+        },
+        {
+            "label": "Elevate",
+            "value": "Elevate"
+        },
+        {
+            "label": "Jazz",
+            "value": "Jazz"
+        },
+        {
+            "label": "WR-V",
+            "value": "WR-V"
+        }
+    ],
+    "Kia": [
+        {
+            "label": "Seltos",
+            "value": "Seltos"
+        },
+        {
+            "label": "Sonet",
+            "value": "Sonet"
+        },
+        {
+            "label": "Carens",
+            "value": "Carens"
+        },
+        {
+            "label": "Carnival",
+            "value": "Carnival"
+        },
+        {
+            "label": "EV6",
+            "value": "EV6"
+        }
+    ],
+    "MG": [
+        {
+            "label": "Hector",
+            "value": "Hector"
+        },
+        {
+            "label": "Astor",
+            "value": "Astor"
+        },
+        {
+            "label": "Gloster",
+            "value": "Gloster"
+        },
+        {
+            "label": "ZP EV",
+            "value": "ZP EV"
+        },
+        {
+            "label": "Comet EV",
+            "value": "Comet EV"
+        }
+    ],
+    "Skoda": [
+        {
+            "label": "Slavia",
+            "value": "Slavia"
+        },
+        {
+            "label": "Kushaq",
+            "value": "Kushaq"
+        },
+        {
+            "label": "Octavia",
+            "value": "Octavia"
+        },
+        {
+            "label": "Superb",
+            "value": "Superb"
+        },
+        {
+            "label": "Kodiaq",
+            "value": "Kodiaq"
+        }
+    ],
+    "Volkswagen": [
+        {
+            "label": "Virtus",
+            "value": "Virtus"
+        },
+        {
+            "label": "Taigun",
+            "value": "Taigun"
+        },
+        {
+            "label": "Polo",
+            "value": "Polo"
+        },
+        {
+            "label": "Vento",
+            "value": "Vento"
+        },
+        {
+            "label": "Tiguan",
+            "value": "Tiguan"
+        }
+    ]
+}
