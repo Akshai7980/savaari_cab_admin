@@ -17,7 +17,7 @@ export class UtilityService {
     private readonly firebaseService: FirebaseService,
     private readonly http: HttpClient,
     private readonly matDialog: MatDialog
-  ) {}
+  ) { }
 
   /**
    * Calculate the difference in days between two dates.
@@ -103,7 +103,8 @@ export class UtilityService {
     const maxAttempts = 100; // Maximum number of attempts to generate a unique token
 
     const generateRandomToken = () => {
-      let token = 'SVC';
+      // TODO: Externalize this token to environment configuration
+      let token = '';
       for (let i = 0; i < tokenLength; i++) {
         const randomIndex = Math.floor(Math.random() * characters.length);
         token += characters[randomIndex];

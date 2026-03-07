@@ -17,7 +17,7 @@ export class FirebaseService {
     private readonly fireStore: AngularFirestore,
     private readonly snackBar: SnackbarService,
     private readonly router: Router
-  ) {}
+  ) { }
 
   // User Login Functionality ----------------
   login(email: string, password: string) {
@@ -25,7 +25,7 @@ export class FirebaseService {
       .signInWithEmailAndPassword(email, password)
       .then((data: any) => {
         const uid = data.user.uid;
-        localStorage.setItem('savaariUser', JSON.stringify({ type: 'user', uid }));
+        sessionStorage.setItem('savaariUser', JSON.stringify({ type: 'user', uid }));
         this.loginSuccessHandler(uid);
       })
       .catch((error: any) => {
@@ -49,7 +49,7 @@ export class FirebaseService {
           .set(userDetails, { merge: true })
           .then((d) => {
             console.log('user details updated');
-            localStorage.setItem('savaariUser', JSON.stringify({ type: 'user', uid }));
+            sessionStorage.setItem('savaariUser', JSON.stringify({ type: 'user', uid }));
             this.loginSuccessHandler(uid);
           });
       })
@@ -91,7 +91,7 @@ export class FirebaseService {
   // User Log-Out Functionality ----------------
   async signOut() {
     this.afAuth.signOut();
-    localStorage.removeItem('savaariUser');
+    sessionStorage.removeItem('savaariUser');
     this.router.navigate(['/admin/login']);
   }
 
@@ -112,7 +112,7 @@ export class FirebaseService {
 
   // Get Saved User Functionality ----------------
   getSavedUser() {
-    const user = JSON.parse(localStorage.getItem('savaariUser') || 'null');
+    const user = JSON.parse(sessionStorage.getItem('savaariUser') || 'null');
     if (user) return user;
     this.signOut();
   }
@@ -200,17 +200,17 @@ export class FirebaseService {
   // --- TO UPDATE TRIP STATUS ---
   updateLeaveStatus(params: any): Promise<void> {
     console.log(params);
-    
+
     const query = this.findDocumentById(params.docId);
 
     return this.fireStore
-    .collection('allAppliedLeaves')
-    .ref.where('docId', '==', params.docId)
-    .get()
-    .then((snapshot) => {
-      if (snapshot.size === 1) {
-        const docRef = snapshot.docs[0].ref;
-        
+      .collection('allAppliedLeaves')
+      .ref.where('docId', '==', params.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+
           return docRef.update(params);
         } else {
           throw new Error('Document not found or multiple documents match the ID.');
@@ -236,15 +236,15 @@ export class FirebaseService {
   getAllVehicleDetails(): Observable<any[]> {
     return this.fireStore.collection('addVehicleDetails').valueChanges();
   }
-  
+
   // TO FETCH VEHICLE DETAIL
   fetchVehicleDetails(docId: string) {
     return new Promise((resolve) => {
       this.fireStore
-      .collection('addVehicleDetails')
-      .ref.where('docId', '==', docId)
-      .get()
-      .then((snapshot) => {
+        .collection('addVehicleDetails')
+        .ref.where('docId', '==', docId)
+        .get()
+        .then((snapshot) => {
           if (snapshot.size === 1) {
             resolve(snapshot.docs[0].data());
           } else {
@@ -255,32 +255,32 @@ export class FirebaseService {
           console.error('Error getting data:', error);
           throw error;
         });
-      });
-    }
+    });
+  }
 
   // TO UPDATE VEHICLE DETAILS
   updateVehicleDetails(data) {
     return this.fireStore
-    .collection('addVehicleDetails')
-    .ref.where('docId', '==', data.docId)
-    .get()
-    .then((snapshot) => {
-      if (snapshot.size === 1) {
-        const docRef = snapshot.docs[0].ref;
-        return docRef.update(data);
-      } else {
-        throw new Error('Vehicle not found or multiple vehicle match the ID.');
-      }
+      .collection('addVehicleDetails')
+      .ref.where('docId', '==', data.docId)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.size === 1) {
+          const docRef = snapshot.docs[0].ref;
+          return docRef.update(data);
+        } else {
+          throw new Error('Vehicle not found or multiple vehicle match the ID.');
+        }
       })
       .catch((error) => {
         console.error('Error getting data:', error);
         throw error;
       });
-    }
-    
-    // TO DELETE VEHICLE DETAILS
-    deleteVehicle(id: string) {
-      return this.fireStore
+  }
+
+  // TO DELETE VEHICLE DETAILS
+  deleteVehicle(id: string) {
+    return this.fireStore
       .collection('addVehicleDetails')
       .ref.where('docId', '==', id)
       .get()
@@ -296,7 +296,7 @@ export class FirebaseService {
         console.error('Error getting data:', error);
         throw error;
       });
-    }
+  }
 
   // TO GET BOOKING DETAIL BY ID
   getBookingDetailById(id: string) {
@@ -338,6 +338,6 @@ export class FirebaseService {
         console.error('Error updating trip status:', error);
         throw error;
       });
-    }  
+  }
 
 }

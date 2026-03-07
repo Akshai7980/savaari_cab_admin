@@ -9,10 +9,10 @@ import { Router } from '@angular/router';
 export class AppComponent implements OnInit {
   title = 'Berry Angular Free Version';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
-    if (!localStorage.getItem('savaariUser')) {
+    if (!sessionStorage.getItem('savaariUser')) {
       this.router.navigate(['/admin/login']);
     }
   }
