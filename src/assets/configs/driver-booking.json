@@ -15,7 +15,8 @@
                     "type": "text",
                     "colspan": 2,
                     "mandatory": true,
-                    "autoCapitalize": true
+                    "autoCapitalize": true,
+                    "placeholder": "Enter Customer Name"
                 },
                 {
                     "fieldID": "address",
@@ -25,7 +26,8 @@
                     "mandatory": true,
                     "autoCapitalize": true,
                     "showCounter": true,
-                    "maxLength": 100
+                    "maxLength": 100,
+                    "placeholder": "Enter full address"
                 },
                 {
                     "fieldID": "dialCode",
@@ -41,7 +43,8 @@
                     "fieldLabel": "Mobile Number",
                     "controlType": "Number",
                     "colspan": 1,
-                    "mandatory": true
+                    "mandatory": true,
+                    "placeholder": "Mobile Number"
                 },
                 {
                     "fieldID": "pickUpLocation",
@@ -49,78 +52,33 @@
                     "controlType": "TextBox",
                     "colspan": 1,
                     "mandatory": true,
-                    "autoCapitalize": true
+                    "autoCapitalize": true,
+                    "placeholder": "Enter Pick Up Location"
                 },
                 {
                     "fieldID": "purposeOfTravel",
                     "fieldLabel": "Purpose Of Travel",
                     "controlType": "Dropdown",
                     "colspan": 1,
-                    "options": [
-                        {
-                            "label": "Select Purpose",
-                            "value": ""
-                        },
-                        {
-                            "label": "Business",
-                            "value": "Business"
-                        },
-                        {
-                            "label": "Vacation",
-                            "value": "Vacation"
-                        },
-                        {
-                            "label": "Family Visit",
-                            "value": "Family Visit"
-                        },
-                        {
-                            "label": "Medical",
-                            "value": "Medical"
-                        },
-                        {
-                            "label": "Education",
-                            "value": "Education"
-                        },
-                        {
-                            "label": "Pilgrimage",
-                            "value": "Pilgrimage"
-                        },
-                        {
-                            "label": "Shopping",
-                            "value": "Shopping"
-                        },
-                        {
-                            "label": "Event/Wedding",
-                            "value": "Event/Wedding"
-                        },
-                        {
-                            "label": "Solo Trip",
-                            "value": "Solo Trip"
-                        },
-                        {
-                            "label": "Relocation",
-                            "value": "Relocation"
-                        },
-                        {
-                            "label": "Other",
-                            "value": "Other"
-                        }
-                    ],
-                    "mandatory": true
+                    "dataSourceKey": "lov-data/driver-booking/purpose-of-travel",
+                    "mandatory": true,
+                    "placeholder": "Select Purpose"
                 },
                 {
                     "fieldID": "startDate",
                     "fieldLabel": "Trip Start Date",
                     "controlType": "Date",
                     "colspan": 1,
-                    "mandatory": true
+                    "mandatory": true,
+                    "placeholder": "mm/dd/yyyy"
                 },
                 {
                     "fieldID": "endDate",
                     "fieldLabel": "Trip End Date",
                     "controlType": "Date",
                     "colspan": 1,
-                    "mandatory": true
+                    "mandatory": true,
+                    "placeholder": "mm/dd/yyyy"
                 },
                 {
                     "fieldID": "startTime",
@@ -128,64 +86,17 @@
                     "controlType": "TextBox",
                     "type": "time",
                     "colspan": 1,
-                    "mandatory": true
+                    "mandatory": true,
+                    "placeholder": "--:-- --"
                 },
                 {
                     "fieldID": "numberOfDays",
                     "fieldLabel": "Number Of Days",
                     "controlType": "Dropdown",
                     "colspan": 1,
-                    "options": [
-                        {
-                            "label": "Select Days",
-                            "value": ""
-                        },
-                        {
-                            "label": "0",
-                            "value": 0
-                        },
-                        {
-                            "label": "1",
-                            "value": 1
-                        },
-                        {
-                            "label": "2",
-                            "value": 2
-                        },
-                        {
-                            "label": "3",
-                            "value": 3
-                        },
-                        {
-                            "label": "4",
-                            "value": 4
-                        },
-                        {
-                            "label": "5",
-                            "value": 5
-                        },
-                        {
-                            "label": "6",
-                            "value": 6
-                        },
-                        {
-                            "label": "7",
-                            "value": 7
-                        },
-                        {
-                            "label": "8",
-                            "value": 8
-                        },
-                        {
-                            "label": "9",
-                            "value": 9
-                        },
-                        {
-                            "label": "10",
-                            "value": 10
-                        }
-                    ],
-                    "mandatory": true
+                    "dataSourceKey": "lov-data/driver-booking/number-of-days",
+                    "mandatory": true,
+                    "placeholder": "Select Days"
                 }
             ]
         },
@@ -200,14 +111,16 @@
                     "controlType": "TextBox",
                     "colspan": 1,
                     "mandatory": true,
-                    "autoCapitalize": true
+                    "autoCapitalize": true,
+                    "placeholder": "Select Driver"
                 },
                 {
                     "fieldID": "rejectedDriver",
                     "fieldLabel": "Rejected Driver",
                     "controlType": "TextBox",
                     "colspan": 1,
-                    "autoCapitalize": true
+                    "autoCapitalize": true,
+                    "placeholder": "Enter Rejected Driver"
                 },
                 {
                     "fieldID": "cusVehicleBrand",
@@ -215,7 +128,8 @@
                     "controlType": "Dropdown",
                     "colspan": 1,
                     "dataSourceKey": "lov-data/driver-booking/vehicle-brands",
-                    "mandatory": true
+                    "mandatory": true,
+                    "placeholder": "Select Brand"
                 },
                 {
                     "fieldID": "cusVehicleModel",
@@ -239,7 +153,8 @@
                     "controlType": "Dropdown",
                     "colspan": 1,
                     "dataSourceKey": "lov-data/driver-booking/vehicle-types",
-                    "mandatory": true
+                    "mandatory": true,
+                    "placeholder": "Select Type"
                 },
                 {
                     "fieldID": "cusVehicleNumber",
@@ -248,7 +163,8 @@
                     "colspan": 1,
                     "mandatory": true,
                     "formatType": "VehicleNumber",
-                    "hint": "Format: XX 00 XX 0000 (e.g., KL 04 BA 0405)"
+                    "hint": "Format: XX 00 XX 0000 (e.g., KL 04 BA 0405)",
+                    "placeholder": "e.g., KL 04 BA 0405"
                 }
             ]
         }

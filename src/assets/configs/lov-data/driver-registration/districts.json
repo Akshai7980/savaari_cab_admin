@@ -1,0 +1,62 @@
+[
+    {
+        "label": "Select District",
+        "value": ""
+    },
+    {
+        "label": "Alappuzha",
+        "value": "Alappuzha"
+    },
+    {
+        "label": "Ernakulam",
+        "value": "Ernakulam"
+    },
+    {
+        "label": "Idukki",
+        "value": "Idukki"
+    },
+    {
+        "label": "Kannur",
+        "value": "Kannur"
+    },
+    {
+        "label": "Kasaragod",
+        "value": "Kasaragod"
+    },
+    {
+        "label": "Kollam",
+        "value": "Kollam"
+    },
+    {
+        "label": "Kottayam",
+        "value": "Kottayam"
+    },
+    {
+        "label": "Kozhikode",
+        "value": "Kozhikode"
+    },
+    {
+        "label": "Malappuram",
+        "value": "Malappuram"
+    },
+    {
+        "label": "Palakkad",
+        "value": "Palakkad"
+    },
+    {
+        "label": "Pathanamthitta",
+        "value": "Pathanamthitta"
+    },
+    {
+        "label": "Thiruvananthapuram",
+        "value": "Thiruvananthapuram"
+    },
+    {
+        "label": "Thrissur",
+        "value": "Thrissur"
+    },
+    {
+        "label": "Wayanad",
+        "value": "Wayanad"
+    }
+]

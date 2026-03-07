@@ -1,0 +1,166 @@
+{
+    "formID": "DRIVER_REGISTRATION_FORM",
+    "formTitle": "Add Driver Details (Registration)",
+    "infoTooltip": "Provide complete driving and personal details to register a new driver.",
+    "formSectionConfig": [
+        {
+            "sectionID": "secPersonalDetails",
+            "sectionLabel": "Personal & Contact Information",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "driverName",
+                    "fieldLabel": "Driver Name",
+                    "controlType": "TextBox",
+                    "type": "text",
+                    "colspan": 2,
+                    "mandatory": true,
+                    "autoCapitalize": true,
+                    "placeholder": "Enter full name"
+                },
+                {
+                    "fieldID": "dialCode",
+                    "fieldLabel": "Dial Code",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "prefixIcon": "🇮🇳",
+                    "prefixText": "+ 91",
+                    "disable": true
+                },
+                {
+                    "fieldID": "mobileNumber",
+                    "fieldLabel": "Mobile Number",
+                    "controlType": "Number",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "placeholder": "Mobile Number"
+                },
+                {
+                    "fieldID": "altMobileNumber",
+                    "fieldLabel": "Alternate Mobile Number",
+                    "controlType": "Number",
+                    "colspan": 1,
+                    "mandatory": false,
+                    "placeholder": "Alternate Mobile Number"
+                },
+                {
+                    "fieldID": "bloodGroup",
+                    "fieldLabel": "Blood Group",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "dataSourceKey": "lov-data/driver-registration/blood-groups",
+                    "mandatory": true,
+                    "placeholder": "Select Blood Group"
+                }
+            ]
+        },
+        {
+            "sectionID": "secLocationDetails",
+            "sectionLabel": "Location Details",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "address",
+                    "fieldLabel": "Address",
+                    "controlType": "TextArea",
+                    "colspan": 2,
+                    "mandatory": true,
+                    "autoCapitalize": true,
+                    "showCounter": true,
+                    "maxLength": 100,
+                    "placeholder": "Enter complete residential address"
+                },
+                {
+                    "fieldID": "state",
+                    "fieldLabel": "State",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "disable": true,
+                    "value": "Kerala",
+                    "placeholder": "State"
+                },
+                {
+                    "fieldID": "district",
+                    "fieldLabel": "District",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "dataSourceKey": "lov-data/driver-registration/districts",
+                    "mandatory": true,
+                    "placeholder": "Select District"
+                },
+                {
+                    "fieldID": "driverLocation",
+                    "fieldLabel": "Driver Location (City/Town)",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "autoCapitalize": true,
+                    "mandatory": true,
+                    "placeholder": "e.g., Kochi"
+                },
+                {
+                    "fieldID": "pinCode",
+                    "fieldLabel": "Pin Code",
+                    "controlType": "Number",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "placeholder": "Pin Code"
+                }
+            ]
+        },
+        {
+            "sectionID": "secEmploymentDetails",
+            "sectionLabel": "Employment & Professional Details",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "licenseNumber",
+                    "fieldLabel": "Driver License Number",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "autoCapitalize": true,
+                    "formatType": "DriverLicense",
+                    "placeholder": "e.g., DL-01 20110012345",
+                    "hint": "Provide valid alphanumeric license number without spaces."
+                },
+                {
+                    "fieldID": "driverGrade",
+                    "fieldLabel": "Driver Grade",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "dataSourceKey": "lov-data/driver-registration/driver-grades",
+                    "mandatory": true,
+                    "placeholder": "Select Grade"
+                },
+                {
+                    "fieldID": "experience",
+                    "fieldLabel": "Experience (Years)",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "dataSourceKey": "lov-data/driver-registration/experience-years",
+                    "mandatory": true,
+                    "placeholder": "Select Experience"
+                },
+                {
+                    "fieldID": "driverCode",
+                    "fieldLabel": "Driver Code",
+                    "controlType": "TextBox",
+                    "colspan": 1,
+                    "disable": true,
+                    "hint": "System generated ID"
+                },
+                {
+                    "fieldID": "dateOfJoining",
+                    "fieldLabel": "Date of Joining",
+                    "controlType": "Date",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "defaultValue": "CURRENT_DATE",
+                    "minDate": "CURRENT_DATE",
+                    "maxDate": "CURRENT_DATE+15",
+                    "placeholder": "mm/dd/yyyy"
+                }
+            ]
+        }
+    ]
+}
