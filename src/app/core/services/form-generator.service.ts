@@ -41,8 +41,19 @@ export class FormGeneratorService {
             if (field.formatType === 'VehicleNumber') {
                 // Indian Vehicle Number format: XX 00 XX 0000
                 validators.push(Validators.pattern(/^[A-Z]{2}\s[0-9]{2}\s[A-Z]{1,2}\s[0-9]{4}$/));
+            } else if (field.formatType === 'DriverLicense') {
+                // Indian Driver License format: DL-01 20110012345 (XX-00 00000000000)
+                validators.push(Validators.pattern(/^[A-Z]{2}-[0-9]{2}\s[0-9]{11}$/));
             }
-            group[field.fieldID] = [field.value || field.defaultValue || '', validators];
+            let defaultValue = field.value || field.defaultValue || '';
+            if (defaultValue === 'CURRENT_DATE') {
+                const date = new Date();
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                defaultValue = `${year}-${month}-${day}`;
+            }
+            group[field.fieldID] = [defaultValue, validators];
         });
     }
 

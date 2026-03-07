@@ -99,7 +99,7 @@ export class UtilityService {
 
   generateToken(): Promise<string> {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const tokenLength = 7; // Length of the token
+    const tokenLength = 10; // Length of the token
     const maxAttempts = 100; // Maximum number of attempts to generate a unique token
 
     const generateRandomToken = () => {

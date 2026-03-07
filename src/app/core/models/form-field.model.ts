@@ -27,13 +27,15 @@ export interface FormFieldConfig {
     defaultValue?: any;
     value?: any;
     hint?: string;
-    formatType?: 'VehicleNumber' | string;
+    formatType?: 'VehicleNumber' | 'DriverLicense' | string;
     autoCapitalize?: boolean;
     prefixIcon?: string;
     prefixText?: string;
     showCounter?: boolean;
     maxLength?: number;
     infoTooltip?: string;
+    minDate?: string;
+    maxDate?: string;
 }
 
 export interface FormSectionConfig {
