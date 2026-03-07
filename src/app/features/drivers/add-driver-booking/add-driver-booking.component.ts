@@ -121,9 +121,22 @@ export class AddDriverBookingComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: any) => {
         if (result) {
+          // 1. Auto-fill Form Fields
           this.bookingForm.patchValue({
-            requiredDriver: result.name
+            requiredDriver: result.driverName,
+            rejectedDriver: 'NIL'
           });
+
+          // 2. Dynamically Inject Driver ID as Subtext (Hint)
+          if (this.formConfig && this.formConfig.formSectionConfig) {
+            for (const section of this.formConfig.formSectionConfig) {
+              const driverField = section.formFieldConfig.find(f => f.fieldID === 'requiredDriver');
+              if (driverField) {
+                driverField.hint = `ID: ${result.driverCode}`;
+                break;
+              }
+            }
+          }
         }
       });
   }

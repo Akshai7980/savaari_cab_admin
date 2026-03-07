@@ -1,0 +1,83 @@
+.driver-list-container {
+    padding: 20px;
+    background-color: #ffffff;
+    height: 100%;
+}
+
+.search-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #ffffff;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eef2f6; // Subtle divider under search
+}
+
+.driver-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eef2f6;
+    padding: 15px 10px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    border-radius: 8px;
+    margin-bottom: 5px;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background-color: #f8f9fa;
+    }
+}
+
+.driver-avatar-wrapper {
+    margin-right: 20px;
+}
+
+.driver-avatar {
+    border-radius: 50%;
+    height: 60px;
+    width: 60px;
+    object-fit: cover;
+    border: 2px solid #eef2f6;
+    background-color: #f8f9fa;
+}
+
+.driver-info {
+    p {
+        margin: 4px 0;
+        line-height: 1.2;
+    }
+
+    .driver-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #212529;
+    }
+
+    .driver-mobile {
+        color: #6c757d;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .driver-code {
+        font-size: 0.85rem;
+        color: #adb5bd;
+        font-family: monospace;
+    }
+}
+
+.driver-actions {
+    .btn {
+        white-space: nowrap;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+}

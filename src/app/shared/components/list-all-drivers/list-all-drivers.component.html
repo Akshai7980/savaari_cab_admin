@@ -1,74 +1,49 @@
-<div style="padding: 20px;">
-  <div
-    class="input-group"
-    style="
-      margin-bottom: 20px;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background-color: #fff;
-      padding: 10px 0px;
-    "
-  >
-    <div style="margin-right: 10px;">
-      <button
-        class="btn btn-secondary"
-        (click)="closeDialog({  type: '',otp: ''})"
-      >
+<div class="driver-list-container">
+  <div class="search-header">
+    <div class="me-3">
+      <button class="btn btn-popup-outline px-3" (click)="closeDialog(null)">
         Cancel
       </button>
     </div>
 
-    <input
-      type="search"
-      class="form-control rounded"
-      placeholder="Search"
-      aria-label="Search"
-      aria-describedby="search-addon"
-      [(ngModel)]="searchQuery"
-      (input)="searchDrivers($event)"
-    />
+    <input type="search" class="form-control rounded" placeholder="Search by Name, Phone, or ID"
+      aria-label="Search Drivers" [(ngModel)]="searchQuery" (ngModelChange)="searchDrivers()" />
 
-    <div style="margin-left: 10px;">
-      <button class="btn btn-secondary">
-        search
+    <div class="ms-3">
+      <button class="btn btn-popup-primary px-4" (click)="searchDrivers()">
+        Search
       </button>
     </div>
   </div>
 
-  <div
-    style="
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid lightgrey;
-      justify-content: space-between;
-    "
-    *ngFor="let item of filteredDrivers"
-  >
-    <div style="display: flex; align-items: center; margin: 10px 0px 10px 0px;">
-      <div>
-        <img
-          src="../../../assets/images/user/avatar-1.jpg"
-          alt=""
-          style="
-            border-radius: 50%;
-            height: 60px;
-            width: 60px;
-            object-fit: cover;
-            margin-right: 20px;
-          "
-        />
-      </div>
-      <div>
-        <p style="margin: 5px 0px 5px 0px;">{{ item.type }}</p>
-        <p style="margin: 5px 0px 5px 0px;">{{ item.otp }}</p>
-      </div>
+  <div class="driver-list">
+    <!-- Empty State -->
+    <div *ngIf="filteredDrivers.length === 0" class="text-center text-muted py-5">
+      <i class="ti ti-users fs-1 mb-2"></i>
+      <p>No drivers found matching your search.</p>
     </div>
 
-    <div>
-      <button class="btn btn-secondary" (click)="closeDialog(item)">
-        Select Driver
-      </button>
+    <!-- List Items -->
+    <div class="driver-item" *ngFor="let item of filteredDrivers">
+      <div class="d-flex align-items-center">
+        <div class="driver-avatar-wrapper">
+          <img [src]="item.path || '../../../assets/images/user/avatar-1.jpg'"
+            (error)="item.path = '../../../assets/images/user/avatar-1.jpg'" alt="Driver Photo" class="driver-avatar" />
+        </div>
+        <div class="driver-info">
+          <p class="driver-name">{{ item.driverName || 'Unknown Driver' }}</p>
+          <p class="driver-mobile">
+            <i class="ti ti-phone me-1 opacity-50"></i>{{ item.mobileNumber || 'N/A' }}
+          </p>
+          <p class="driver-code">ID: {{ item.driverCode || 'N/A' }}</p>
+        </div>
+      </div>
+
+      <div class="driver-actions">
+        <button class="btn btn-popup-primary btn-sm px-4" (click)="closeDialog(item)">
+          Select
+        </button>
+      </div>
     </div>
   </div>
 </div>
