@@ -13,7 +13,6 @@
             </div>
             <input *ngSwitchCase="'TextBox'" [type]="config.type || 'text'" [id]="config.fieldID"
                 [formControlName]="config.fieldID" class="form-control" [placeholder]="config.placeholder || ''"
-                [attr.disabled]="config.disable ? true : null" [disabled]="config.disable ? true : null"
                 (blur)="onBlur()" (input)="onInput($event)" [class.has-prefix]="config.prefixIcon || config.prefixText">
         </div>
 
@@ -23,7 +22,7 @@
 
         <!-- Dropdown -->
         <select *ngSwitchCase="'Dropdown'" [id]="config.fieldID" [formControlName]="config.fieldID"
-            class="form-select shadow-sm" [attr.disabled]="config.disable ? true : null">
+            class="form-select shadow-sm" [class.placeholder-active]="!control?.value">
             <option value="" disabled selected>{{ config.placeholder || 'Select ' + config.fieldLabel }}</option>
             <option *ngFor="let opt of config.options" [value]="opt.value">{{ opt.label }}</option>
         </select>
@@ -55,11 +54,12 @@
 
         <!-- Date -->
         <input *ngSwitchCase="'Date'" type="date" [id]="config.fieldID" [formControlName]="config.fieldID"
-            class="form-control shadow-sm">
+            class="form-control shadow-sm" [placeholder]="config.placeholder || ''"
+            [class.placeholder-active]="!control?.value" [attr.min]="minDate" [attr.max]="maxDate">
 
         <!-- Number -->
         <input *ngSwitchCase="'Number'" type="tel" [id]="config.fieldID" [formControlName]="config.fieldID"
-            class="form-control" (keypress)="onNumberKeyPress($event)">
+            class="form-control" (keypress)="onNumberKeyPress($event)" [placeholder]="config.placeholder || ''">
     </ng-container>
 
     <div class="invalid-feedback d-block text-danger small mt-1" *ngIf="getError()">

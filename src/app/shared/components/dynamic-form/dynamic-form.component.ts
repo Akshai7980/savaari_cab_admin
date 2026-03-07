@@ -22,6 +22,11 @@ export class DynamicFormComponent implements OnInit {
             console.error('DynamicFormComponent: formGroup is required.');
         }
 
+        // Properly disable Reactive Forms control if metadata specifies it
+        if (this.config.disable) {
+            this.control?.disable({ emitEvent: false });
+        }
+
         if (this.config.dataSourceKey && !this.config.dependsOn) {
             this.utilityService.getJSON(`assets/configs/${this.config.dataSourceKey}.json`)
                 .subscribe({
@@ -78,6 +83,33 @@ export class DynamicFormComponent implements OnInit {
         return this.formGroup.get(this.config.fieldID);
     }
 
+    private getLocalDateString(date: Date = new Date()): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    get minDate(): string | null {
+        if (this.config.minDate === 'CURRENT_DATE') {
+            return this.getLocalDateString();
+        }
+        return this.config.minDate || null;
+    }
+
+    get maxDate(): string | null {
+        if (this.config.maxDate?.startsWith('CURRENT_DATE+')) {
+            const days = parseInt(this.config.maxDate.split('+')[1], 10);
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            return this.getLocalDateString(date);
+        }
+        if (this.config.maxDate === 'CURRENT_DATE') {
+            return this.getLocalDateString();
+        }
+        return this.config.maxDate || null;
+    }
+
     get isValid() {
         return this.control?.valid;
     }
@@ -95,6 +127,10 @@ export class DynamicFormComponent implements OnInit {
                 return `Invalid format. Expected: KL 07 AB 1234`;
             }
 
+            if (firstErrorKey === 'pattern' && this.config.formatType === 'DriverLicense') {
+                return `Invalid format. Expected: DL-01 20110012345`;
+            }
+
             return validator?.message || `Invalid ${this.config.fieldLabel}`;
         }
         return null;
@@ -104,6 +140,11 @@ export class DynamicFormComponent implements OnInit {
         if (this.config.formatType === 'VehicleNumber' && this.control?.value) {
             const formatted = this.formatVehicleNumber(this.control.value);
             this.control.setValue(formatted, { emitEvent: false });
+        } else if (this.config.formatType === 'DriverLicense' && this.control?.value) {
+            const formatted = this.formatDriverLicense(this.control.value);
+            this.control.setValue(formatted, { emitEvent: false });
+            this.control.markAsTouched();
+            this.control.updateValueAndValidity({ emitEvent: false });
         }
     }
 
@@ -162,6 +203,33 @@ export class DynamicFormComponent implements OnInit {
             if (district) result += ' ' + district;
             if (series) result += ' ' + series;
             if (uniqueId) result += ' ' + uniqueId;
+
+            return result.trim();
+        }
+
+        return clean;
+    }
+
+    private formatDriverLicense(value: string): string {
+        // Remove non-alphanumeric and uppercase
+        const clean = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+        // Standard Indian DL Format: XX-00 00000000000 (e.g. DL-01 20110012345)
+        if (clean.length >= 2) {
+            const state = clean.substring(0, 2);
+            let rto = '';
+            let remainder = '';
+
+            if (clean.length > 2) {
+                rto = clean.substring(2, 4);
+                if (clean.length > 4) {
+                    remainder = clean.substring(4, 15); // year (4) + id (7)
+                }
+            }
+
+            let result = state;
+            if (rto) result += '-' + rto;
+            if (remainder) result += ' ' + remainder;
 
             return result.trim();
         }
