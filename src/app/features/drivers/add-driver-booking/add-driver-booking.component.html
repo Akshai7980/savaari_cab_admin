@@ -1,7 +1,7 @@
 <div class="main-content-wrapper">
   <!-- Breadcrumb section is handled by the parent layout -->
 
-  <div class="main-container-violet p-4">
+  <div class="main-container-violet p-4" *ngIf="!isLoading()">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="main-title mb-0">{{ isEditMode() ? 'Edit' : 'Add' }} Driver Booking</h1>
       <button class="btn btn-primary-outline btn-sm shadow-sm" (click)="selectDriver()">
@@ -9,13 +9,7 @@
       </button>
     </div>
 
-    <div *ngIf="isLoading()" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading Form...</span>
-      </div>
-    </div>
-
-    <div class="form-card-container" *ngIf="!isLoading()">
+    <div class="form-card-container">
       <app-dynamic-form-container *ngIf="formConfig && bookingForm" [config]="formConfig" [formGroup]="bookingForm">
       </app-dynamic-form-container>
 
@@ -31,4 +25,8 @@
       </div>
     </div>
   </div>
+
+  <!-- Loading State -->
+  <app-form-loader [isLoading]="isLoading()"></app-form-loader>
+
 </div>

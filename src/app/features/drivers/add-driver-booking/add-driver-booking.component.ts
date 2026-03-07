@@ -11,6 +11,7 @@ import { FormConfig } from 'src/app/core/models/form-field.model';
 import { DriverBooking } from 'src/app/core/models/booking.model';
 import { DynamicFormContainerComponent } from 'src/app/shared/components/dynamic-form-container/dynamic-form-container.component';
 import { ListAllDriversComponent } from 'src/app/shared/components/list-all-drivers/list-all-drivers.component';
+import { FormLoaderComponent } from 'src/app/shared/components/form-loader/form-loader.component';
 
 @Component({
   selector: 'app-add-driver-booking',
@@ -19,6 +20,7 @@ import { ListAllDriversComponent } from 'src/app/shared/components/list-all-driv
     CommonModule,
     ReactiveFormsModule,
     DynamicFormContainerComponent,
+    FormLoaderComponent,
   ],
   templateUrl: './add-driver-booking.component.html',
   styleUrls: ['./add-driver-booking.component.scss']
@@ -62,7 +64,10 @@ export class AddDriverBookingComponent implements OnInit {
         if (!this.isEditMode()) {
           this.initializeDateValues();
         }
-        this.isLoading.set(false);
+        // Artificial delay for smooth Premium UX loader transition
+        setTimeout(() => {
+          this.isLoading.set(false);
+        }, 600);
       });
   }
 
