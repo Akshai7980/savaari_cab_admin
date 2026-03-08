@@ -2,12 +2,13 @@ import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FirebaseService } from 'src/app/core/services/firebase.service';
-import { UtilityService } from 'src/app/core/services/utility.service';
-import { FormGeneratorService } from 'src/app/core/services/form-generator.service';
-import { FormConfig } from 'src/app/core/models/form-field.model';
-import { DynamicFormContainerComponent } from 'src/app/shared/components/dynamic-form-container/dynamic-form-container.component';
-import { FormLoaderComponent } from 'src/app/shared/components/form-loader/form-loader.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FirebaseService } from '../../../core/services/firebase.service';
+import { UtilityService } from '../../../core/services/utility.service';
+import { FormGeneratorService } from '../../../core/services/form-generator.service';
+import { FormConfig } from '../../../core/models/form-field.model';
+import { DynamicFormContainerComponent } from '../../../shared/components/dynamic-form-container/dynamic-form-container.component';
+import { FormLoaderComponent } from '../../../shared/components/form-loader/form-loader.component';
 
 @Component({
   selector: 'app-add-driver-details',
@@ -26,6 +27,7 @@ export default class AddDriverDetailsComponent implements OnInit {
   private utilityService = inject(UtilityService);
   private formGeneratorService = inject(FormGeneratorService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   driverRegForm!: FormGroup;
   formConfig!: FormConfig;
@@ -37,14 +39,12 @@ export default class AddDriverDetailsComponent implements OnInit {
 
   loadFormConfig() {
     this.utilityService.getJSON('assets/configs/driver-registration.json')
-      .subscribe((data: FormConfig) => {
-        this.formConfig = data;
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data: any) => {
+        this.formConfig = data as FormConfig;
         this.driverRegForm = this.formGeneratorService.generateForm(this.formConfig);
         this.generateDriverToken();
-        // Artificial delay for smooth Premium UX loader transition
-        setTimeout(() => {
-          this.isLoading.set(false);
-        }, 600);
+        this.isLoading.set(false);
       });
   }
 
@@ -65,26 +65,31 @@ export default class AddDriverDetailsComponent implements OnInit {
     this.generateDriverToken();
   }
 
-  async onSubmit() {
-    if (this.driverRegForm.valid) {
-      const driverData = this.driverRegForm.getRawValue(); // include disabled field values like driverCode
-
-      const docId = this.firebaseService.createId();
-      driverData.docId = docId;
-
-      this.firebaseService.addDrivers(driverData)
-        .then(() => {
-          this.utilityService.successFailedPopup('SUCCESS');
-          this.driverRegForm.reset();
-          this.generateDriverToken();
-          this.router.navigate(['/drivers/list-driver-details']);
-        })
-        .catch((error) => {
-          this.utilityService.successFailedPopup('FAILED');
-          console.error('Error adding driver details:', error);
-        });
-    } else {
+  onSubmit() {
+    if (this.driverRegForm.invalid) {
       this.driverRegForm.markAllAsTouched();
+      return;
     }
+
+    const driverData = this.driverRegForm.getRawValue();
+    console.log('Final Form Data Object:', driverData);
+
+    this.isLoading.set(true);
+
+    const docId = this.firebaseService.createId();
+    driverData.docId = docId;
+
+    this.firebaseService.addDrivers(driverData)
+      .then(() => {
+        this.utilityService.successFailedPopup('SUCCESS');
+        this.driverRegForm.reset();
+        this.generateDriverToken();
+        this.router.navigate(['/drivers/list-driver-details']);
+      })
+      .catch((error) => {
+        console.error('Error adding driver details:', error);
+        this.utilityService.successFailedPopup('FAILED');
+      })
+      .finally(() => this.isLoading.set(false));
   }
 }
