@@ -35,7 +35,7 @@
                     "controlType": "TextBox",
                     "colspan": 1,
                     "prefixIcon": "🇮🇳",
-                    "prefixText": "+ 91",
+                    "prefixText": "+ 91 ( Indian )",
                     "disable": true
                 },
                 {
@@ -70,6 +70,9 @@
                     "controlType": "Date",
                     "colspan": 1,
                     "mandatory": true,
+                    "minDate": "CURRENT_DATE",
+                    "maxDate": "CURRENT_DATE+15",
+                    "defaultValue": "CURRENT_DATE",
                     "placeholder": "mm/dd/yyyy"
                 },
                 {
@@ -78,6 +81,7 @@
                     "controlType": "Date",
                     "colspan": 1,
                     "mandatory": true,
+                    "dependsOn": "startDate",
                     "placeholder": "mm/dd/yyyy"
                 },
                 {
@@ -87,6 +91,7 @@
                     "type": "time",
                     "colspan": 1,
                     "mandatory": true,
+                    "defaultValue": "CURRENT_TIME+15",
                     "placeholder": "--:-- --"
                 },
                 {
@@ -96,6 +101,7 @@
                     "colspan": 1,
                     "dataSourceKey": "lov-data/driver-booking/number-of-days",
                     "mandatory": true,
+                    "defaultValue": "1",
                     "placeholder": "Select Days"
                 }
             ]
@@ -111,6 +117,7 @@
                     "controlType": "TextBox",
                     "colspan": 1,
                     "mandatory": true,
+                    "readonly": true,
                     "autoCapitalize": true,
                     "placeholder": "Select Driver"
                 },

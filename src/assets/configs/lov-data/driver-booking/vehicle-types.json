@@ -26,5 +26,9 @@
     {
         "label": "MUV",
         "value": "MUV"
+    },
+    {
+        "label": "Other",
+        "value": "Other"
     }
 ]
