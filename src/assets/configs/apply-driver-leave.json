@@ -1,0 +1,97 @@
+{
+    "formID": "APPLY_DRIVER_LEAVE_FORM",
+    "formTitle": "Apply Driver Leave",
+    "infoTooltip": "Complete all mandatory fields to apply for driver leave.",
+    "formSectionConfig": [
+        {
+            "sectionID": "secDriverInfo",
+            "sectionLabel": "Driver Information",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "driverName",
+                    "fieldLabel": "Driver Name",
+                    "controlType": "TextBox",
+                    "type": "text",
+                    "colspan": 2,
+                    "mandatory": true,
+                    "readonly": true,
+                    "placeholder": "Click to select a driver"
+                },
+                {
+                    "fieldID": "driverMobileNumber",
+                    "fieldLabel": "Driver Mobile Number",
+                    "controlType": "Number",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "readonly": true,
+                    "placeholder": "Auto-filled on driver selection"
+                },
+                {
+                    "fieldID": "leaveType",
+                    "fieldLabel": "Leave Type",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "placeholder": "Select Leave Type",
+                    "options": [
+                        {
+                            "label": "Full Day",
+                            "value": "FULL"
+                        },
+                        {
+                            "label": "Half Day",
+                            "value": "HALF"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "sectionID": "secLeaveDetails",
+            "sectionLabel": "Leave Details",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "leaveStartDate",
+                    "fieldLabel": "Leave Start Date",
+                    "controlType": "Date",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "defaultValue": "CURRENT_DATE",
+                    "minDate": "CURRENT_DATE",
+                    "maxDate": "CURRENT_DATE+30",
+                    "placeholder": "mm/dd/yyyy"
+                },
+                {
+                    "fieldID": "leaveEndDate",
+                    "fieldLabel": "Leave End Date",
+                    "controlType": "Date",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "defaultValue": "CURRENT_DATE",
+                    "minDate": "CURRENT_DATE",
+                    "maxDate": "CURRENT_DATE+30",
+                    "placeholder": "mm/dd/yyyy"
+                },
+                {
+                    "fieldID": "numberOfDays",
+                    "fieldLabel": "Number of Days",
+                    "controlType": "Number",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "placeholder": "Auto-calculated"
+                },
+                {
+                    "fieldID": "leaveReason",
+                    "fieldLabel": "Leave Reason",
+                    "controlType": "TextArea",
+                    "colspan": 2,
+                    "showCounter": true,
+                    "maxLength": 200,
+                    "placeholder": "Enter reason for leave"
+                }
+            ]
+        }
+    ]
+}
