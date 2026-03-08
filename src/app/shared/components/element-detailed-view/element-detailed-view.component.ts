@@ -2,11 +2,12 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-element-detailed-view',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatTableModule],
+  imports: [CommonModule, MatDialogModule, MatTableModule, MatIconModule],
   templateUrl: './element-detailed-view.component.html',
   styleUrls: ['./element-detailed-view.component.scss']
 })
