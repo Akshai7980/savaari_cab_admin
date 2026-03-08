@@ -36,6 +36,7 @@ export interface FormFieldConfig {
     infoTooltip?: string;
     minDate?: string;
     maxDate?: string;
+    readonly?: boolean;
 }
 
 export interface FormSectionConfig {
