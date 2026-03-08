@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { LoadingService } from './core/services/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,8 @@ import { Router } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   title = 'Berry Angular Free Version';
+  private loadingService = inject(LoadingService);
+  isLoading = this.loadingService.isLoading;
 
   constructor(private router: Router) { }
 

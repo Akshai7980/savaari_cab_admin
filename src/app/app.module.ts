@@ -22,12 +22,14 @@ import { SharedModule } from './shared/shared.module';
 import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
 
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { environment } from '../environments/environment';
 import { VehicleNumberPipe } from './shared/pipes/vehicle-number/vehicle-number.pipe';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 
 const app = initializeApp(environment.firebaseConfig);
 const analytics = getAnalytics(app);
@@ -57,6 +59,11 @@ const analytics = getAnalytics(app);
         NavItemComponent,
         NavCollapseComponent,
         NavGroupComponent],
-    providers: [NavigationItem, provideHttpClient(withInterceptorsFromDi())]
+    providers: [
+        NavigationItem,
+        provideHttpClient(
+            withInterceptors([authInterceptor, loadingInterceptor])
+        )
+    ]
 })
 export class AppModule { }
