@@ -20,3 +20,18 @@ export interface DriverBooking {
     tripCancelledBy?: string;
     selectedDriver?: string;
 }
+export interface DriverLeave {
+    docId: string;
+    driverName: string;
+    leaveReason: string;
+    leaveStartDate: string;
+    leaveEndDate: string;
+    numberOfDays: string;
+    leaveType: string;
+    driverMobileNumber: string;
+    createdAt: Date;
+    driverCode: string;
+    driverId: string;
+    driverType: string;
+    leaveAppliedBy: string;
+}

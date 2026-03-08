@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FormConfig, FormFieldConfig, FormSectionConfig } from 'src/app/core/models/form-field.model';
+import { FormConfig, FormFieldConfig } from '../../../core/models/form-field.model';
 import { DynamicFormComponent } from '../dynamic-form/dynamic-form.component';
 
 @Component({

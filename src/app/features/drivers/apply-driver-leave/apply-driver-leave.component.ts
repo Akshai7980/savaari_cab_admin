@@ -1,14 +1,14 @@
+import { Component, inject, OnInit, ViewChild, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
-import { DataShareService } from 'src/app/core/services/data-share.service';
-import { FirebaseService } from 'src/app/core/services/firebase.service';
-import { UtilityService } from 'src/app/core/services/utility.service';
-import { ListAllDriversComponent } from 'src/app/shared/components/list-all-drivers/list-all-drivers.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { Driver } from 'src/app/core/models/driver.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FirebaseService } from '../../../core/services/firebase.service';
+import { UtilityService } from '../../../core/services/utility.service';
+import { ListAllDriversComponent } from '../../../shared/components/list-all-drivers/list-all-drivers.component';
+import { SharedModule } from '../../../shared/shared.module';
+import { Driver } from '../../../core/models/driver.model';
+import { DriverLeave } from '../../../core/models/booking.model';
 
 @Component({
   selector: 'apply-driver-leave',
@@ -17,24 +17,23 @@ import { Driver } from 'src/app/core/models/driver.model';
   templateUrl: './apply-driver-leave.component.html',
   styleUrls: ['./apply-driver-leave.component.scss']
 })
-export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
-  @ViewChild('startDateInput') startDateInput: HTMLInputElement;
-  @ViewChild('endDateInput') endDateInput: HTMLInputElement;
+export default class ApplyDriverLeaveComponent implements OnInit {
+  @ViewChild('startDateInput') startDateInput!: any;
+  @ViewChild('endDateInput') endDateInput!: any;
 
   public readonly applyLeaveForm: FormGroup;
-  private allDrivers: Driver[];
+  private allDrivers: Driver[] = [];
   private readonly currentDate: string = '';
   public editForm: boolean = false;
-  private readonly subscription: Subscription[] = [];
 
-  constructor(
-    private readonly firebaseService: FirebaseService,
-    private readonly dataSharingService: DataShareService,
-    private readonly formBuilder: FormBuilder,
-    private readonly utilityService: UtilityService,
-    private readonly dialog: MatDialog
-  ) {
-    this.currentDate = utilityService.currentDate();
+  private firebaseService = inject(FirebaseService);
+  private formBuilder = inject(FormBuilder);
+  private utilityService = inject(UtilityService);
+  private dialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
+
+  constructor() {
+    this.currentDate = this.utilityService.currentDate();
 
     this.applyLeaveForm = this.formBuilder.group({
       driverName: ['', Validators.required],
@@ -54,15 +53,6 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const subscription = this.dataSharingService.data$.subscribe((data) => {
-      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
-        this.applyLeaveForm.patchValue(data);
-        this.editForm = true;
-      }
-    });
-
-    this.subscription.push(subscription);
-
     this.getAllDrivers();
   }
 
@@ -83,27 +73,29 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
       data: { drivers: this.allDrivers }
     });
 
-    const subscription = dialogRef.afterClosed().subscribe((selectedDrivers: Driver[]) => {
-      console.log(`Dialog result:`, selectedDrivers);
-
-      this.applyLeaveForm.controls['driverName'].setValue(selectedDrivers['type']); // yet to update
-      this.applyLeaveForm.controls['driverMobileNumber'].setValue(selectedDrivers['otp']); // yet to update
-      this.applyLeaveForm.controls['driverCode'].setValue(''); // yet to update
-      this.applyLeaveForm.controls['driverId'].setValue(''); // yet to update
-      this.applyLeaveForm.controls['driverType'].setValue(''); // yet to update
-    });
-
-    this.subscription.push(subscription);
+    dialogRef.afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((selectedDriver: Driver | null) => {
+        if (selectedDriver) {
+          this.applyLeaveForm.patchValue({
+            driverName: selectedDriver.driverName,
+            driverMobileNumber: selectedDriver.mobileNumber,
+            driverCode: selectedDriver.driverCode,
+            driverId: selectedDriver.docId,
+            driverType: selectedDriver.driverType
+          });
+        }
+      });
   }
 
   getAllDrivers() {
-    const subscription = this.firebaseService.getUserOTPs().subscribe((res) => {
-      if (res && res.length > 0) {
-        this.allDrivers = res;
-      }
-    });
-
-    this.subscription.push(subscription);
+    this.firebaseService.getDriverList()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res) => {
+        if (res && res.length > 0) {
+          this.allDrivers = res;
+        }
+      });
   }
 
   settingValuesToForm() {
@@ -148,10 +140,5 @@ export default class ApplyDriverLeaveComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
-    if (this.subscription)
-      this.subscription.forEach((element) => {
-        element.unsubscribe();
-      });
-  }
+
 }

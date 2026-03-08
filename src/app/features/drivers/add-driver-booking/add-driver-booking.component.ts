@@ -4,14 +4,15 @@ import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { FirebaseService } from 'src/app/core/services/firebase.service';
-import { UtilityService } from 'src/app/core/services/utility.service';
-import { FormGeneratorService } from 'src/app/core/services/form-generator.service';
-import { FormConfig } from 'src/app/core/models/form-field.model';
-import { DriverBooking } from 'src/app/core/models/booking.model';
-import { DynamicFormContainerComponent } from 'src/app/shared/components/dynamic-form-container/dynamic-form-container.component';
-import { ListAllDriversComponent } from 'src/app/shared/components/list-all-drivers/list-all-drivers.component';
-import { FormLoaderComponent } from 'src/app/shared/components/form-loader/form-loader.component';
+import { FirebaseService } from '../../../core/services/firebase.service';
+import { UtilityService } from '../../../core/services/utility.service';
+import { FormGeneratorService } from '../../../core/services/form-generator.service';
+import { FormConfig, FormFieldConfig } from '../../../core/models/form-field.model';
+import { DriverBooking } from '../../../core/models/booking.model';
+import { DynamicFormContainerComponent } from '../../../shared/components/dynamic-form-container/dynamic-form-container.component';
+import { ListAllDriversComponent } from '../../../shared/components/list-all-drivers/list-all-drivers.component';
+import { Driver } from '../../../core/models/driver.model';
+import { FormLoaderComponent } from '../../../shared/components/form-loader/form-loader.component';
 
 @Component({
   selector: 'app-add-driver-booking',
@@ -39,7 +40,7 @@ export class AddDriverBookingComponent implements OnInit {
   bookingId: string | null = null;
   isEditMode = signal<boolean>(false);
   isLoading = signal<boolean>(true);
-  drivers: any[] = [];
+  drivers: Driver[] = [];
 
   ngOnInit() {
     this.loadFormConfig();
@@ -58,16 +59,18 @@ export class AddDriverBookingComponent implements OnInit {
 
   loadFormConfig() {
     this.utilityService.getJSON('assets/configs/driver-booking.json')
-      .subscribe((data: FormConfig) => {
-        this.formConfig = data;
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data: any) => {
+        this.formConfig = data as FormConfig;
         this.bookingForm = this.formGeneratorService.generateForm(this.formConfig);
         this.isLoading.set(false);
       });
   }
 
   loadBookingData(id: string) {
-    this.firebaseService.getDocument('driver_bookings', id)
-      .subscribe((data: any) => {
+    this.firebaseService.getDocument<DriverBooking>('driver_bookings', id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => {
         if (data && this.bookingForm) {
           this.bookingForm.patchValue(data);
         }
@@ -94,7 +97,7 @@ export class AddDriverBookingComponent implements OnInit {
 
     dialogRef.afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((result: any) => {
+      .subscribe((result: Driver | null) => {
         if (result) {
           this.bookingForm.patchValue({
             requiredDriver: result.driverName,
@@ -114,7 +117,7 @@ export class AddDriverBookingComponent implements OnInit {
       });
   }
 
-  onFieldClick(event: { fieldID: string; config: any }) {
+  onFieldClick(event: { fieldID: string; config: FormFieldConfig }) {
     if (event.fieldID === 'requiredDriver') {
       this.selectDriver();
     }

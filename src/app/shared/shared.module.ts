@@ -15,6 +15,8 @@ import { AlertPopupComponent } from './components/alert-popup/alert-popup.compon
 import { ElementDetailedViewComponent } from './components/element-detailed-view/element-detailed-view.component';
 import { NoDataFoundComponent } from './components/no-data-found/no-data-found.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
+import { FormLoaderComponent } from './components/form-loader/form-loader.component';
+import { DynamicFormContainerComponent } from './components/dynamic-form-container/dynamic-form-container.component';
 
 @NgModule({
   imports: [
@@ -35,7 +37,12 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
-    AlertPopupComponent
+    AlertPopupComponent,
+    SpinnerComponent,
+    ElementDetailedViewComponent,
+    NoDataFoundComponent,
+    FormLoaderComponent,
+    DynamicFormContainerComponent
   ],
   exports: [
     CommonModule,
@@ -57,8 +64,9 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     MatButtonModule,
     MatIconModule,
     ElementDetailedViewComponent,
-    NoDataFoundComponent
+    NoDataFoundComponent,
+    FormLoaderComponent,
+    DynamicFormContainerComponent
   ],
-  declarations: [SpinnerComponent, ElementDetailedViewComponent, NoDataFoundComponent]
 })
 export class SharedModule { }

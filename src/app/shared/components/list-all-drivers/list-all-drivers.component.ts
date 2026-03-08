@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
-import { Driver } from 'src/app/core/models/driver.model';
+import { Driver } from '../../../core/models/driver.model';
 
 @Component({
   selector: 'app-list-all-drivers',

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore, QueryFn } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, first } from 'rxjs';
+import { BehaviorSubject, Observable, first, map, of } from 'rxjs';
 import { SnackbarService } from './snackbar.service';
 import { AuthService } from './auth.service';
 import { User } from '../models/user.model';
@@ -75,10 +75,12 @@ export class FirebaseService {
   private loginSuccessHandler(uid: string): void {
     this.snackBar.showMessage('Login Successful');
     this.fetchUserDetails(uid).subscribe((user) => {
-      this.userDetails = user;
-      this.userProfileSubscription.next(this.userDetails);
-      this.authService.updateCurrentUser(user);
-      this.router.navigate(['/dashboard']);
+      if (user) {
+        this.userDetails = user;
+        this.userProfileSubscription.next(this.userDetails);
+        this.authService.updateCurrentUser(user);
+        this.router.navigate(['/dashboard']);
+      }
     });
   }
 
@@ -111,7 +113,7 @@ export class FirebaseService {
    */
   getCurrentUserDetails(): Observable<User | null> {
     if (this.userDetails) {
-      return new BehaviorSubject<User | null>(this.userDetails).asObservable().pipe(first());
+      return of(this.userDetails);
     }
 
     const savedUser = this.authService.getSession();
@@ -119,14 +121,21 @@ export class FirebaseService {
       return this.fetchUserDetails(savedUser.uid);
     }
 
-    return new BehaviorSubject<User | null>(null).asObservable().pipe(first());
+    return of(null);
   }
 
   // Get Saved User Functionality ----------------
-  getSavedUser() {
-    const user = JSON.parse(sessionStorage.getItem('savaariUser') || 'null');
-    if (user) return user;
+  getSavedUser(): User | null {
+    const userStr = sessionStorage.getItem('savaariUser');
+    if (userStr) {
+      try {
+        return JSON.parse(userStr);
+      } catch (e) {
+        console.error('Error parsing saved user', e);
+      }
+    }
     this.signOut();
+    return null;
   }
 
   /**
@@ -136,25 +145,13 @@ export class FirebaseService {
     const savedUser = this.authService.getSession();
     if (savedUser?.uid) {
       this.fetchUserDetails(savedUser.uid).subscribe((user) => {
-        this.userDetails = user;
-        this.userProfileSubscription.next(this.userDetails);
-        this.authService.updateCurrentUser(user);
+        if (user) {
+          this.userDetails = user;
+          this.userProfileSubscription.next(this.userDetails);
+          this.authService.updateCurrentUser(user);
+        }
       });
     }
-  }
-
-  /**
-   * Adds a new driver booking.
-   */
-  addDriverBooking(driverBooking: DriverBooking) {
-    return this.fireStore.collection('driverBooking').add(driverBooking);
-  }
-
-  /**
-   * Adds a new registered driver.
-   */
-  addDrivers(driver: Driver) {
-    return this.fireStore.collection('registeredDrivers').add(driver);
   }
 
   /**
@@ -172,197 +169,92 @@ export class FirebaseService {
   }
 
   /**
-   * Returns an observable of all user OTPs (mapped to any for now as schema is unclear).
+   * Returns an observable of all user OTPs.
    */
-  getUserOTPs(): Observable<any[]> {
+  getUserOTPs(): Observable<unknown[]> {
     return this.fireStore.collection('userOtp').valueChanges();
   }
 
   /**
-   * Updates trip status for a specific booking.
+   * Generic method to get a document by a custom 'docId' field.
    */
-  updateTripStatus(params: Partial<DriverBooking> & { docId: string }): Promise<void> {
-    const collection = this.fireStore.collection('driverBooking');
-    return collection.ref.where('docId', '==', params.docId)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.size === 1) {
-          return snapshot.docs[0].ref.update(params);
-        } else {
-          throw new Error('Document not found or multiple documents match the ID.');
-        }
-      });
+  getDocument<T>(collectionName: string, docId: string): Observable<T | null> {
+    return this.fireStore.collection<T>(collectionName, ref => ref.where('docId', '==', docId))
+      .valueChanges()
+      .pipe(first(), map(docs => docs.length > 0 ? docs[0] : null));
   }
 
   /**
-   * Creates a unique ID for Firestore documents.
+   * Generic method to update a document identified by a 'docId' field.
    */
-  createId(): string {
-    return this.fireStore.createId();
-  }
-
-  /**
-   * Applies for a driver leave.
-   */
-  applyDriverLeave(driverLeave: DriverLeave) {
-    return this.fireStore.collection('allAppliedLeaves').add(driverLeave);
-  }
-
-  /**
-   * Returns an observable of all applied leaves.
-   */
-  getDriverAppliedLeaves(): Observable<DriverLeave[]> {
-    return this.fireStore.collection<DriverLeave>('allAppliedLeaves').valueChanges();
-  }
-
-  /**
-   * Updates status for a driver leave request.
-   */
-  updateLeaveStatus(params: Partial<DriverLeave> & { docId: string }): Promise<void> {
-    return this.fireStore
-      .collection('allAppliedLeaves')
-      .ref.where('docId', '==', params.docId)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.size === 1) {
-          return snapshot.docs[0].ref.update(params);
-        } else {
-          throw new Error('Leave document not found or duplicate IDs found.');
-        }
-      });
-  }
-
-  /**
-   * Returns an observable of all registered drivers.
-   */
-  getDriverList(): Observable<Driver[]> {
-    return this.fireStore.collection<Driver>('registeredDrivers').valueChanges();
-  }
-
-  /**
-   * Adds new vehicle details.
-   */
-  addVehicleDetails(vehicle: Vehicle) {
-    return this.fireStore.collection('addVehicleDetails').add(vehicle);
-  }
-
-  /**
-   * Returns an observable of all vehicle details.
-   */
-  getAllVehicleDetails(): Observable<Vehicle[]> {
-    return this.fireStore.collection<Vehicle>('addVehicleDetails').valueChanges();
-  }
-
-  /**
-   * Fetches specific vehicle details by document ID.
-   */
-  fetchVehicleDetails(docId: string): Observable<Vehicle | null> {
-    return new Observable((subscriber) => {
-      this.fireStore
-        .collection<Vehicle>('addVehicleDetails')
-        .ref.where('docId', '==', docId)
-        .get()
-        .then((snapshot) => {
-          if (snapshot.size === 1) {
-            subscriber.next(snapshot.docs[0].data() as Vehicle);
-            subscriber.complete();
-          } else {
-            subscriber.error(new Error('Vehicle not found or multiple vehicle match the ID.'));
-          }
-        })
-        .catch((error) => subscriber.error(error));
-    });
-  }
-
-  /**
-   * Updates vehicle details.
-   */
-  updateVehicleDetails(data: Partial<Vehicle> & { docId: string }): Promise<void> {
-    return this.fireStore
-      .collection('addVehicleDetails')
-      .ref.where('docId', '==', data.docId)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.size === 1) {
-          return snapshot.docs[0].ref.update(data);
-        } else {
-          throw new Error('Vehicle not found or multiple vehicle match the ID.');
-        }
-      });
-  }
-
-  /**
-   * Deletes a vehicle by ID.
-   */
-  deleteVehicle(id: string): Promise<void> {
-    return this.fireStore
-      .collection('addVehicleDetails')
-      .ref.where('docId', '==', id)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.size === 1) {
-          return snapshot.docs[0].ref.delete();
-        } else {
-          throw new Error('Vehicle not found or multiple vehicle match the ID.');
-        }
-      });
-  }
-
-  /**
-   * Fetches specific booking detail by ID.
-   */
-  getBookingDetailById(id: string): Observable<DriverBooking | null> {
-    return new Observable((subscriber) => {
-      this.fireStore
-        .collection<DriverBooking>('driverBooking')
-        .ref.where('docId', '==', id)
-        .get()
-        .then((snapshot) => {
-          if (snapshot.size === 1) {
-            subscriber.next(snapshot.docs[0].data() as DriverBooking);
-            subscriber.complete();
-          } else {
-            subscriber.error(new Error('Booking Details not found.'));
-          }
-        })
-        .catch((error) => subscriber.error(error));
-    });
-  }
-
-  /**
-   * Updates booking detail by ID.
-   */
-  updateBookingDetailById(params: Partial<DriverBooking> & { docId: string }): Promise<void> {
-    return this.fireStore
-      .collection('driverBooking')
-      .ref.where('docId', '==', params.docId)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.size === 1) {
-          return snapshot.docs[0].ref.update(params);
-        } else {
-          throw new Error('Document not found or multiple documents match the ID.');
-        }
-      });
-  }
-
-  getDocument(collection: string, docId: string): Observable<any> {
-    // Note: This expects a 'docId' field in the document content as per previous patterns
-    return this.fireStore.collection(collection, ref => ref.where('docId', '==', docId)).valueChanges().pipe(first());
-  }
-
-  updateDocument(collection: string, docId: string, data: any): Promise<void> {
-    return this.fireStore.collection(collection).ref.where('docId', '==', docId).get().then(snapshot => {
+  updateDocument<T extends { docId?: string }>(collectionName: string, docId: string, data: Partial<T>): Promise<void> {
+    return this.fireStore.collection(collectionName).ref.where('docId', '==', docId).get().then(snapshot => {
       if (!snapshot.empty) {
         return snapshot.docs[0].ref.update(data);
       } else {
-        throw new Error('Document not found');
+        throw new Error(`Document with docId ${docId} not found in ${collectionName}`);
       }
     });
   }
 
-  addDocument(collection: string, data: any): Promise<any> {
-    return this.fireStore.collection(collection).add(data);
+  /**
+   * Generic method to add a new document.
+   */
+  addDocument<T>(collectionName: string, data: T): Promise<any> {
+    return this.fireStore.collection(collectionName).add(data);
   }
+
+  /**
+   * Deletes a document identified by its custom 'docId' field.
+   */
+  deleteDocument(collectionName: string, docId: string): Promise<void> {
+    return this.fireStore.collection(collectionName).ref.where('docId', '==', docId).get().then(snapshot => {
+      if (!snapshot.empty) {
+        return snapshot.docs[0].ref.delete();
+      } else {
+        throw new Error(`Document with docId ${docId} not found in ${collectionName}`);
+      }
+    });
+  }
+
+  /**
+   * Returns an observable of all documents in a collection.
+   */
+  getCollection<T>(collectionName: string): Observable<T[]> {
+    return this.fireStore.collection<T>(collectionName).valueChanges();
+  }
+
+  // Deprecated specific methods (re-mapped to generic ones)
+  addDriverBooking(driverBooking: DriverBooking) { return this.addDocument('driverBooking', driverBooking); }
+  addDrivers(driver: Driver) { return this.addDocument('registeredDrivers', driver); }
+  applyDriverLeave(driverLeave: DriverLeave) { return this.addDocument('allAppliedLeaves', driverLeave); }
+  getDriverAppliedLeaves() { return this.getCollection<DriverLeave>('allAppliedLeaves'); }
+  getDriverList() { return this.getCollection<Driver>('registeredDrivers'); }
+  addVehicleDetails(vehicle: Vehicle) { return this.addDocument('addVehicleDetails', vehicle); }
+  getAllVehicleDetails() { return this.getCollection<Vehicle>('addVehicleDetails'); }
+
+  deleteVehicle(id: string) { return this.deleteDocument('addVehicleDetails', id); }
+
+  updateTripStatus(params: Partial<DriverBooking> & { docId: string }) {
+    return this.updateDocument('driverBooking', params.docId, params);
+  }
+  updateLeaveStatus(params: Partial<DriverLeave> & { docId: string }) {
+    return this.updateDocument('allAppliedLeaves', params.docId, params);
+  }
+  updateVehicleDetails(data: Partial<Vehicle> & { docId: string }) {
+    return this.updateDocument('addVehicleDetails', data.docId, data);
+  }
+  updateBookingDetailById(params: Partial<DriverBooking> & { docId: string }) {
+    return this.updateDocument('driverBooking', params.docId, params);
+  }
+
+  getBookingDetailById(docId: string): Observable<DriverBooking | null> {
+    return this.getDocument<DriverBooking>('driverBooking', docId);
+  }
+
+  createId(): string {
+    return this.fireStore.createId();
+  }
+
 
 }

@@ -1,12 +1,14 @@
-import { Component, Input, OnDestroy, Inject, ViewEncapsulation, inject, effect } from '@angular/core';
+import { Component, Input, OnDestroy, Inject, ViewEncapsulation, inject, effect, DestroyRef } from '@angular/core';
 import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
-import { DOCUMENT } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { LoadingService } from '../../../core/services/loading.service';
-
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Spinkit } from './spinkits';
 
 @Component({
   selector: 'app-spinner',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './spinner.component.html',
   styleUrls: ['./spinner.component.scss', './spinkit-css/sk-line-material.scss'],
   encapsulation: ViewEncapsulation.None
@@ -18,6 +20,7 @@ export class SpinnerComponent implements OnDestroy {
   @Input() spinner = Spinkit.skLine;
 
   private loadingService = inject(LoadingService);
+  private destroyRef = inject(DestroyRef);
   private isNavigationPending = false;
 
   constructor(
@@ -29,21 +32,23 @@ export class SpinnerComponent implements OnDestroy {
       this.updateVisibility();
     });
 
-    this.router.events.subscribe(
-      (event) => {
-        if (event instanceof NavigationStart) {
-          this.isNavigationPending = true;
-          this.updateVisibility();
-        } else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+    this.router.events
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (event) => {
+          if (event instanceof NavigationStart) {
+            this.isNavigationPending = true;
+            this.updateVisibility();
+          } else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+            this.isNavigationPending = false;
+            this.updateVisibility();
+          }
+        },
+        error: () => {
           this.isNavigationPending = false;
           this.updateVisibility();
         }
-      },
-      () => {
-        this.isNavigationPending = false;
-        this.updateVisibility();
-      }
-    );
+      });
   }
 
   private updateVisibility(): void {

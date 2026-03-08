@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
-import { FirebaseService } from 'src/app/core/services/firebase.service';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { FirebaseService } from '../../../../core/services/firebase.service';
+import { SharedModule } from '../../../../shared/shared.module';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { UtilityService } from 'src/app/core/services/utility.service';
+import { UtilityService } from '../../../../core/services/utility.service';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ListAllDriversComponent } from 'src/app/shared/components/list-all-drivers/list-all-drivers.component';
+import { ListAllDriversComponent } from '../../../../shared/components/list-all-drivers/list-all-drivers.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DriverBooking } from 'src/app/core/models/booking.model';
-import { Driver } from 'src/app/core/models/driver.model';
+import { DriverBooking } from '../../../../core/models/booking.model';
+import { Driver } from '../../../../core/models/driver.model';
 
 @Component({
   selector: 'app-trip-detail-view',

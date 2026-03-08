@@ -1,13 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnInit, DestroyRef, inject } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
-import { FirebaseService } from 'src/app/core/services/firebase.service';
-import { SnackbarService } from 'src/app/core/services/snackbar.service';
-import { ElementDetailedViewComponent } from 'src/app/shared/components/element-detailed-view/element-detailed-view.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { Vehicle } from 'src/app/core/models/vehicle.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FirebaseService } from '../../../core/services/firebase.service';
+import { SnackbarService } from '../../../core/services/snackbar.service';
+import { ElementDetailedViewComponent } from '../../../shared/components/element-detailed-view/element-detailed-view.component';
+import { SharedModule } from '../../../shared/shared.module';
+import { Vehicle } from '../../../core/models/vehicle.model';
 
 export interface VehicleDisplay extends Vehicle {
   position?: number;
@@ -16,7 +16,7 @@ export interface VehicleDisplay extends Vehicle {
 @Component({
   selector: 'app-list-vehicle',
   standalone: true,
-  imports: [CommonModule, SharedModule, RouterModule],
+  imports: [SharedModule, RouterModule],
   templateUrl: './list-vehicle.component.html',
   styleUrls: ['./list-vehicle.component.scss']
 })
@@ -24,7 +24,9 @@ export default class ListVehicleComponent implements OnInit {
   displayedColumns: string[] = ['position', 'ownerName', 'vehicleNumber', 'fuelType', 'vehicleAge', 'vehicleClass', 'actions'];
   dataSource = new MatTableDataSource<VehicleDisplay>([]);
   showPaginator = false;
-  private dialogRef: any;
+
+  private dialogRef: MatDialogRef<ElementDetailedViewComponent> | null = null;
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private readonly firebaseService: FirebaseService,
@@ -38,20 +40,22 @@ export default class ListVehicleComponent implements OnInit {
   }
 
   getVehicleList(): void {
-    this.firebaseService.getAllVehicleDetails().subscribe(
-      (res: Vehicle[]) => {
-        const mappedData: VehicleDisplay[] = res.map((item, index) => ({
-          ...item,
-          position: index + 1
-        }));
+    this.firebaseService.getAllVehicleDetails()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: Vehicle[]) => {
+          const mappedData: VehicleDisplay[] = res.map((item, index) => ({
+            ...item,
+            position: index + 1
+          }));
 
-        this.dataSource.data = mappedData;
-        this.showPaginator = mappedData.length > 5;
-      },
-      (error) => {
-        console.error('Error fetching vehicle details:', error);
-      }
-    );
+          this.dataSource.data = mappedData;
+          this.showPaginator = mappedData.length > 5;
+        },
+        error: (error) => {
+          console.error('Error fetching vehicle details:', error);
+        }
+      });
   }
 
   toViewVehicle(element: VehicleDisplay): void {
@@ -78,11 +82,11 @@ export default class ListVehicleComponent implements OnInit {
         buttons1: 'Edit',
         buttons2: 'Delete',
         edit: () => {
-          this.dialogRef.close();
+          this.dialogRef?.close();
           this.toEditVehicle(element);
         },
         delete: () => {
-          this.dialogRef.close();
+          this.dialogRef?.close();
           this.toDeleteVehicle(element);
         }
       }
