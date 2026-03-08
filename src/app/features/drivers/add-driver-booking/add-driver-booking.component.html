@@ -10,7 +10,8 @@
     </div>
 
     <div class="form-card-container">
-      <app-dynamic-form-container *ngIf="formConfig && bookingForm" [config]="formConfig" [formGroup]="bookingForm">
+      <app-dynamic-form-container *ngIf="formConfig && bookingForm" [config]="formConfig" [formGroup]="bookingForm"
+        (fieldClick)="onFieldClick($event)">
       </app-dynamic-form-container>
 
       <div class="footer-actions mt-4 text-end">

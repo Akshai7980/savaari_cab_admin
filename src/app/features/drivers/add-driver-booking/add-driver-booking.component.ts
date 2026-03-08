@@ -61,13 +61,7 @@ export class AddDriverBookingComponent implements OnInit {
       .subscribe((data: FormConfig) => {
         this.formConfig = data;
         this.bookingForm = this.formGeneratorService.generateForm(this.formConfig);
-        if (!this.isEditMode()) {
-          this.initializeDateValues();
-        }
-        // Artificial delay for smooth Premium UX loader transition
-        setTimeout(() => {
-          this.isLoading.set(false);
-        }, 600);
+        this.isLoading.set(false);
       });
   }
 
@@ -78,30 +72,6 @@ export class AddDriverBookingComponent implements OnInit {
           this.bookingForm.patchValue(data);
         }
       });
-  }
-
-  initializeDateValues() {
-    if (!this.bookingForm) return;
-    const now = new Date();
-    const futureDate = new Date(now.getTime() + 15 * 60000); // Add 15 minutes
-
-    // Format date as yyyy-mm-dd
-    const year = futureDate.getFullYear();
-    const month = String(futureDate.getMonth() + 1).padStart(2, '0');
-    const day = String(futureDate.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-
-    // Format time as HH:mm (24h format for the time input)
-    const hours = String(futureDate.getHours()).padStart(2, '0');
-    const minutes = String(futureDate.getMinutes()).padStart(2, '0');
-    const formattedTime = `${hours}:${minutes}`;
-
-    this.bookingForm.patchValue({
-      startDate: formattedDate,
-      endDate: formattedDate,
-      startTime: formattedTime,
-      numberOfDays: 1
-    });
   }
 
   getDrivers() {
@@ -126,13 +96,11 @@ export class AddDriverBookingComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: any) => {
         if (result) {
-          // 1. Auto-fill Form Fields
           this.bookingForm.patchValue({
             requiredDriver: result.driverName,
             rejectedDriver: 'NIL'
           });
 
-          // 2. Dynamically Inject Driver ID as Subtext (Hint)
           if (this.formConfig && this.formConfig.formSectionConfig) {
             for (const section of this.formConfig.formSectionConfig) {
               const driverField = section.formFieldConfig.find(f => f.fieldID === 'requiredDriver');
@@ -146,53 +114,61 @@ export class AddDriverBookingComponent implements OnInit {
       });
   }
 
+  onFieldClick(event: { fieldID: string; config: any }) {
+    if (event.fieldID === 'requiredDriver') {
+      this.selectDriver();
+    }
+  }
+
   onCancel() {
     this.bookingForm.reset();
-    if (!this.isEditMode()) {
-      this.initializeDateValues();
-    } else {
+    if (this.isEditMode()) {
       this.loadBookingData(this.bookingId!);
     }
   }
 
   onSubmit() {
-    if (this.bookingForm.valid) {
-      const bookingData = this.bookingForm.value as DriverBooking;
-
-      // Post-processing for time format as per business requirements
-      if (bookingData.startTime) {
-        bookingData.startTime = this.utilityService.convertTo12HourFormat(bookingData.startTime) || bookingData.startTime;
-      }
-
-      if (this.isEditMode()) {
-        this.firebaseService.updateDocument('driver_bookings', this.bookingId!, bookingData)
-          .then(() => {
-            this.utilityService.successFailedPopup('SUCCESS');
-            this.router.navigate(['/drivers/bookings']);
-          })
-          .catch(error => {
-            console.error(error);
-            this.utilityService.successFailedPopup('FAILED');
-          });
-      } else {
-        const docId = this.firebaseService.createId();
-        bookingData.docId = docId;
-        bookingData.status = 'yts';
-
-        this.firebaseService.addDocument('driver_bookings', bookingData)
-          .then(() => {
-            this.utilityService.successFailedPopup('SUCCESS');
-            this.bookingForm.reset();
-            this.initializeDateValues();
-            this.router.navigate(['/drivers/bookings']);
-          })
-          .catch(error => {
-            console.error(error);
-            this.utilityService.successFailedPopup('FAILED');
-          });
-      }
-    } else {
+    if (this.bookingForm.invalid) {
       this.bookingForm.markAllAsTouched();
+      return;
+    }
+
+    const bookingData = { ...this.bookingForm.value } as any;
+    console.log('Final Form Data Object:', bookingData);
+
+    this.isLoading.set(true);
+
+    if (bookingData.startTime) {
+      bookingData.startTime = this.utilityService.convertTo12HourFormat(bookingData.startTime) || bookingData.startTime;
+    }
+
+    if (this.isEditMode()) {
+      this.firebaseService.updateDocument('driver_bookings', this.bookingId!, bookingData)
+        .then(() => {
+          this.utilityService.successFailedPopup('SUCCESS');
+          this.router.navigate(['/drivers/bookings']);
+        })
+        .catch(error => {
+          console.error(error);
+          this.utilityService.successFailedPopup('FAILED');
+        })
+        .finally(() => this.isLoading.set(false));
+    } else {
+      const docId = this.firebaseService.createId();
+      bookingData.docId = docId;
+      bookingData.status = 'yts';
+
+      this.firebaseService.addDocument('driver_bookings', bookingData)
+        .then(() => {
+          this.utilityService.successFailedPopup('SUCCESS');
+          this.bookingForm.reset();
+          this.router.navigate(['/drivers/bookings']);
+        })
+        .catch(error => {
+          console.error(error);
+          this.utilityService.successFailedPopup('FAILED');
+        })
+        .finally(() => this.isLoading.set(false));
     }
   }
 }
