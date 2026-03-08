@@ -13,19 +13,47 @@
             </div>
             <input *ngSwitchCase="'TextBox'" [type]="config.type || 'text'" [id]="config.fieldID"
                 [formControlName]="config.fieldID" class="form-control" [placeholder]="config.placeholder || ''"
-                (blur)="onBlur()" (input)="onInput($event)" [class.has-prefix]="config.prefixIcon || config.prefixText">
+                (blur)="onBlur()" (input)="onInput($event)" [class.has-prefix]="config.prefixIcon || config.prefixText"
+                [readOnly]="config.readonly" (click)="onFieldClick()">
         </div>
 
         <div class="field-hint text-muted small mt-1" *ngIf="config.hint && !getError()">
             <i class="ti ti-info-circle me-1"></i> {{ config.hint }}
         </div>
 
-        <!-- Dropdown -->
-        <select *ngSwitchCase="'Dropdown'" [id]="config.fieldID" [formControlName]="config.fieldID"
-            class="form-select shadow-sm" [class.placeholder-active]="!control?.value">
-            <option value="" disabled selected>{{ config.placeholder || 'Select ' + config.fieldLabel }}</option>
-            <option *ngFor="let opt of config.options" [value]="opt.value">{{ opt.label }}</option>
-        </select>
+        <!-- Custom Dropdown -->
+        <div *ngSwitchCase="'Dropdown'" class="custom-dropdown position-relative" [class.open]="isDropdownOpen"
+            [class.disabled]="control?.disabled" tabindex="-1">
+            <div class="form-control custom-select-box d-flex justify-content-between align-items-center shadow-sm"
+                [class.placeholder-active]="!control?.value" [class.is-invalid]="getError()"
+                (click)="toggleDropdown($event)" tabindex="0">
+                <span class="text-truncate flex-grow-1 text-start">
+                    {{ getSelectedLabel() || config.placeholder || 'Select ' + config.fieldLabel }}
+                </span>
+                <i class="ti ti-chevron-down dropdown-icon ms-2"></i>
+            </div>
+
+            <div class="dropdown-options-container shadow-lg" *ngIf="isDropdownOpen">
+                <div class="dropdown-search-container p-2 border-bottom sticky-top bg-white"
+                    *ngIf="config.options && config.options.length > 3">
+                    <input type="text" class="form-control form-control-sm dropdown-search-input"
+                        placeholder="Search..." [value]="searchTerm" (input)="onSearchChange($event)"
+                        (click)="$event.stopPropagation()">
+                </div>
+
+                <div class="dropdown-option placeholder-option" *ngIf="!searchTerm" [class.selected]="!control?.value"
+                    (click)="selectOption('')">
+                    {{ config.placeholder || 'Select ' + config.fieldLabel }}
+                </div>
+                <div class="dropdown-option" *ngFor="let opt of filteredOptions"
+                    [class.selected]="control?.value === opt.value" (click)="selectOption(opt.value)">
+                    {{ opt.label }}
+                </div>
+                <div class="dropdown-option text-muted text-center" *ngIf="filteredOptions.length === 0">
+                    No results found
+                </div>
+            </div>
+        </div>
 
         <!-- Radio -->
         <div *ngSwitchCase="'Radio'" class="radio-group mt-2">
@@ -53,13 +81,30 @@
         </div>
 
         <!-- Date -->
-        <input *ngSwitchCase="'Date'" type="date" [id]="config.fieldID" [formControlName]="config.fieldID"
-            class="form-control shadow-sm" [placeholder]="config.placeholder || ''"
-            [class.placeholder-active]="!control?.value" [attr.min]="minDate" [attr.max]="maxDate">
+        <div *ngSwitchCase="'Date'" class="custom-datepicker-container position-relative"
+            [class.disabled]="control?.disabled">
+            <div class="form-control custom-select-box d-flex justify-content-between align-items-center shadow-sm position-relative"
+                [class.placeholder-active]="!control?.value" [class.is-invalid]="getError()" (click)="openDatePicker()"
+                (keydown.enter)="openDatePicker()" tabindex="0">
 
-        <!-- Number -->
+                <span class="text-truncate flex-grow-1 text-start">
+                    {{ control?.value || config.placeholder || 'Select ' + config.fieldLabel }}
+                </span>
+
+                <i class="ti ti-calendar-event dropdown-icon ms-2 fs-5" style="color: #6B7280; z-index: 1;"></i>
+
+                <!-- Overlay actual input so Material CDK can dock perfectly to the field boundaries -->
+                <input matInput [matDatepicker]="picker" [id]="config.fieldID" [min]="minDateAsDate"
+                    [max]="maxDateAsDate" (dateChange)="onDateChange($event)"
+                    class="position-absolute w-100 h-100 top-0 start-0 opacity-0"
+                    style="cursor: pointer; pointer-events: none;" [disabled]="control?.disabled">
+                <mat-datepicker #picker></mat-datepicker>
+            </div>
+        </div>
+
         <input *ngSwitchCase="'Number'" type="tel" [id]="config.fieldID" [formControlName]="config.fieldID"
-            class="form-control" (keypress)="onNumberKeyPress($event)" [placeholder]="config.placeholder || ''">
+            class="form-control" (keypress)="onNumberKeyPress($event)" [placeholder]="config.placeholder || ''"
+            [readOnly]="config.readonly" (click)="onFieldClick()">
     </ng-container>
 
     <div class="invalid-feedback d-block text-danger small mt-1" *ngIf="getError()">

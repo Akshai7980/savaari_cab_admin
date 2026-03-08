@@ -147,4 +147,241 @@
             margin-right: 4px;
         }
     }
+
+    .custom-dropdown {
+        .custom-select-box {
+            cursor: pointer;
+            user-select: none;
+
+            &.is-invalid {
+                border-color: #dc3545; // text-danger
+                background-position: right 2.25rem center;
+
+                .text-truncate {
+                    padding-right: 1.5rem;
+                }
+            }
+
+            .dropdown-icon {
+                transition: transform 0.2s ease;
+                color: #6B7280;
+                font-size: 1.1rem;
+            }
+
+            .flex-grow-1 {
+                min-width: 0;
+            }
+        }
+
+        &.open .custom-select-box {
+            background-color: white;
+            border-color: #673ab7;
+            box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.1);
+
+            .dropdown-icon {
+                transform: rotate(180deg);
+                color: #673ab7;
+            }
+        }
+
+        &.disabled .custom-select-box {
+            background-color: #F3F4F6;
+            cursor: not-allowed;
+            color: #9CA3AF;
+        }
+
+        .dropdown-options-container {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            z-index: 1000;
+            max-height: 250px;
+            overflow-y: auto;
+
+            /* Custom Scrollbar */
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+                margin: 4px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: #D1D5DB;
+                border-radius: 8px;
+            }
+
+            &::-webkit-scrollbar-thumb:hover {
+                background: #9CA3AF;
+            }
+
+            .dropdown-search-container {
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                background-color: #fcfcfc;
+
+                .input-group-text {
+                    background-color: transparent;
+                    border-color: #E5E7EB;
+                }
+
+                .dropdown-search-input {
+                    border-color: #E5E7EB;
+                    font-size: 0.9rem;
+                    box-shadow: none;
+                    height: 36px;
+
+                    &:focus {
+                        border-color: #E5E7EB;
+                        box-shadow: none;
+                    }
+                }
+            }
+
+            .dropdown-option {
+                padding: 0.65rem 1rem;
+                font-size: 0.95rem;
+                color: #374151;
+                cursor: pointer;
+                transition: background-color 0.15s ease;
+                white-space: normal;
+                word-wrap: break-word;
+
+                &:hover {
+                    background-color: rgba(103, 58, 183, 0.05);
+                    color: #673ab7;
+                }
+
+                &.selected {
+                    background-color: rgba(103, 58, 183, 0.1);
+                    color: #673ab7;
+                    font-weight: 500;
+                }
+
+                &.placeholder-option {
+                    color: #9CA3AF;
+                    font-style: italic;
+
+                    &:hover {
+                        background-color: #f9fafb;
+                        color: #6B7280;
+                    }
+
+                    &.selected {
+                        background-color: transparent;
+                        color: #9CA3AF;
+                        font-weight: normal;
+                    }
+                }
+            }
+        }
+    }
+
+    // Custom Date Picker Container Styles
+    .custom-datepicker-container {
+        width: 100%;
+
+        .custom-select-box {
+            cursor: pointer;
+            user-select: none;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            background-color: white;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+            &:focus {
+                outline: 0;
+                border-color: #80bdff; // Bootstrap primary focus color
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+            &.is-invalid {
+                border-color: #dc3545; // text-danger
+
+                &:focus {
+                    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+                }
+            }
+
+            .flex-grow-1 {
+                min-width: 0;
+                line-height: normal;
+            }
+
+            .dropdown-icon {
+                color: #6B7280;
+                font-size: 1.15rem;
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        &.disabled .custom-select-box {
+            background-color: #F3F4F6;
+            cursor: not-allowed;
+            color: #9CA3AF;
+
+            .dropdown-icon {
+                color: #9CA3AF;
+            }
+        }
+    }
+
+    // Time Input Overrides
+    input[type="time"].form-control {
+        cursor: pointer;
+
+        &::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+            z-index: 10;
+        }
+
+        position: relative;
+        padding-right: 2.5rem; // Make space for the icon
+
+        // Add a custom clock icon behind the invisible native indicator
+        &::after {
+            content: "\ee0e"; // Tabler icon: clock
+            font-family: 'tabler-icons' !important;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+            font-size: 1.25rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+    }
+}
+
+// Global Material Theme Overrides for Datepicker
+::ng-deep .mat-datepicker-content {
+    .mat-calendar {
+        font-family: inherit;
+    }
+
+    .mat-calendar-body-selected {
+        background-color: #673ab7;
+    }
+
+    .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+        border-color: #673ab7;
+    }
 }
