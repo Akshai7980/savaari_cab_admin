@@ -1,113 +1,120 @@
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule, DatePipe, TitleCasePipe } from '@angular/common';
-import { AfterViewChecked, Component, OnInit, ViewChild, inject, DestroyRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { NavigationStart, Router } from '@angular/router';
-import { DataShareService } from 'src/app/core/services/data-share.service';
-import { FirebaseService } from 'src/app/core/services/firebase.service';
-import { AlertPopupComponent } from 'src/app/shared/components/alert-popup/alert-popup.component';
-import { ElementDetailedViewComponent } from 'src/app/shared/components/element-detailed-view/element-detailed-view.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { DriverLeave } from 'src/app/core/models/leave.model';
-
-export interface DriverLeaveDisplay extends DriverLeave {
-  position?: number;
-}
+import { FirebaseService } from '../../../core/services/firebase.service';
+import { UtilityService } from '../../../core/services/utility.service';
+import { DataShareService } from '../../../core/services/data-share.service';
+import { TableConfig } from '../../../core/models/table-config.model';
+import { DriverLeave } from '../../../core/models/leave.model';
+import { DynamicSummaryTableComponent } from '../../../shared/components/dynamic-summary-table/dynamic-summary-table.component';
+import { FormLoaderComponent } from '../../../shared/components/form-loader/form-loader.component';
+import { ElementDetailedViewComponent } from '../../../shared/components/element-detailed-view/element-detailed-view.component';
+import { AlertPopupComponent } from '../../../shared/components/alert-popup/alert-popup.component';
 
 @Component({
   selector: 'list-driver-leave',
   standalone: true,
-  imports: [CommonModule, SharedModule],
+  imports: [
+    CommonModule,
+    DynamicSummaryTableComponent,
+    FormLoaderComponent
+  ],
   templateUrl: './list-driver-leave.component.html',
   styleUrls: ['./list-driver-leave.component.scss'],
   providers: [DatePipe, TitleCasePipe]
 })
-export default class ListDriverLeaveComponent implements OnInit, AfterViewChecked {
-  displayedColumns: string[] = ['position', 'driverName', 'driverMobileNumber', 'leaveReason', 'leaveType', 'numberOfDays', 'actions'];
-  dataSource = new MatTableDataSource<DriverLeaveDisplay>([]);
+export default class ListDriverLeaveComponent implements OnInit {
+  private firebaseService = inject(FirebaseService);
+  private utilityService = inject(UtilityService);
+  private dataShareService = inject(DataShareService);
+  private destroyRef = inject(DestroyRef);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
+  private datePipe = inject(DatePipe);
+  private titleCasePipe = inject(TitleCasePipe);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  showPaginator = false;
-  private readonly destroyRef = inject(DestroyRef);
+  tableConfig!: TableConfig;
+  leaveData: DriverLeave[] = [];
+  isLoading = signal<boolean>(true);
+
   private dialogRef: any;
 
-  constructor(
-    private readonly firebaseService: FirebaseService,
-    private readonly dataShareService: DataShareService,
-    private readonly titleCase: TitleCasePipe,
-    private readonly matDialog: MatDialog,
-    private readonly datePipe: DatePipe,
-    private readonly router: Router
-  ) { }
-
   ngOnInit(): void {
-    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        this.matDialog.closeAll();
-      }
-    });
-
+    this.loadTableConfig();
     this.getDriverAppliedLeaves();
   }
 
-  ngAfterViewChecked(): void {
-    if (this.showPaginator && !this.dataSource.paginator) {
-      this.dataSource.paginator = this.paginator;
-    } else if (!this.showPaginator && this.dataSource.paginator) {
-      this.dataSource.paginator = null;
+  loadTableConfig() {
+    this.utilityService.getJSON('assets/configs/list-driver-leave.json')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data: any) => {
+        this.tableConfig = data as TableConfig;
+      });
+  }
+
+  getDriverAppliedLeaves() {
+    this.firebaseService.getDriverAppliedLeaves()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        (res: DriverLeave[]) => {
+          this.leaveData = res
+            .filter(leave => !leave.isLeaveCancelled)
+            .map((item, index) => ({
+              ...item,
+              position: index + 1
+            }));
+          this.isLoading.set(false);
+        },
+        (error) => {
+          console.error('Error fetching driver applied leaves:', error);
+          this.isLoading.set(false);
+        }
+      );
+  }
+
+  onTableAction(event: { actionID: string; row: DriverLeave }) {
+    switch (event.actionID) {
+      case 'view':
+        this.toViewLeave(event.row);
+        break;
+      case 'cancel':
+        this.toCancelLeave(event.row);
+        break;
+      case 'edit':
+        this.toEditLeave(event.row);
+        break;
     }
   }
 
-  getDriverAppliedLeaves(): void {
-    this.firebaseService.getDriverAppliedLeaves().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
-      (res: DriverLeave[]) => {
-        const response: DriverLeaveDisplay[] = res
-          .filter(leave => !leave.isLeaveCancelled)
-          .map((item, index) => ({
-            ...item,
-            position: index + 1
-          }));
-
-        this.dataSource.data = response;
-        this.showPaginator = response.length > 5;
-      },
-      (error) => {
-        console.error('Error fetching driver applied leaves:', error);
-      }
-    );
-  }
-
-  toViewLeave(element: DriverLeaveDisplay): void {
-    this.matDialog.closeAll();
+  toViewLeave(element: DriverLeave): void {
+    this.dialog.closeAll();
 
     const startDate = this.datePipe.transform(element.leaveStartDate, 'longDate');
     const endDate = this.datePipe.transform(element.leaveEndDate, 'longDate');
 
     const data = [
-      { key: 'Driver Name', value: this.titleCase.transform(element.driverName) },
+      { key: 'Driver Name', value: this.titleCasePipe.transform(element.driverName) },
       { key: 'Driver Mobile Number', value: `+91-${element.driverMobileNumber || ''}` },
-      { key: 'Leave Reason', value: this.titleCase.transform(element.leaveReason) },
+      { key: 'Leave Reason', value: this.titleCasePipe.transform(element.leaveReason) },
       { key: 'Leave Type', value: element?.leaveType === 'FULL' ? 'Full Day' : 'Half Day' },
       { key: 'No: Of Days Leave', value: element.numberOfDays },
-      { key: 'Driver Type', value: this.titleCase.transform(element.driverType || '') },
+      { key: 'Driver Type', value: this.titleCasePipe.transform(element.driverType || '') },
       { key: 'Leave Start Date', value: startDate },
       { key: 'Leave End Date', value: endDate }
     ];
 
-    this.dialogRef = this.matDialog.open(ElementDetailedViewComponent, {
+    this.dialogRef = this.dialog.open(ElementDetailedViewComponent, {
       data: {
         data: data,
         heading: `${element.driverName} | Leave From ${startDate} To ${endDate}`,
         buttons1: 'Edit',
         buttons2: 'Cancel',
-
         edit: () => {
           this.dialogRef.close();
           this.toEditLeave(element);
         },
-
         delete: () => {
           this.dialogRef.close();
           this.toCancelLeave(element);
@@ -116,16 +123,16 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
     });
   }
 
-  toCancelLeave(element: DriverLeaveDisplay): void {
+  toCancelLeave(element: DriverLeave): void {
     const startDate = this.datePipe.transform(element.leaveStartDate, 'longDate');
     const endDate = this.datePipe.transform(element.leaveEndDate, 'longDate');
-    const driverName = this.titleCase.transform(element.driverName);
+    const driverName = this.titleCasePipe.transform(element.driverName);
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.height = '400px';
     dialogConfig.width = '600px';
 
-    this.dialogRef = this.matDialog.open(AlertPopupComponent, {
+    this.dialogRef = this.dialog.open(AlertPopupComponent, {
       ...dialogConfig,
       data: {
         icon: 'close',
@@ -151,7 +158,7 @@ export default class ListDriverLeaveComponent implements OnInit, AfterViewChecke
     });
   }
 
-  toEditLeave(element: DriverLeaveDisplay): void {
+  toEditLeave(element: DriverLeave): void {
     this.dataShareService.updateData(element);
     this.router.navigate(['applyDriverLeave']);
   }
