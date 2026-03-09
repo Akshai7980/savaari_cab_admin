@@ -1,50 +1,179 @@
-.container {
-  padding: 30px;
+// ─── Alert Dialog ────────────────────────────────────────────
+
+.alert-dialog {
+  padding: 32px 28px;
   text-align: center;
-  overflow: hidden;
+  position: relative;
+  animation: alertZoomIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
-  .container::-webkit-scrollbar {
-    display: none;
+// Close Button
+.alert-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #f5f0ff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1;
+
+  mat-icon {
+    font-size: 20px;
+    color: #5e35b1;
   }
 
-  .container {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  &:hover {
+    background: #5e35b1;
+    transform: rotate(90deg);
 
-  .mat-icon {
-    float: right;
+    mat-icon {
+      color: #fff;
+    }
   }
+}
+
+// Illustration
+.alert-illustration {
+  margin-bottom: 20px;
 
   img {
-    width: 35%;
-    margin-bottom: 20px;
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    animation: alertBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+    filter: drop-shadow(0 4px 12px rgba(94, 53, 177, 0.15));
+  }
+}
+
+// Heading
+.alert-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: #311b92;
+  margin: 0 0 8px;
+  animation: alertFadeIn 0.3s ease 0.2s both;
+}
+
+// Content
+.alert-content {
+  font-size: 15px;
+  color: #616161;
+  line-height: 1.7;
+  margin: 12px 0 28px;
+  animation: alertFadeIn 0.3s ease 0.3s both;
+
+  :host ::ng-deep strong {
+    color: #5e35b1;
+    font-weight: 700;
+  }
+}
+
+// Action Buttons — Multiple
+.alert-actions {
+  display: flex;
+  gap: 12px;
+  animation: alertFadeIn 0.3s ease 0.4s both;
+}
+
+.alert-actions-single {
+  display: flex;
+  justify-content: center;
+  animation: alertFadeIn 0.3s ease 0.4s both;
+}
+
+.alert-btn {
+  flex: 1;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 2px solid transparent;
+}
+
+.alert-btn-primary {
+  background: linear-gradient(135deg, #7c4dff 0%, #5e35b1 100%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(94, 53, 177, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(94, 53, 177, 0.4);
   }
 
-  p {
-    margin-top: 25px;
-    font-size: 15px;
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.alert-btn-secondary {
+  background: transparent;
+  color: #757575;
+  border-color: #e0e0e0;
+
+  &:hover {
+    border-color: #bdbdbd;
+    background: #f5f5f5;
+    color: #424242;
+    transform: translateY(-1px);
+  }
+}
+
+.alert-btn-success {
+  background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(67, 160, 71, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67, 160, 71, 0.4);
+  }
+}
+
+// Animations
+@keyframes alertZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
   }
 
-  .action-btn {
-    display: flex;
-    gap: 20px;
-    position: relative;
-    top: 20px;
-    margin: 20px 0;
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
-    button {
-      width: 50%;
-      height: 55px;
-    }
+@keyframes alertBounce {
+  from {
+    opacity: 0;
+    transform: scale(0.4) translateY(20px);
   }
 
-  .action-btn-single {
-    text-align: center;
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
 
-    button {
-      width: 50%;
-      height: 55px;
-    }
+@keyframes alertFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
