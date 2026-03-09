@@ -1,0 +1,85 @@
+{
+    "tableID": "LIST_DRIVER_LEAVE",
+    "tableTitle": "Driver Leave Records",
+    "showFilter": true,
+    "paginateAfter": 5,
+    "pageSizeOptions": [
+        5,
+        10,
+        20
+    ],
+    "defaultPageSize": 5,
+    "columns": [
+        {
+            "columnID": "position",
+            "headerLabel": "No.",
+            "isIndex": true,
+            "width": "60px",
+            "align": "center"
+        },
+        {
+            "columnID": "driverName",
+            "headerLabel": "Driver Name",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "driverMobileNumber",
+            "headerLabel": "Mobile",
+            "transform": {
+                "prefix": "+91-",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "leaveReason",
+            "headerLabel": "Reason",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "leaveType",
+            "headerLabel": "Type",
+            "transform": {
+                "valueMap": {
+                    "FULL": "Full Day",
+                    "HALF": "Half Day"
+                },
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "numberOfDays",
+            "headerLabel": "Days",
+            "width": "80px",
+            "align": "center",
+            "transform": {
+                "fallback": "--"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "actionID": "view",
+            "label": "View",
+            "icon": "ti ti-eye",
+            "variant": "primary"
+        },
+        {
+            "actionID": "cancel",
+            "label": "Cancel",
+            "icon": "ti ti-x",
+            "variant": "danger"
+        },
+        {
+            "actionID": "edit",
+            "label": "Edit",
+            "icon": "ti ti-pencil",
+            "variant": "secondary"
+        }
+    ]
+}
