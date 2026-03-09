@@ -1,0 +1,145 @@
+.dynamic-table-wrapper {
+    width: 100%;
+}
+
+// Filter bar
+.table-filter-bar {
+    display: flex;
+    justify-content: flex-end;
+
+    .filter-field {
+        width: 320px;
+        font-size: 14px;
+    }
+}
+
+// Table Styles
+.summary-table {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+
+    // Header
+    th.mat-mdc-header-cell {
+        background-color: #ede7f6;
+        color: #5e35b1;
+        font-weight: 600;
+        font-size: 13px;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        padding: 14px 16px;
+        border-bottom: 2px solid #d1c4e9;
+        white-space: nowrap;
+    }
+
+    // Cells
+    td.mat-mdc-cell {
+        padding: 12px 16px;
+        font-size: 14px;
+        color: #424242;
+        border-bottom: 1px solid #f3f0fa;
+        vertical-align: middle;
+    }
+
+    // Hover Row
+    .table-row {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: #f3f0fa;
+        }
+
+        &:active {
+            background-color: #ede7f6;
+        }
+    }
+}
+
+// Responsive Wrapper
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e8e0f0;
+    box-shadow: 0 2px 8px rgba(94, 53, 177, 0.06);
+}
+
+// Actions Column
+.actions-header {
+    text-align: center !important;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 8px 16px !important;
+}
+
+// Action Buttons
+.btn-action {
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    i {
+        font-size: 13px;
+    }
+}
+
+.btn-action-primary {
+    background-color: #ede7f6;
+    color: #5e35b1;
+    border-color: #d1c4e9;
+
+    &:hover {
+        background-color: #5e35b1;
+        color: #fff;
+    }
+}
+
+.btn-action-secondary {
+    background-color: #f5f5f5;
+    color: #616161;
+    border-color: #e0e0e0;
+
+    &:hover {
+        background-color: #616161;
+        color: #fff;
+    }
+}
+
+.btn-action-danger {
+    background-color: #fce4ec;
+    color: #c62828;
+    border-color: #ef9a9a;
+
+    &:hover {
+        background-color: #c62828;
+        color: #fff;
+    }
+}
+
+.btn-action-warning {
+    background-color: #fff3e0;
+    color: #e65100;
+    border-color: #ffcc80;
+
+    &:hover {
+        background-color: #e65100;
+        color: #fff;
+    }
+}
+
+// Paginator
+mat-paginator {
+    border-top: 1px solid #e8e0f0;
+    background: transparent;
+}
