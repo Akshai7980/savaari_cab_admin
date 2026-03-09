@@ -1,0 +1,73 @@
+{
+    "tableID": "LIST_DRIVER_DETAILS",
+    "tableTitle": "Registered Drivers",
+    "showFilter": true,
+    "paginateAfter": 5,
+    "pageSizeOptions": [
+        5,
+        10,
+        20
+    ],
+    "defaultPageSize": 5,
+    "columns": [
+        {
+            "columnID": "position",
+            "headerLabel": "No.",
+            "isIndex": true,
+            "width": "60px",
+            "align": "center"
+        },
+        {
+            "columnID": "driverName",
+            "headerLabel": "Driver Name",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "mobileNumber",
+            "headerLabel": "Mobile",
+            "transform": {
+                "prefix": "+91-",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "driverType",
+            "headerLabel": "Driver Type",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "district",
+            "headerLabel": "Location",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "actionID": "view",
+            "label": "View",
+            "icon": "ti ti-eye",
+            "variant": "primary"
+        },
+        {
+            "actionID": "delete",
+            "label": "Delete",
+            "icon": "ti ti-trash",
+            "variant": "danger"
+        },
+        {
+            "actionID": "edit",
+            "label": "Edit",
+            "icon": "ti ti-pencil",
+            "variant": "secondary"
+        }
+    ]
+}
