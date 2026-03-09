@@ -235,6 +235,15 @@ export class FirebaseService {
 
   deleteVehicle(id: string) { return this.deleteDocument('addVehicleDetails', id); }
 
+  /** Soft-deletes a driver by marking them as inactive (keeps backup in DB). */
+  deactivateDriver(params: { docId: string; deactivatedAt: Date; deactivatedBy: string }) {
+    return this.updateDocument('registeredDrivers', params.docId, {
+      isActive: false,
+      deactivatedAt: params.deactivatedAt,
+      deactivatedBy: params.deactivatedBy
+    } as any);
+  }
+
   updateTripStatus(params: Partial<DriverBooking> & { docId: string }) {
     return this.updateDocument('driverBooking', params.docId, params);
   }
