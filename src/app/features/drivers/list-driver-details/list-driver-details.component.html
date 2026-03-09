@@ -1,87 +1,21 @@
-<div>
-  <app-no-data-found *ngIf="dataSource.data.length === 0"></app-no-data-found>
+<div class="main-content-wrapper">
 
-  <table mat-table [dataSource]="dataSource" *ngIf="dataSource.data.length > 0">
-    <!-- Position Column -->
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef>No.</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element?.position ? element.position : '--' }}
-      </td>
-    </ng-container>
+  @if (!isLoading()) {
+  <div class="main-container-violet p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="main-title mb-0">List Driver Details</h1>
+    </div>
 
-    <!-- Driver Name Column -->
-    <ng-container matColumnDef="driverName">
-      <th mat-header-cell *matHeaderCellDef>Driver Name</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element?.driverName ?? element?.fullName ?? '' }}
-      </td>
-    </ng-container>
+    <div class="form-card-container">
+      @if (tableConfig) {
+      <app-dynamic-summary-table [config]="tableConfig" [data]="driverData" (rowAction)="onTableAction($event)">
+      </app-dynamic-summary-table>
+      }
+    </div>
+  </div>
+  }
 
-    <!-- Mobile Number Column -->
-    <ng-container matColumnDef="mobileNumber">
-      <th mat-header-cell *matHeaderCellDef>Mobile</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element?.mobileNumber ? element.mobileNumber : '--' }}
-      </td>
-    </ng-container>
+  <!-- Loading State -->
+  <app-form-loader [isLoading]="isLoading()"></app-form-loader>
 
-    <!-- Leave Reason Column -->
-    <ng-container matColumnDef="driverType">
-      <th mat-header-cell *matHeaderCellDef>Driver Type</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element?.driverType ? element.driverType : '--' }}
-      </td>
-    </ng-container>
-
-    <!-- Leave Type Column -->
-    <ng-container matColumnDef="district">
-      <th mat-header-cell *matHeaderCellDef>Location</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element?.district ? element.district : '--' }}
-      </td>
-    </ng-container>
-
-    <!-- Actions Column -->
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let element">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          style="margin-right: 10px;"
-          (click)="toViewDriverDetails(element)"
-        >
-          View
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          style="margin-right: 10px;"
-          (click)="toDeleteDriverDetails(element)"
-        >
-          Delete
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          style="margin-right: 10px;"
-          (click)="toEditDriverDetails(element)"
-        >
-          Edit
-        </button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-
-  <mat-paginator
-    *ngIf="showPaginator"
-    [pageSizeOptions]="[5, 10, 20]"
-    showFirstLastButtons
-    aria-label="Select page of periodic elements"
-  >
-  </mat-paginator>
 </div>
