@@ -1,41 +1,40 @@
-<div class="wrapper">
-  <div class="mat-icon">
-    <mat-icon
-      (click)="close()"
-      aria-hidden="false"
-      aria-label="Example close icon"
-      fontIcon="close"
-    ></mat-icon>
+<div class="detail-dialog">
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-content">
+      <div class="header-icon-badge">
+        <i class="ti ti-file-text"></i>
+      </div>
+      <h2 class="dialog-title">{{ data.heading }}</h2>
+    </div>
+    <button class="close-btn" (click)="close()" aria-label="Close dialog">
+      <mat-icon fontIcon="close"></mat-icon>
+    </button>
   </div>
 
-  <table mat-table [dataSource]="dataSource" *ngIf="dataSource.data.length > 0">
-    <!-- Key Column -->
-    <ng-container matColumnDef="key">
-      <th mat-header-cell *matHeaderCellDef colspan="2">
-        {{data.heading | titlecase}}
-      </th>
-      <td mat-cell *matCellDef="let element">
-        {{ element?.key ? element.key : '--' }}
-      </td>
-    </ng-container>
+  <!-- Details List -->
+  <div class="dialog-body">
+    @if (details.length > 0) {
+    <div class="details-grid">
+      @for (item of details; track item.key; let i = $index) {
+      <div class="detail-row" [style.animation-delay]="(i * 40) + 'ms'">
+        <span class="detail-key">{{ item.key }}</span>
+        <span class="detail-value">{{ item.value || '--' }}</span>
+      </div>
+      }
+    </div>
+    }
+  </div>
 
-    <!-- Value Column -->
-    <ng-container matColumnDef="value">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let element">
-        {{ element?.value ? element.value : '--' }}
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-  <div class="action-btn">
-    <button class="btn btn-secondary" (click)="edit()">
-      {{ data.buttons1 }}
+  <!-- Footer Actions -->
+  <div class="dialog-footer">
+    <button class="btn btn-detail-edit" (click)="edit()">
+      <i class="ti ti-pencil me-1"></i>
+      {{ data.buttons1 || 'Edit' }}
     </button>
-    <button class="btn btn-secondary" (click)="delete()">
-      {{ data.buttons2 }}
+    <button class="btn btn-detail-danger" (click)="delete()">
+      <i class="ti ti-trash me-1"></i>
+      {{ data.buttons2 || 'Delete' }}
     </button>
   </div>
 </div>

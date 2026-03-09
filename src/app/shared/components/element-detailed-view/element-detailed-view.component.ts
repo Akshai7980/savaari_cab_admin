@@ -1,29 +1,25 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-element-detailed-view',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatTableModule, MatIconModule],
+  imports: [CommonModule, MatDialogModule, MatIconModule],
   templateUrl: './element-detailed-view.component.html',
   styleUrls: ['./element-detailed-view.component.scss']
 })
 export class ElementDetailedViewComponent implements OnInit {
-  displayedColumns: string[] = ['key', 'value'];
-  dataSource = new MatTableDataSource<DetailsList>([]);
+  details: DetailsList[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public readonly data: any,
     private readonly matDialog: MatDialog
-  ) {
-    console.log(data);
-  }
+  ) { }
 
   ngOnInit(): void {
-    this.dataSource.data = this.data.data;
+    this.details = this.data.data || [];
   }
 
   edit() {
