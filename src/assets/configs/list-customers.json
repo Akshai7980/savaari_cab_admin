@@ -1,0 +1,59 @@
+{
+    "tableID": "LIST_CUSTOMERS",
+    "tableTitle": "Customers",
+    "showFilter": true,
+    "paginateAfter": 5,
+    "pageSizeOptions": [
+        5,
+        10,
+        20
+    ],
+    "defaultPageSize": 5,
+    "columns": [
+        {
+            "columnID": "position",
+            "headerLabel": "No.",
+            "isIndex": true,
+            "width": "60px",
+            "align": "center"
+        },
+        {
+            "columnID": "customerName",
+            "headerLabel": "Customer Name",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "customerNumber",
+            "headerLabel": "Contact Number",
+            "transform": {
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "address",
+            "headerLabel": "Address",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "totalBookings",
+            "headerLabel": "Total Bookings",
+            "transform": {
+                "fallback": "0"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "actionID": "view",
+            "label": "View",
+            "icon": "ti ti-eye",
+            "variant": "primary"
+        }
+    ]
+}

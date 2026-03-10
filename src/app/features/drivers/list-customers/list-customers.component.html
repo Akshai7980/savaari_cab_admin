@@ -1,1 +1,21 @@
-<p>list-customers works!</p>
+<div class="main-content-wrapper">
+
+    @if (!isLoading()) {
+    <div class="main-container-violet p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="main-title mb-0">Customers</h1>
+        </div>
+
+        <div class="form-card-container">
+            @if (tableConfig) {
+            <app-dynamic-summary-table [config]="tableConfig" [data]="customerData" (rowAction)="onTableAction($event)">
+            </app-dynamic-summary-table>
+            }
+        </div>
+    </div>
+    }
+
+    <!-- Loading State -->
+    <app-form-loader [isLoading]="isLoading()"></app-form-loader>
+
+</div>
