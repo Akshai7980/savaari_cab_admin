@@ -1,0 +1,79 @@
+{
+    "tableID": "LIST_VEHICLES",
+    "tableTitle": "Registered Vehicles",
+    "showFilter": true,
+    "paginateAfter": 5,
+    "pageSizeOptions": [
+        5,
+        10,
+        20
+    ],
+    "defaultPageSize": 5,
+    "columns": [
+        {
+            "columnID": "position",
+            "headerLabel": "No.",
+            "isIndex": true,
+            "width": "60px",
+            "align": "center"
+        },
+        {
+            "columnID": "ownerName",
+            "headerLabel": "Owner Name",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "vehicleNumber",
+            "headerLabel": "Vehicle Number",
+            "transform": {
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "fuelType",
+            "headerLabel": "Fuel Type",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "vehicleAge",
+            "headerLabel": "Vehicle Age",
+            "transform": {
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "vehicleClass",
+            "headerLabel": "Vehicle Class",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "actionID": "view",
+            "label": "View",
+            "icon": "ti ti-eye",
+            "variant": "primary"
+        },
+        {
+            "actionID": "delete",
+            "label": "Delete",
+            "icon": "ti ti-trash",
+            "variant": "danger"
+        },
+        {
+            "actionID": "edit",
+            "label": "Edit",
+            "icon": "ti ti-pencil",
+            "variant": "secondary"
+        }
+    ]
+}
