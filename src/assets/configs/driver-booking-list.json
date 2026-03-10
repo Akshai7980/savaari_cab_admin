@@ -1,0 +1,85 @@
+{
+    "tableID": "DRIVER_BOOKING_LIST",
+    "tableTitle": "Driver Bookings",
+    "showFilter": true,
+    "paginateAfter": 5,
+    "pageSizeOptions": [
+        5,
+        10,
+        20
+    ],
+    "defaultPageSize": 5,
+    "columns": [
+        {
+            "columnID": "position",
+            "headerLabel": "No.",
+            "isIndex": true,
+            "width": "60px",
+            "align": "center"
+        },
+        {
+            "columnID": "startTime",
+            "headerLabel": "Trip Time",
+            "transform": {
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "customerName",
+            "headerLabel": "Customer Name",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "pickUpLocation",
+            "headerLabel": "Location",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "dropOffLocation",
+            "headerLabel": "Destination",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "cusVehicleName",
+            "headerLabel": "Vehicle Name (Type)",
+            "transform": {
+                "fallback": "--"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "actionID": "view",
+            "label": "View",
+            "icon": "ti ti-eye",
+            "variant": "primary"
+        },
+        {
+            "actionID": "close",
+            "label": "Close",
+            "icon": "ti ti-circle-check",
+            "variant": "warning"
+        },
+        {
+            "actionID": "cancel",
+            "label": "Cancel",
+            "icon": "ti ti-x",
+            "variant": "danger"
+        },
+        {
+            "actionID": "edit",
+            "label": "Edit",
+            "icon": "ti ti-pencil",
+            "variant": "secondary"
+        }
+    ]
+}
