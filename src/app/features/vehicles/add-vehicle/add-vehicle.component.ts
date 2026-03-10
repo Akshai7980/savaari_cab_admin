@@ -1,105 +1,108 @@
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { DataShareService } from 'src/app/core/services/data-share.service';
-import { FirebaseService } from 'src/app/core/services/firebase.service';
-import { SnackbarService } from 'src/app/core/services/snackbar.service';
-import { UtilityService } from 'src/app/core/services/utility.service';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FirebaseService } from '../../../core/services/firebase.service';
+import { UtilityService } from '../../../core/services/utility.service';
+import { DataShareService } from '../../../core/services/data-share.service';
+import { SnackbarService } from '../../../core/services/snackbar.service';
+import { FormGeneratorService } from '../../../core/services/form-generator.service';
+import { FormConfig } from '../../../core/models/form-field.model';
+import { DynamicFormContainerComponent } from '../../../shared/components/dynamic-form-container/dynamic-form-container.component';
+import { FormLoaderComponent } from '../../../shared/components/form-loader/form-loader.component';
 
 @Component({
   selector: 'app-add-vehicle',
   standalone: true,
-  imports: [CommonModule, SharedModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicFormContainerComponent,
+    FormLoaderComponent
+  ],
   templateUrl: './add-vehicle.component.html',
   styleUrls: ['./add-vehicle.component.scss']
 })
 export default class AddVehicleComponent implements OnInit {
-  public vehicleRegForm: FormGroup;
-  public editForm: boolean = false;
+  private firebaseService = inject(FirebaseService);
+  private utilityService = inject(UtilityService);
+  private dataSharingService = inject(DataShareService);
+  private snackBar = inject(SnackbarService);
+  private formGeneratorService = inject(FormGeneratorService);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
-  private subscription: Subscription[] = [];
-
-  constructor(
-    private readonly utilityService: UtilityService,
-    private readonly firebaseService: FirebaseService,
-    private readonly dataSharingService: DataShareService,
-    private readonly snackBar: SnackbarService,
-    private readonly formBuilder: FormBuilder
-  ) {
-    this.vehicleRegForm = this.formBuilder.group({
-      ownerName: [''],
-      insuranceDateEnd: ['', Validators.required],
-      registrationDate: ['', Validators.required],
-      registeringAuthority: ['Kerala'],
-      location: ['', Validators.required],
-      ownerContactNumber: ['', Validators.required],
-      CFDate: ['', Validators.required],
-      smokeClearanceDateEnd: ['', Validators.required],
-      vehicleType: ['', Validators.required],
-      vehicleNumber: ['', Validators.required],
-      docId: ['']
-    });
-  }
+  vehicleRegForm!: FormGroup;
+  formConfig!: FormConfig;
+  isLoading = signal<boolean>(true);
+  editForm = false;
 
   ngOnInit(): void {
-    const subscription = this.dataSharingService.data$.subscribe((data) => {
-      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
-        this.editForm = true;
-        this.vehicleRegForm.patchValue(data);
-      }
-    });
-
-    this.subscription.push(subscription);
+    this.loadFormConfig();
   }
 
-  ngAfterViewInit(): void {
-    this.vehicleRegForm.controls['registeringAuthority'].disable();
-    const subscription: Subscription = this.vehicleRegForm.controls['registrationDate'].valueChanges.subscribe((value) => {
-      const dayDifference: number = this.utilityService.calculateDaysDifference(value, new Date().toISOString());
-      this.vehicleRegForm.controls['vehicleAge'].setValue(dayDifference);
-    });
-
-    this.subscription.push(subscription);
-  }
-
-  addVehicle() {
-    if (this.vehicleRegForm.valid) {
-      if (!this.editForm) {
-        const docId = this.firebaseService.createId();
-        this.vehicleRegForm.controls['docId'].setValue(docId);
-
-        this.firebaseService.addVehicleDetails(this.vehicleRegForm.value).then(
-          (res) => {
-            console.log(res);
-            this.vehicleRegForm.reset();
-            this.snackBar.showMessage('Vehicle Details Successfully Added');
-          },
-          (error) => {
-            console.error('Error adding vehicle details:', error);
-            this.snackBar.showMessage('Error Adding vehicle details');
-          }
-        );
-      } else {
-        this.firebaseService.updateVehicleDetails(this.vehicleRegForm.value).then(
-          (res) => {
-            this.snackBar.showMessage('Vehicle Details Successfully Updated');
-          },
-          (error) => {
-            console.error('Error updating vehicle details:', error);
-            this.snackBar.showMessage('Error Updating vehicle details');
-          }
-        );
-      }
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.subscription)
-      this.subscription.forEach((element) => {
-        element.unsubscribe();
+  loadFormConfig(): void {
+    this.utilityService.getJSON('assets/configs/vehicle-registration.json')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data: any) => {
+        this.formConfig = data as FormConfig;
+        this.vehicleRegForm = this.formGeneratorService.generateForm(this.formConfig);
+        this.checkForEditMode();
+        this.isLoading.set(false);
       });
+  }
+
+  private checkForEditMode(): void {
+    this.dataSharingService.data$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data: any) => {
+        if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+          this.editForm = true;
+          this.vehicleRegForm.patchValue(data);
+        }
+      });
+  }
+
+  onCancel(): void {
+    this.vehicleRegForm.reset();
+    this.editForm = false;
+  }
+
+  onSubmit(): void {
+    if (this.vehicleRegForm.invalid) {
+      this.vehicleRegForm.markAllAsTouched();
+      return;
+    }
+
+    const vehicleData = this.vehicleRegForm.getRawValue();
+    this.isLoading.set(true);
+
+    if (!this.editForm) {
+      const docId = this.firebaseService.createId();
+      vehicleData.docId = docId;
+
+      this.firebaseService.addVehicleDetails(vehicleData)
+        .then(() => {
+          this.snackBar.showMessage('Vehicle Details Successfully Added');
+          this.vehicleRegForm.reset();
+          this.router.navigate(['/listVehicle']);
+        })
+        .catch((error) => {
+          console.error('Error adding vehicle details:', error);
+          this.snackBar.showMessage('Error Adding vehicle details');
+        })
+        .finally(() => this.isLoading.set(false));
+    } else {
+      this.firebaseService.updateVehicleDetails(vehicleData)
+        .then(() => {
+          this.snackBar.showMessage('Vehicle Details Successfully Updated');
+        })
+        .catch((error) => {
+          console.error('Error updating vehicle details:', error);
+          this.snackBar.showMessage('Error Updating vehicle details');
+        })
+        .finally(() => this.isLoading.set(false));
+    }
   }
 }

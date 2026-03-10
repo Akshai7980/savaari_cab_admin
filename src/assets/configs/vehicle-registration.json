@@ -1,0 +1,141 @@
+{
+    "formID": "VEHICLE_REGISTRATION_FORM",
+    "formTitle": "Add Vehicle Details (Registration)",
+    "infoTooltip": "Register a new vehicle by providing ownership, registration, and compliance details.",
+    "formSectionConfig": [
+        {
+            "sectionID": "secOwnerDetails",
+            "sectionLabel": "Owner Information",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "ownerName",
+                    "fieldLabel": "Owner Name",
+                    "controlType": "TextBox",
+                    "type": "text",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "autoCapitalize": true,
+                    "placeholder": "Enter owner's full name"
+                },
+                {
+                    "fieldID": "ownerContactNumber",
+                    "fieldLabel": "Owner Contact Number",
+                    "controlType": "Number",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "prefixIcon": "🇮🇳",
+                    "prefixText": "+ 91",
+                    "placeholder": "Contact Number"
+                }
+            ]
+        },
+        {
+            "sectionID": "secVehicleDetails",
+            "sectionLabel": "Vehicle Details",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "vehicleNumber",
+                    "fieldLabel": "Vehicle Number",
+                    "controlType": "TextBox",
+                    "type": "text",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "autoCapitalize": true,
+                    "formatType": "VehicleNumber",
+                    "placeholder": "e.g., KL 07 AB 1234",
+                    "hint": "Enter the vehicle registration number.",
+                    "validators": [
+                        {
+                            "name": "pattern",
+                            "args": "^[A-Z]{2}\\s?\\d{2}\\s?[A-Z]{0,2}\\s?\\d{1,4}$",
+                            "message": "Invalid format. Expected: KL 07 AB 1234"
+                        }
+                    ]
+                },
+                {
+                    "fieldID": "vehicleType",
+                    "fieldLabel": "Vehicle Type",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "dataSourceKey": "lov-data/driver-booking/vehicle-types",
+                    "placeholder": "Select Vehicle Type"
+                },
+                {
+                    "fieldID": "registeringAuthority",
+                    "fieldLabel": "Registering Authority",
+                    "controlType": "TextBox",
+                    "type": "text",
+                    "colspan": 1,
+                    "disable": true,
+                    "defaultValue": "Kerala",
+                    "placeholder": "Registering Authority"
+                },
+                {
+                    "fieldID": "location",
+                    "fieldLabel": "Location",
+                    "controlType": "Dropdown",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "dataSourceKey": "lov-data/driver-registration/districts",
+                    "placeholder": "Select Location"
+                }
+            ]
+        },
+        {
+            "sectionID": "secDatesCompliance",
+            "sectionLabel": "Dates & Compliance",
+            "sectionLayout": 2,
+            "formFieldConfig": [
+                {
+                    "fieldID": "registrationDate",
+                    "fieldLabel": "Vehicle Registration Date",
+                    "controlType": "Date",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "placeholder": "mm/dd/yyyy"
+                },
+                {
+                    "fieldID": "insuranceDateEnd",
+                    "fieldLabel": "Insurance End Date",
+                    "controlType": "Date",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "placeholder": "mm/dd/yyyy"
+                },
+                {
+                    "fieldID": "CFDate",
+                    "fieldLabel": "CF Date",
+                    "controlType": "Date",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "placeholder": "mm/dd/yyyy"
+                },
+                {
+                    "fieldID": "smokeClearanceDateEnd",
+                    "fieldLabel": "Smoke Clearance End Date",
+                    "controlType": "Date",
+                    "colspan": 1,
+                    "mandatory": true,
+                    "placeholder": "mm/dd/yyyy"
+                }
+            ]
+        },
+        {
+            "sectionID": "secHiddenFields",
+            "sectionLabel": "",
+            "sectionLayout": 1,
+            "hideOnLoad": true,
+            "formFieldConfig": [
+                {
+                    "fieldID": "docId",
+                    "fieldLabel": "Document ID",
+                    "controlType": "TextBox",
+                    "hideOnLoad": true
+                }
+            ]
+        }
+    ]
+}
