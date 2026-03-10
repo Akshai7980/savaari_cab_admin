@@ -45,7 +45,13 @@ $purples: (
 );
 
 // Characters which are escaped by the escape-svg function
-$escaped-characters: (('<', '%3c'), ('>', '%3e'), ('#', '%23'), ('(', '%28'), (')', '%29'));
+$escaped-characters: (
+  ('<', '%3c'),
+  ('>', '%3e'),
+  ('#', '%23'),
+  ('(', '%28'),
+  (')', '%29')
+);
 $spacer: 1rem;
 $spacers: (
   0: 0,
@@ -63,7 +69,7 @@ $position-values: (
   100: 100%
 );
 
-$body-bg: #eceff1; // change
+$body-bg: #eef2f6; // change
 $body-text-align: null;
 $link-color: $primary;
 $link-decoration: none;
@@ -242,8 +248,7 @@ $form-check-input-width: 1.25em;
 $form-check-min-height: $font-size-base * $line-height-base;
 $form-check-padding-start: $form-check-input-width + 0.5em;
 $form-check-margin-bottom: 0.125rem;
-$form-check-transition:
-  background-color 0.15s ease-in-out,
+$form-check-transition: background-color 0.15s ease-in-out,
   background-position 0.15s ease-in-out,
   border-color 0.15s ease-in-out;
 $form-check-input-active-filter: brightness(90%);
@@ -331,8 +336,7 @@ $nav-link-font-size: null;
 $nav-link-font-weight: null;
 $nav-link-color: null;
 $nav-link-hover-color: null;
-$nav-link-transition:
-  color 0.15s ease-in-out,
+$nav-link-transition: color 0.15s ease-in-out,
   background-color 0.15s ease-in-out,
   border-color 0.15s ease-in-out;
 $nav-link-disabled-color: $gray-600;
@@ -366,16 +370,12 @@ $form-bg: #f0f3f6;
 $theme-color: linear-gradient(-135deg, #673ab7 0%, #673ab7 100%);
 $theme-color2: linear-gradient(-135deg, #899fd4 0%, #a389d4 100%);
 
-$theme-colors: map-merge(
-  (
-    'primary': $primary,
-    'secondary': $secondary,
-    'success': $success,
-    'info': $info,
-    'warning': $warning,
-    'danger': $danger,
-    'light': $light,
-    'dark': $dark
-  ),
-  $theme-colors
-); // Color contrast
+$theme-colors: map-merge(('primary': $primary,
+      'secondary': $secondary,
+      'success': $success,
+      'info': $info,
+      'warning': $warning,
+      'danger': $danger,
+      'light': $light,
+      'dark': $dark ),
+    $theme-colors); // Color contrast

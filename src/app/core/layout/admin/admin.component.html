@@ -1,16 +1,9 @@
-<app-navigation
-  class="coded-navbar pc-sidebar"
-  [ngClass]="{
+<app-navigation class="coded-navbar pc-sidebar" [ngClass]="{
     'navbar-collapsed': navCollapsed,
     'mob-open': navCollapsedMob
-  }"
-  (NavCollapsedMob)="navMobClick()"
-></app-navigation>
+  }" (NavCollapsedMob)="navMobClick()"></app-navigation>
 
-<app-nav-bar
-  (NavCollapse)="this.navCollapsed = !this.navCollapsed"
-  (NavCollapsedMob)="navMobClick()"
-></app-nav-bar>
+<app-nav-bar (NavCollapse)="this.navCollapsed = !this.navCollapsed" (NavCollapsedMob)="navMobClick()"></app-nav-bar>
 
 <div class="pc-container">
   <div class="coded-wrapper">
@@ -19,8 +12,9 @@
         <app-breadcrumb></app-breadcrumb>
 
         <div class="main-body">
-          <div class="page-wrapper">
+          <div class="page-wrapper" style="position: relative;">
             <router-outlet></router-outlet>
+            <app-spinner></app-spinner>
           </div>
         </div>
       </div>
