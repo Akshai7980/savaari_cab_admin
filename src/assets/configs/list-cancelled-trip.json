@@ -1,0 +1,75 @@
+{
+    "tableID": "LIST_CANCELLED_TRIPS",
+    "tableTitle": "Cancelled Trips",
+    "showFilter": true,
+    "paginateAfter": 5,
+    "pageSizeOptions": [
+        5,
+        10,
+        20
+    ],
+    "defaultPageSize": 5,
+    "columns": [
+        {
+            "columnID": "position",
+            "headerLabel": "No.",
+            "isIndex": true,
+            "width": "60px",
+            "align": "center"
+        },
+        {
+            "columnID": "startTime",
+            "headerLabel": "Trip Time",
+            "transform": {
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "customerName",
+            "headerLabel": "Customer Name",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "pickUpLocation",
+            "headerLabel": "Location",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "dropOffLocation",
+            "headerLabel": "Destination",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "cusVehicleName",
+            "headerLabel": "Vehicle Name (Type)",
+            "transform": {
+                "fallback": "--"
+            }
+        },
+        {
+            "columnID": "tripCancelledBy",
+            "headerLabel": "Cancelled By",
+            "transform": {
+                "pipe": "titlecase",
+                "fallback": "--"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "actionID": "view",
+            "label": "View",
+            "icon": "ti ti-eye",
+            "variant": "primary"
+        }
+    ]
+}

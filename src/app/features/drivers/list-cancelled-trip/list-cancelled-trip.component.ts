@@ -1,12 +1,15 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { VehicleNumberPipe } from 'src/app/shared/pipes/vehicle-number/vehicle-number.pipe';
-import { FirebaseService } from 'src/app/core/services/firebase.service';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { DriverBooking } from 'src/app/core/models/booking.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FirebaseService } from '../../../core/services/firebase.service';
+import { UtilityService } from '../../../core/services/utility.service';
+import { TableConfig } from '../../../core/models/table-config.model';
+import { DriverBooking } from '../../../core/models/booking.model';
+import { DynamicSummaryTableComponent } from '../../../shared/components/dynamic-summary-table/dynamic-summary-table.component';
+import { FormLoaderComponent } from '../../../shared/components/form-loader/form-loader.component';
+import { ElementDetailedViewComponent } from '../../../shared/components/element-detailed-view/element-detailed-view.component';
 
 export interface DriverBookingDisplay extends DriverBooking {
   position?: number;
@@ -14,78 +17,106 @@ export interface DriverBookingDisplay extends DriverBooking {
 
 @Component({
   selector: 'app-list-cancelled-trip',
+  standalone: true,
+  imports: [
+    CommonModule,
+    DynamicSummaryTableComponent,
+    FormLoaderComponent
+  ],
   templateUrl: './list-cancelled-trip.component.html',
   styleUrls: ['./list-cancelled-trip.component.scss'],
-  standalone: true,
-  imports: [CommonModule, SharedModule, VehicleNumberPipe]
+  providers: [TitleCasePipe]
 })
-export default class ListCancelledTripComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['position', 'tripTime', 'customerName', 'location', 'destination', 'vehicleName', 'actions'];
-  dataSource = new MatTableDataSource<DriverBookingDisplay>([]);
-  driverBookings: DriverBookingDisplay[] = [];
-  listType: string = 'closed';
+export default class ListCancelledTripComponent implements OnInit {
+  private firebaseService = inject(FirebaseService);
+  private utilityService = inject(UtilityService);
+  private destroyRef = inject(DestroyRef);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
+  private titleCasePipe = inject(TitleCasePipe);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  tableConfig!: TableConfig;
+  bookingData: DriverBookingDisplay[] = [];
+  isLoading = signal<boolean>(true);
 
-  constructor(
-    private readonly firebaseService: FirebaseService,
-    private readonly router: Router
-  ) { }
+  private dialogRef!: MatDialogRef<any>;
 
   ngOnInit(): void {
+    this.loadTableConfig();
     this.getBookingList();
   }
 
-  getBookingList(): void {
-    this.firebaseService.getDriverBooking().subscribe(
-      (res: DriverBooking[]) => {
-        const bookingList = res.filter(booking => booking.status === 'canceled' || booking.isTripCancelled);
-
-        this.driverBookings = bookingList.map((item, index) => ({
-          ...item,
-          position: index + 1
-        }));
-        this.dataSource.data = this.driverBookings;
-      },
-      (error) => {
-        console.error('Error fetching cancelled trips:', error);
-      }
-    );
+  loadTableConfig(): void {
+    this.utilityService.getJSON('assets/configs/list-cancelled-trip.json')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data: any) => {
+        this.tableConfig = data as TableConfig;
+      });
   }
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+  getBookingList(): void {
+    this.firebaseService.getDriverBooking()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        (res: DriverBooking[]) => {
+          const bookingList = res.filter(
+            booking => booking.status === 'canceled' || booking.isTripCancelled
+          );
+
+          this.bookingData = bookingList.map((item, index) => ({
+            ...item,
+            position: index + 1
+          }));
+          this.isLoading.set(false);
+        },
+        (error) => {
+          console.error('Error fetching cancelled trips:', error);
+          this.isLoading.set(false);
+        }
+      );
+  }
+
+  onTableAction(event: { actionID: string; row: DriverBookingDisplay }): void {
+    switch (event.actionID) {
+      case 'view':
+        this.toViewTrip(event.row);
+        break;
+    }
   }
 
   toViewTrip(rowData: DriverBookingDisplay): void {
-    this.router.navigate([`tripDetail/today/${rowData.docId}`]);
-  }
+    this.dialog.closeAll();
 
-  toCloseTrip(rowData: DriverBookingDisplay): void {
-    if (rowData.docId) {
-      const params = {
-        status: 'closed',
-        tripCancelledBy: 'Admin',
-        docId: rowData.docId
-      };
-      this.firebaseService.updateTripStatus(params as any);
-    }
-  }
+    const data = [
+      { key: 'Customer Name', value: this.titleCasePipe.transform(rowData.customerName || '') },
+      { key: 'Customer Number', value: rowData.customerNumber || '--' },
+      { key: 'Pick-up Location', value: this.titleCasePipe.transform(rowData.pickUpLocation || '') },
+      { key: 'Drop-off Location', value: this.titleCasePipe.transform(rowData.dropOffLocation || '') },
+      { key: 'Start Date', value: rowData.startDate || '--' },
+      { key: 'Trip Time', value: rowData.startTime || '--' },
+      { key: 'Number of Days', value: rowData.numberOfDays || '--' },
+      { key: 'Vehicle', value: rowData.cusVehicleName ? `${rowData.cusVehicleName} (${rowData.cusVehicleType})` : '--' },
+      { key: 'Required Driver', value: this.titleCasePipe.transform(rowData.requiredDriver || '') || '--' },
+      { key: 'Selected Driver', value: this.titleCasePipe.transform(rowData.selectedDriver || '') || '--' },
+      { key: 'Status', value: 'CANCELLED' },
+      { key: 'Cancelled By', value: this.titleCasePipe.transform(rowData.tripCancelledBy || '') || '--' },
+      { key: 'Cancellation Time', value: rowData.tripCancellationTime || '--' }
+    ];
 
-  toCancelTrip(rowData: DriverBookingDisplay): void {
-    if (rowData.docId) {
-      const params = {
-        isTripCancelled: true,
-        status: 'canceled',
-        tripCancellationTime: new Date().toISOString(),
-        tripCancelledBy: 'Admin',
-        docId: rowData.docId
-      };
-      this.firebaseService.updateTripStatus(params as any);
-    }
-  }
-
-  toEditTrip(rowData: DriverBookingDisplay): void {
-    this.router.navigate(['driverBookings'], { queryParams: { id: rowData.docId } });
+    this.dialogRef = this.dialog.open(ElementDetailedViewComponent, {
+      data: {
+        data: data,
+        heading: `${this.titleCasePipe.transform(rowData.customerName || '')} | Cancelled Trip`,
+        buttons1: 'View Full Details',
+        buttons2: 'Close',
+        edit: () => {
+          this.dialogRef.close();
+          this.router.navigate([`tripDetail/today/${rowData.docId}`]);
+        },
+        delete: () => {
+          this.dialogRef.close();
+        }
+      }
+    });
   }
 }
